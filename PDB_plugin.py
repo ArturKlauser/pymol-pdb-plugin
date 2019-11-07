@@ -992,7 +992,7 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
 
         if method == "entity":
             entities(pdbid)
-        if method == "domains":
+        elif method == "domains":
             entities(pdbid)
             domains(pdbid)
         elif method == "validation":
