@@ -13,10 +13,6 @@ from pymol import cmd
 from pymol import stored
 from chempy.cif import *
 
-# logging
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-
 # API calls
 server_root = "https://www.ebi.ac.uk/pdbe/api/"
 summaryURL = server_root + "pdb/entry/summary/"
@@ -43,10 +39,6 @@ stored.residue_dict = {}
 stored.ca_p_only = []
 stored.entities = {}
 
-
-pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
-mmCIF_file_RE = re.compile(r'mmCIF_file=(.*)')
-
 # cmd.set('connect_mode', 4)
 
 empty_cif_list = ["", ".", "?", None]
@@ -63,7 +55,7 @@ class ApiCall:
         try:
             import requests
         except Exception as e:
-            logging.error(e)
+            logging.exception(e)
             return self.data
         self.encode_url()
         r = requests.get(url=self.url, timeout=60)
@@ -90,7 +82,7 @@ def url_response_urllib2(url, description):
     try:
         import urllib2
     except Exception as e:
-        logging.error(e)
+        logging.exception(e)
         return data
     data_response = False
     tries = 1
@@ -945,22 +937,6 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
         print("please provide a 4 letter PDB code")
 
 
-def __init_plugin__(app=None):
-    try:
-        # Simply add the menu entry and callback
-        from pymol.plugins import addmenuitemqt
-
-        addmenuitemqt('PDB Analysis - All', PDBeLoaderDialog)
-        addmenuitemqt('PDB Analysis - Molecules', PDBeEntityDialog)
-        addmenuitemqt('PDB Analysis - Domains', PDBeDomainDialog)
-        addmenuitemqt('PDB Analysis - Validation', PDBeValidationDialog)
-        addmenuitemqt('PDB Analysis - Assemblies', PDBeAssemblyDialog)
-
-    except Exception as e:
-        logging.error('unable to make menu items')
-        logging.error(e)
-
-
 def GetPdbId(label):
     from pymol.Qt import QtWidgets
 
@@ -1038,6 +1014,45 @@ def count_chain(selection='all'):
 pymol.cmd.extend("count_chain", count_chain)
 
 
+def Initialize():
+    # get preferences
+    pref_loglevel = 'PDB_PLUGIN_LOGLEVEL'
+    loglevel = pymol.plugins.pref_get(pref_loglevel, None)
+    if loglevel is None:
+        # supported log levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
+        loglevel = 'WARNING'
+        pymol.plugins.pref_set(pref_loglevel, loglevel)
+        pymol.plugins.pref_save()
+
+    # set up logging of 'root' logger
+    logger = logging.getLogger()
+    numeric_loglevel = getattr(logging, loglevel.upper(), None)
+    if numeric_loglevel is None:
+      logger.setLevel(logging.WARNING)
+      logging.error('Preference ' + pref_loglevel + ' is invalid;' +
+                    ' using WARNING instead.')
+    else:
+      logger.setLevel(numeric_loglevel)
+
+
+# Run when used as a plugin.
+def __init_plugin__(app=None):
+    Initialize()
+    try:
+        # Simply add the menu entry and callback
+        from pymol.plugins import addmenuitemqt
+
+        addmenuitemqt('PDB Analysis - All', PDBeLoaderDialog)
+        addmenuitemqt('PDB Analysis - Molecules', PDBeEntityDialog)
+        addmenuitemqt('PDB Analysis - Domains', PDBeDomainDialog)
+        addmenuitemqt('PDB Analysis - Validation', PDBeValidationDialog)
+        addmenuitemqt('PDB Analysis - Assemblies', PDBeAssemblyDialog)
+
+    except Exception as e:
+        logging.error('unable to make menu items')
+        logging.exception(e)
+
+
 def usage():
     usage = """
         Usage
@@ -1047,12 +1062,17 @@ def usage():
     # pymol.cmd.quit()
 
 
+# Run when used from the command line.
 if __name__ == '__main__':
+    Initialize()
     mmCIF_file = None
     pdbid = None
     if len(sys.argv) > 1:
         print(sys.argv)
         for arr in sys.argv:
+            pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
+            mmCIF_file_RE = re.compile(r'mmCIF_file=(.*)')
+
             if pdb_id_re.match(arr):
                 pdbid = pdb_id_re.match(arr).group(0)
             if mmCIF_file_RE.match(arr):
