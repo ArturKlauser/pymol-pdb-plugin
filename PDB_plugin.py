@@ -1021,25 +1021,21 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
         print("please provide a 4 letter PDB code")
 
 
-
-def __init__(self):
+def __init_plugin__(app=None):
     try:
         # Simply add the menu entry and callback
-        self.menuBar.addmenuitem('Plugin', 'command', 'PDB Loader',
-                                 label='PDB Analysis - All',
-                                 command=lambda s=self: PDBeLoaderDialog(s))
-        self.menuBar.addmenuitem('Plugin', 'command', 'PDB Molecules',
-                                 label='PDB Analysis - Molecules',
-                                 command=lambda s=self: PDBeEntityDialog(s))
-        self.menuBar.addmenuitem('Plugin', 'command', 'PDB Domains',
-                                 label='PDB Analysis - Domains',
-                                 command=lambda s=self: PDBeDomainDialog(s))
-        self.menuBar.addmenuitem('Plugin', 'command', 'PDB Validation',
-                                 label='PDB Analysis - Validation',
-                                 command=lambda s=self: PDBeValidationDialog(s))
-        self.menuBar.addmenuitem('Plugin', 'command', 'Assemblies',
-                                 label='PDB Analysis - Assemblies',
-                                 command=lambda s=self: PDBeAssemblyDialog(s))
+        from pymol.plugins import addmenuitemqt
+
+        addmenuitemqt('PDB Analysis - All',
+                      lambda: PDBeLoaderDialog(app))
+        addmenuitemqt('PDB Analysis - Molecules',
+                      lambda: PDBeEntityDialog(app))
+        addmenuitemqt('PDB Analysis - Domains',
+                      lambda: PDBeDomainDialog(app))
+        addmenuitemqt('PDB Analysis - Validation',
+                      lambda: PDBeValidationDialog(app))
+        addmenuitemqt('PDB Analysis - Assemblies',
+                      lambda: PDBeAssemblyDialog(app))
 
     except Exception as e:
         logging.error('unable to make menu items')
