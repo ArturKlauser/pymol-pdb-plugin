@@ -41,17 +41,8 @@ stored.molecule_dict = {}
 stored.poly_count = 0
 stored.residue_dict = {}
 stored.ca_p_only = []
-stored.assemblies = {}
-stored.operators = {}
-stored.cif_items = {}
-stored.asym_to_chain = {}
-stored.assembly_objects = {}
 stored.entities = {}
 
-sphere_scale_dict = {'sticks': '0.25',
-                     'spheres': '0.5',
-                     'cartoon': '',
-                     'ribbon': ''}
 
 pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
 mmCIF_file_RE = re.compile(r'mmCIF_file=(.*)')
@@ -163,45 +154,6 @@ def url_response(url, description):
     return data
 
 
-def getColor(val, crange=[2, 5], inverted=1, absolute=1, buffer=32):
-    """convert colour value in rgb for pymol"""
-    if absolute == 1: val = abs(val)
-
-    # Convert value to integer in range [0,510]
-    integercolor = int((val - crange[0]) / (crange[1] - crange[0]) * 510)
-
-    if integercolor < 0: integercolor = 0
-    if integercolor > 510: integercolor = 510
-    if inverted == 1: integercolor = 510 - integercolor
-
-    # first 255 values are converted in color RED --> YELLOW
-    if integercolor <= 255:
-        red = 255 - buffer
-        green = int(integercolor * (1 - buffer / 255))
-        blue = 0
-    # other values are converted in color YELLOW --> GREEN
-    elif (integercolor <= 510):
-        integercolor -= 255
-        red = int(255 + integercolor * (buffer / 255 - 1))
-        green = 255 - buffer
-        blue = 0
-    else:
-        red = 150
-        green = 150
-        blue = 150
-
-    red = float(red) / 255.0
-    green = float(green) / 255.0
-    blue = float(blue) / 255.0
-    # return color format used for drawing in Pymol
-    colour_list = []
-    colour_list.append(red)
-    colour_list.append(green)
-    colour_list.append(blue)
-    return colour_list
-    # return "[" + int(red) + ',' + int(green) + ',' + int(blue) + "]"
-
-
 pymolcolours = [
     "red", "green", "blue", "yellow", "magenta", "cyan",
     "tv_red", "tv_green", "tv_blue", "tv_yellow", "lightmagenta", "palecyan",
@@ -219,10 +171,6 @@ pymolcolours = [
 validation_background_colour = [0.4, 1.0, 0.4]
 cmd.set_color("validation_green_background", validation_background_colour)
 validation_colours = ['yellow', 'orange', 'red']
-angle_bond_dict = {'angles': {'description': 'bond angles', 'colour': 'yellow', 'display': 'spheres'},
-                   'bonds': {'description': 'bond length', 'colour': 'red', 'display': 'spheres'}}
-rama_dict = {'ramachandran_outliers': {'selection': ' and name C+CA+N+O', 'colour': 'yellow', 'display': 'spheres'},
-             'sidechain_outliers': {'selection': ' and not name N+CA+C+O', 'colour': 'red', 'display': 'spheres'}}
 
 
 def colour_return(num):
@@ -315,28 +263,6 @@ def poly_seq_scheme(pdbid):
                                                                     'observed': PDBobs, 'residueName': residueName,
                                                                     'chainID': chain_id}})
                         # pprint(seq_scheme)
-
-
-def asym_from_entity(pdbid, entity_id):
-    url = moleculesURL + pdbid
-    # global molecule_dict
-    if stored.molecule_dict == {}:
-        stored.molecule_dict = url_response(url, 'molecules')
-    asym_id_list = []
-    if pdbid in stored.molecule_dict:
-        # print (entity_id)
-        for entity in stored.molecule_dict[pdbid]:
-            # add ca only list
-            if entity['ca_p_only'] != False:
-                for a in entity['in_struct_asyms']:
-                    if a not in stored.ca_p_only:
-                        stored.ca_p_only.append(a)
-            # pprint(entity['entity_id'])
-            for a in entity['in_struct_asyms']:
-                if str(entity_id) == str(entity['entity_id']):
-                    asym_id_list.append(str(a))
-    # print (asym_id_list)
-    return asym_id_list
 
 
 def check_range_observed(asym_id, start, end, unobs):
@@ -498,8 +424,6 @@ def insert_code(asym_id, CIFnum):
 
     return PDBnum
 
-
-polymeric_types = ['']
 
 
 class Validation:
