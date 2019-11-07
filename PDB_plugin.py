@@ -1026,81 +1026,57 @@ def __init_plugin__(app=None):
         # Simply add the menu entry and callback
         from pymol.plugins import addmenuitemqt
 
-        addmenuitemqt('PDB Analysis - All',
-                      lambda: PDBeLoaderDialog(app))
-        addmenuitemqt('PDB Analysis - Molecules',
-                      lambda: PDBeEntityDialog(app))
-        addmenuitemqt('PDB Analysis - Domains',
-                      lambda: PDBeDomainDialog(app))
-        addmenuitemqt('PDB Analysis - Validation',
-                      lambda: PDBeValidationDialog(app))
-        addmenuitemqt('PDB Analysis - Assemblies',
-                      lambda: PDBeAssemblyDialog(app))
+        addmenuitemqt('PDB Analysis - All', PDBeLoaderDialog)
+        addmenuitemqt('PDB Analysis - Molecules', PDBeEntityDialog)
+        addmenuitemqt('PDB Analysis - Domains', PDBeDomainDialog)
+        addmenuitemqt('PDB Analysis - Validation', PDBeValidationDialog)
+        addmenuitemqt('PDB Analysis - Assemblies', PDBeAssemblyDialog)
 
     except Exception as e:
         logging.error('unable to make menu items')
         logging.error(e)
 
-def PDBeLoaderDialog(app):
 
-    try:
-        import tkSimpleDialog  # Python 2
-    except ImportError:
-        import tkinter.simpledialog as tkSimpleDialog  # Python 3
+def GetPdbId(label):
+    from pymol.Qt import QtWidgets
 
-    pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
-                                       'Highlight chemically distinct molecules, domains and assemblies in a PDB entry. Please enter a 4-digit pdb code:',
-                                       parent=app.root)
-    PDBe_startup(pdbCode, "all")
+    pdbid, ok_pressed = QtWidgets.QInputDialog.getText(
+        None, 'PDB Loader Service',
+        label + '\nPlease enter a 4-digit PDB ID:',
+        QtWidgets.QLineEdit.Normal, "")
 
-
-def PDBeEntityDialog(app):
-    try:
-        import tkSimpleDialog  # Python 2
-    except ImportError:
-        import tkinter.simpledialog as tkSimpleDialog  # Python 3
-
-    pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
-                                       'Highlight chemically distinct molecules in a PDB entry. Please enter a 4-digit pdb code:',
-                                       parent=app.root)
-    PDBe_startup(pdbCode, "entity")
+    if ok_pressed:
+        return pdbid
+    else:
+        return None
 
 
-def PDBeDomainDialog(app):
-    try:
-        import tkSimpleDialog  # Python 2
-    except ImportError:
-        import tkinter.simpledialog as tkSimpleDialog  # Python 3
-
-    pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
-                                       'Display Pfam, SCOP, CATH and Rfam domains on a PDB entry. Please enter a 4-digit pdb code:',
-                                       parent=app.root)
-    PDBe_startup(pdbCode, "domains")
+def PDBeLoaderDialog():
+    pdbid = GetPdbId(
+        'Highlight chemically distinct molecules, domains and assemblies in a'
+        ' PDB entry.')
+    if pdbid: PDBe_startup(pdbid, "all")
 
 
-def PDBeValidationDialog(app):
-    try:
-        import tkSimpleDialog  # Python 2
-    except ImportError:
-        import tkinter.simpledialog as tkSimpleDialog  # Python 3
-
-    pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
-                                       'Display geometric outliers on a PDB entry. Please enter a 4-digit pdb code:',
-                                       parent=app.root)
-    PDBe_startup(pdbCode, "validation")
+def PDBeEntityDialog():
+    pdbid = GetPdbId('Highlight chemically distinct molecules in a PDB entry.')
+    if pdbid: PDBe_startup(pdbid, "entity")
 
 
-def PDBeAssemblyDialog(app):
-    try:
-        import tkSimpleDialog  # Python 2
-    except ImportError:
-        import tkinter.simpledialog as tkSimpleDialog  # Python 3
+def PDBeDomainDialog():
+    pdbid = GetPdbId(
+        'Display Pfam, SCOP, CATH and Rfam domains on a PDB entry.')
+    if pdbid: PDBe_startup(pdbid, "domains")
 
-    pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
-                                       'Display assemblies for a PDB entry. Please enter a 4-digit pdb code:',
-                                       parent=app.root)
-    PDBe_startup(pdbCode, "show_assembly")
 
+def PDBeValidationDialog():
+    pdbid = GetPdbId('Display geometric outliers on a PDB entry.')
+    if pdbid: PDBe_startup(pdbid, "validation")
+
+
+def PDBeAssemblyDialog():
+    pdbid = GetPdbId('Display assemblies for a PDB entry.')
+    if pdbid: PDBe_startup(pdbid, "show_assembly")
 
 
 
