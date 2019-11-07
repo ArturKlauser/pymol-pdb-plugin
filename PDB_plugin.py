@@ -1047,7 +1047,11 @@ def __init__(self):
 
 def PDBeLoaderDialog(app):
 
-    import tkSimpleDialog
+    try:
+        import tkSimpleDialog  # Python 2
+    except ImportError:
+        import tkinter.simpledialog as tkSimpleDialog  # Python 3
+
     pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
                                        'Highlight chemically distinct molecules, domains and assemblies in a PDB entry. Please enter a 4-digit pdb code:',
                                        parent=app.root)
@@ -1055,7 +1059,11 @@ def PDBeLoaderDialog(app):
 
 
 def PDBeEntityDialog(app):
-    import tkSimpleDialog
+    try:
+        import tkSimpleDialog  # Python 2
+    except ImportError:
+        import tkinter.simpledialog as tkSimpleDialog  # Python 3
+
     pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
                                        'Highlight chemically distinct molecules in a PDB entry. Please enter a 4-digit pdb code:',
                                        parent=app.root)
@@ -1063,7 +1071,11 @@ def PDBeEntityDialog(app):
 
 
 def PDBeDomainDialog(app):
-    import tkSimpleDialog
+    try:
+        import tkSimpleDialog  # Python 2
+    except ImportError:
+        import tkinter.simpledialog as tkSimpleDialog  # Python 3
+
     pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
                                        'Display Pfam, SCOP, CATH and Rfam domains on a PDB entry. Please enter a 4-digit pdb code:',
                                        parent=app.root)
@@ -1071,7 +1083,11 @@ def PDBeDomainDialog(app):
 
 
 def PDBeValidationDialog(app):
-    import tkSimpleDialog
+    try:
+        import tkSimpleDialog  # Python 2
+    except ImportError:
+        import tkinter.simpledialog as tkSimpleDialog  # Python 3
+
     pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
                                        'Display geometric outliers on a PDB entry. Please enter a 4-digit pdb code:',
                                        parent=app.root)
@@ -1079,7 +1095,11 @@ def PDBeValidationDialog(app):
 
 
 def PDBeAssemblyDialog(app):
-    import tkSimpleDialog
+    try:
+        import tkSimpleDialog  # Python 2
+    except ImportError:
+        import tkinter.simpledialog as tkSimpleDialog  # Python 3
+
     pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
                                        'Display assemblies for a PDB entry. Please enter a 4-digit pdb code:',
                                        parent=app.root)
