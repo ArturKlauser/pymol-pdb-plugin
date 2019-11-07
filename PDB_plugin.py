@@ -1027,16 +1027,12 @@ pymol.cmd.extend("PDB_Analysis_Validation", PDBe_validation)
 pymol.cmd.extend("PDB_Analysis_Assemblies", PDBe_assemblies)
 
 
-def chain_append(chain):
-    if chain not in stored.chain:
-        pymol.stored.chain.append(chain)
-
-
-def count_chain(selection):
-    pymol.stored.chain = []
-    pymol.cmd.iterate(selection, 'chain_append(chain)')
-    print(stored.chain)
-    print("Number of chains: %s" % (len(stored.chain)))
+def count_chain(selection='all'):
+    stored.chains = set()
+    pymol.cmd.iterate(selection, 'stored.chains.add(chain)')
+    print(stored.chains)
+    print("Number of chains: %s" % (len(stored.chains)))
+    return len(stored.chains)
 
 
 pymol.cmd.extend("count_chain", count_chain)
