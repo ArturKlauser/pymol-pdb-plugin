@@ -1042,11 +1042,11 @@ def __init_plugin__(app=None):
         # Simply add the menu entry and callback
         from pymol.plugins import addmenuitemqt
 
-        addmenuitemqt('PDB Analysis - All', PDBeLoaderDialog)
-        addmenuitemqt('PDB Analysis - Molecules', PDBeEntityDialog)
-        addmenuitemqt('PDB Analysis - Domains', PDBeDomainDialog)
-        addmenuitemqt('PDB Analysis - Validation', PDBeValidationDialog)
-        addmenuitemqt('PDB Analysis - Assemblies', PDBeAssemblyDialog)
+        addmenuitemqt('PDB Analysis|All', PDBeLoaderDialog)
+        addmenuitemqt('PDB Analysis|Molecules', PDBeEntityDialog)
+        addmenuitemqt('PDB Analysis|Domains', PDBeDomainDialog)
+        addmenuitemqt('PDB Analysis|Validation', PDBeValidationDialog)
+        addmenuitemqt('PDB Analysis|Assemblies', PDBeAssemblyDialog)
 
     except Exception as e:
         logging.error('unable to make menu items')
