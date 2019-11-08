@@ -66,7 +66,7 @@ class ApiCall:
             self.data = {}
 
         else:
-            print(r.status_code, r.reason)
+            logging.debug(r.status_code, r.reason)
             self.data = {}
 
         return self.data
@@ -168,10 +168,10 @@ validation_colours = ['yellow', 'orange', 'red']
 def colour_return(num):
     colournum = ""
     factor = 1
-    while (num >= len(pymolcolours)):
-        # print (num)
+    while num >= len(pymolcolours):
+        # logging.debug(num)
         num = num - (len(pymolcolours) * factor)
-        # print (num)
+        # logging.debug(num)
         factor = factor + 1
     else:
         colournum = num
@@ -186,7 +186,7 @@ def poly_display_type(asym, mol_type, length):
     if stored.poly_count > 50:
         display_type = "ribbon"
     elif asym in stored.ca_p_only:
-        print('set ribbon trace on')
+        logging.debug('set ribbon trace on')
         cmd.set('ribbon_trace_atoms', 1)
         display_type = "ribbon"
     else:
@@ -199,7 +199,7 @@ def poly_display_type(asym, mol_type, length):
         if re.search('saccharide', mol_type):
             display_type = 'sticks'
 
-    # print ('asym: %s, mol_type: %s, length: %s, display_type: %s' %(asym, mol_type, length, display_type))
+    # logging.debug('asym: %s, mol_type: %s, length: %s, display_type: %s' %(asym, mol_type, length, display_type))
     return display_type
 
 
@@ -254,7 +254,7 @@ def poly_seq_scheme(pdbid):
                         stored.seq_scheme[asym_id].update({CIFnum: {'PDBnum': PDBnum, 'PDBinsCode': PDBinsCode,
                                                                     'observed': PDBobs, 'residueName': residueName,
                                                                     'chainID': chain_id}})
-                        # pprint(seq_scheme)
+                        # logging.debug(seq_scheme)
 
 
 def check_range_observed(asym_id, start, end, unobs):
@@ -268,52 +268,52 @@ def check_range_observed(asym_id, start, end, unobs):
             lastResidue = r
 
     if end > lastResidue:
-        # print ('ERROR: residue %s from SIFTS is greater than the lastSeqRes number %s' %(end, lastSeqRes))
+        # logging.debug('ERROR: residue %s from SIFTS is greater than the lastSeqRes number %s' %(end, lastSeqRes))
         end = lastResidue
 
-    # print ("first residue: %s, last residue %s" %(firstResidue, lastResidue))
-    # print (seq_scheme[asym_id][start])
+    # logging.debug("first residue: %s, last residue %s" %(firstResidue, lastResidue))
+    # logging.debug(seq_scheme[asym_id][start])
     if start in stored.seq_scheme[asym_id]:
         chain = stored.seq_scheme[asym_id][start]['chainID']
 
         while stored.seq_scheme[asym_id][start]['observed'] == False:
-            # print ("PDB start is not observed, adding 1 to residue number %s" %(start))
+            # logging.debug("PDB start is not observed, adding 1 to residue number %s" %(start))
             if start == lastResidue:
-                # print ("domain not observed")
+                # logging.debug("domain not observed")
                 unobs = True
                 break
             else:
                 start += 1
                 if start == lastResidue:
-                    # print ("domain not observed")
+                    # logging.debug("domain not observed")
                     unobs = True
                     break
                 elif start == end:
-                    # print ("domain not observed")
+                    # logging.debug("domain not observed")
                     unobs = True
                     break
 
     if end in stored.seq_scheme[asym_id]:
         while stored.seq_scheme[asym_id][end]['observed'] == False:
-            # print ("PDB end is not observed, minusing 1 from residue number %s" %(end))
+            # logging.debug("PDB end is not observed, minusing 1 from residue number %s" %(end))
             if end == firstResidue:
-                # print ("domain not observed")
+                # logging.debug("domain not observed")
                 unobs = True
                 break
             else:
                 end -= 1
                 if end == firstResidue:
-                    # print ("domain not observed")
+                    # logging.debug("domain not observed")
                     unobs = True
                     break
                 elif start == end:
-                    # print ("domain not observed")
+                    # logging.debug("domain not observed")
                     unobs = True
                     break
 
     if unobs == False:
-        # print ("CIF start: %s, CIF end %s" %(start, end))
-        # print ("PDB start: %s, PDB end %s" %(PDBstart, PDBend))
+        # logging.debug("CIF start: %s, CIF end %s" %(start, end))
+        # logging.debug("PDB start: %s, PDB end %s" %(PDBstart, PDBend))
 
         # need to do something about non continuous ranges which pymol doesn't cope with.
         """find all sections where the residue number increases by one. If it jumps then store this as a separate
@@ -346,7 +346,7 @@ def check_range_observed(asym_id, start, end, unobs):
                     nextPDB = int(stored.seq_scheme[asym_id][nextCIF]['PDBnum'])
 
                     if nextPDB - currentPDB > 1:
-                        # print ("numbering not continues, positive jump - store as section")
+                        # logging.debug("numbering not continues, positive jump - store as section")
                         startPDB = stored.seq_scheme[asym_id][blockStartCIF]['PDBnum']
                         swap = checkOrder(startPDB, currentPDB)
                         startPDBins = insert_code(asym_id, blockStartCIF)
@@ -358,7 +358,7 @@ def check_range_observed(asym_id, start, end, unobs):
                             # move start to next block
                         blockStartCIF = nextCIF
                     elif currentPDB - nextPDB > 1:
-                        # print ("numbering not continues, negative jump - store as section")
+                        # logging.debug("numbering not continues, negative jump - store as section")
                         startPDB = stored.seq_scheme[asym_id][blockStartCIF]['PDBnum']
                         swap = checkOrder(startPDB, currentPDB)
                         startPDBins = insert_code(asym_id, blockStartCIF)
@@ -383,16 +383,16 @@ def check_range_observed(asym_id, start, end, unobs):
         else:
             range_dict.append({"PDBstart": nextPDB, "PDBend": startPDBins, "chainID": chain})
 
-            # pprint(range_dict)
+            # logging.debug(range_dict)
     else:
-        print("domain unobserved")
+        logging.debug("domain unobserved")
 
     return range_dict
 
 
 def checkOrder(start, end):
     swap = False
-    # print ('PRE: start: %s, end %s, swap %s' %(start, end, swap))
+    # logging.debug('PRE: start: %s, end %s, swap %s' %(start, end, swap))
     if type(start) is str:
         start = start.split('\\')[-1]
     if type(end) is str:
@@ -400,7 +400,7 @@ def checkOrder(start, end):
 
     if int(start) > int(end):
         swap = True
-    # print ('POST: start: %s, end: %s, swap %s' %(start, end, swap))
+    # logging.debug('POST: start: %s, end: %s, swap %s' %(start, end, swap))
     return swap
 
 
@@ -425,7 +425,7 @@ class Validation:
         val_data = url_response(url, 'validation')
 
         if val_data:
-            print('There is validation for this entry')
+            logging.debug('There is validation for this entry')
 
             url = validation_residueURL + pdbid
             res_data = url_response(url, 'residue validation')
@@ -435,7 +435,7 @@ class Validation:
 
             self.per_residue_validation(pdbid, res_data, rama_data)
         else:
-            print("No validation for this entry")
+            logging.debug("No validation for this entry")
 
             ###this takes too long for really large entries.
             # Validation().per_chain_per_residue_validation(pdbid, res_data, rama_data)
@@ -443,7 +443,7 @@ class Validation:
     """validation of all polymeric enties"""
 
     def validation_selection(self, selection, display_id):
-        # print (selection)
+        # logging.debug(selection)
 
         # uses a list so 0 means that there is one outlier for this residue.
 
@@ -457,7 +457,7 @@ class Validation:
         if colour_num > 2:
             colour_num = 2
         residue_colour = validation_colours[colour_num]
-        # print (residue_colour)
+        # logging.debug(residue_colour)
         cmd.color(residue_colour, selection)
 
     def geometric_validation(self, pdbid, res_data, chain=False, model=1):
@@ -468,17 +468,17 @@ class Validation:
                 if 'molecules' in res_data[pdbid]:
                     if res_data[pdbid]['molecules']:
                         for entity in res_data[pdbid]['molecules']:
-                            # print (entity)
+                            # logging.debug(entity)
                             entity_id = entity['entity_id']
                             for chain in entity['chains']:
                                 chain_id = chain['chain_id']
-                                # print (chain_id)
+                                # logging.debug(chain_id)
                                 for model in chain['models']:
                                     model_id = int(model['model_id'])
                                     for outlier_type in model['outlier_types']:
                                         outliers = model['outlier_types'][outlier_type]
-                                        # print (outlier_type)
-                                        # print (outliers)
+                                        # logging.debug(outlier_type)
+                                        # logging.debug(outliers)
                                         for outlier in outliers:
                                             PDB_res_num = outlier['author_residue_number']
                                             PDB_ins_code = outlier['author_insertion_code']
@@ -486,14 +486,14 @@ class Validation:
                                             if PDB_ins_code not in [None, " "]:
                                                 PDB_res_num = '%s%s' % (PDB_res_num, PDB_ins_code)
 
-                                            # print (PDB_res_num)
+                                            # logging.debug(PDB_res_num)
                                             selection = "chain %s and resi %s" % (chain_id, PDB_res_num)
                                             if model == 1 or model_id:
                                                 if chain == False or chain_id:
                                                     self.validation_selection(selection, pdbid)
 
                     else:
-                        print("no residue validation for this entry")
+                        logging.debug("no residue validation for this entry")
 
     def ramachandran_validation(self, pdbid, rama_data, chain=False, model=1):
         """display ramachandran outliers"""
@@ -503,9 +503,9 @@ class Validation:
                 for k in rama_data[pdbid]:
                     v = rama_data[pdbid][k]
                     if v:
-                        print("ramachandran %s for this entry" % k)
+                        logging.debug("ramachandran %s for this entry" % k)
                         for outlier in rama_data[pdbid][k]:
-                            # print (outlier)
+                            # logging.debug(outlier)
                             entity_id = outlier['entity_id']
                             model_id = int(outlier['model_id'])
                             chain_id = outlier['chain_id']
@@ -521,10 +521,10 @@ class Validation:
                                 if chain == False or chain_id:
                                     self.validation_selection(selection, pdbid)
                             else:
-                                print("is multimodel!!!, outlier not in model 1, not shown.")
+                                logging.debug("is multimodel!!!, outlier not in model 1, not shown.")
 
                     else:
-                        print("no %s" % (k))
+                        logging.debug("no %s" % (k))
 
     def per_residue_validation(self, pdbid, res_data, rama_data):
         """validation of all outliers, coloured by number of outliers"""
@@ -535,7 +535,7 @@ class Validation:
             stored.molecule_dict = url_response(url, 'molecules')
         if pdbid in stored.molecule_dict:
             for entity in stored.molecule_dict[pdbid]:
-                # pprint(entity)
+                # logging.debug(entity)
                 mol_type = entity['molecule_type']
                 ca_only_list = []
                 if entity['ca_p_only'] != False:
@@ -550,7 +550,7 @@ class Validation:
                         length = entity['length']
                         asym_id = a
                         display_type = poly_display_type(asym_id, 'polypeptide', length)
-                        # print (asym_id)
+                        # logging.debug(asym_id)
                         x = check_range_observed(asym_id, start, end, unobs)
                         if x:
                             for y in x:
@@ -558,7 +558,7 @@ class Validation:
                                 end = y['PDBend']
                                 chain = y['chainID']
                                 selection = "chain %s and resi %s-%s and %s" % (chain, start, end, pdbid)
-                                # print (selection)
+                                # logging.debug(selection)
                                 cmd.show(display_type, selection)
 
         cmd.colour("validation_green_background", pdbid)
@@ -568,11 +568,11 @@ class Validation:
         self.geometric_validation(pdbid, res_data)
         self.ramachandran_validation(pdbid, rama_data)
 
-        # pprint(stored.residue_dict)
+        # logging.debug(stored.residue_dict)
 
 
 def entities(pdbid):
-    print('Display entities')
+    logging.debug('Display entities')
     cmd.set("cartoon_transparency", 0.3, pdbid)
     cmd.set("ribbon_transparency", 0.3, pdbid)
     url = moleculesURL + pdbid
@@ -594,11 +594,11 @@ def entities(pdbid):
                 else:
                     entity_name = entity['molecule_name'][0]
             else:
-                print("No name from the API")
+                logging.debug("No name from the API")
                 entity_name = "entity_%s" % (entity['entity_id'])
-            # print ('entity %s: %s' %(entity['entity_id'], entity_name))
+            # logging.debug('entity %s: %s' %(entity['entity_id'], entity_name))
 
-            # print (entity['entity_id'])
+            # logging.debug(entity['entity_id'])
             ####see if its polymeric
             mol_type = entity['molecule_type']
             # entity_name = entity['molecule_name']
@@ -607,7 +607,7 @@ def entities(pdbid):
                 objectName = re.sub(r'\W+', "", objectName)
             else:
                 objectName = "entity_%s" % (entity['entity_id'])
-            # print (objectName)
+            # logging.debug(objectName)
             display_type = ""
             object_selection = []
             pymol_selection = ""
@@ -618,22 +618,22 @@ def entities(pdbid):
                         poly_seq_scheme(pdbid)
                     if mol_type == 'Bound':
                         ##bound molecules have no CIFresidue number and this is defaulted to 1 in the API
-                        # print (entity_name)
-                        # print (stored.seq_scheme[a])
+                        # logging.debug(entity_name)
+                        # logging.debug(stored.seq_scheme[a])
                         for res in stored.seq_scheme[a]:
-                            # print (stored.seq_scheme[a][res])
+                            # logging.debug(stored.seq_scheme[a][res])
                             short = stored.seq_scheme[a][res]
                             chain = short['chainID']
                             res = ""
                             display_type = 'spheres'
-                            # print (short)
+                            # logging.debug(short)
                             if short['PDBinsCode'] == None:
                                 res = str(short['PDBnum'])
                             else:
                                 res = str(short['PDBnum']) + short['PDBinsCode']
                             selection = "chain %s and resi %s and %s" % (chain, res, pdbid)
                             object_selection.append(selection)
-                            # print (selection)
+                            # logging.debug(selection)
                     else:
                         ###find the first and last residues
                         unobs = False
@@ -643,16 +643,16 @@ def entities(pdbid):
                         ###need to work out if cartoon is the right thing to display
                         length = entity['length']
                         display_type = poly_display_type(asym_id, mol_type, length)
-                        # print (asym_id)
+                        # logging.debug(asym_id)
                         x = check_range_observed(asym_id, start, end, unobs)
-                        # print (x)
+                        # logging.debug(x)
                         if x:
                             for y in x:
                                 start = y['PDBstart']
                                 end = y['PDBend']
                                 chain = y['chainID']
                                 selection = "chain %s and resi %s-%s and %s" % (chain, start, end, pdbid)
-                                # print (selection)
+                                # logging.debug(selection)
                                 object_selection.append(selection)
 
                 for o in object_selection:
@@ -667,7 +667,7 @@ def entities(pdbid):
                 try:
                     stored.entities[pdbid]['entity'][entity['entity_id']]['selection']['selection_list'].append(
                         pymol_selection)
-                    print('appended %s' % (pymol_selection))
+                    logging.debug('appended %s' % (pymol_selection))
                 except:
                     stored.entities.setdefault(pdbid, {}) \
                         .setdefault('entity', {}) \
@@ -675,17 +675,17 @@ def entities(pdbid):
                         .setdefault('selection', {}) \
                         .update({'display_type': display_type, 'selection_list': [pymol_selection]})
 
-                # print (pymol_selection)
+                # logging.debug(pymol_selection)
                 if len(objectName) > 250:
                     objectName = objectName[:249]
                 cmd.select("test_select", pymol_selection)
                 cmd.create(objectName, "test_select")
-                # print (display_type)
+                # logging.debug(display_type)
                 cmd.show(display_type, objectName)
 
                 # colour by entity.
                 colour = colour_return(int(entity['entity_id']))
-                # print (colour)
+                # logging.debug(colour)
                 cmd.color(colour, objectName)
 
     cmd.delete("test_select")
@@ -694,23 +694,23 @@ def entities(pdbid):
 
 def show_assemblies(pdbid, mmCIF_file):
     """iterate through the assemblies and output images"""
-    print('Generating assemblies')
+    logging.info('Generating assemblies')
     # cmd.hide('everything')
     worker_functions().trans_setting('all', 0.0)
 
     try:
         assemblies = cmd.get_assembly_ids(pdbid)  # list or None
-        print(assemblies)
+        logging.debug(assemblies)
         if assemblies:
             for a_id in assemblies:
-                print("Assembly: %s" % (a_id))
+                logging.debug("Assembly: %s" % (a_id))
                 assembly_name = pdbid + '_assem_' + a_id
-                print(assembly_name)
+                logging.debug(assembly_name)
                 cmd.set('assembly', a_id)
                 cmd.load(mmCIF_file, assembly_name, format='cif')
-                print('finished Assembly: %s' % (a_id))
+                logging.debug('finished Assembly: %s' % (a_id))
     except:
-        print('pymol version does not support assemblies')
+        logging.debug('pymol version does not support assemblies')
 
 
 def mapping(pdbid):
@@ -725,15 +725,15 @@ def mapping(pdbid):
     nucleic_domains = url_response(nucleic_url, "nucleic_domains")
     for data in [protein_domains, nucleic_domains]:
         if data == {}:
-            print("no domain information for this entry")
+            logging.debug("no domain information for this entry")
         else:
             for domain_type in data[pdbid]:
                 if domain_type in domain_to_make:
                     for domain in data[pdbid][domain_type]:
                         if data[pdbid][domain_type][domain]['mappings']:
                             identifier = data[pdbid][domain_type][domain]['identifier']
-                            # print (domain_type)
-                            # print (domain)
+                            # logging.debug(domain_type)
+                            # logging.debug(domain)
                             for mapping in data[pdbid][domain_type][domain]['mappings']:
                                 unobs = False
                                 PDBstart = ""
@@ -748,7 +748,7 @@ def mapping(pdbid):
                                     domain_segment_id = 1
                                 if segment_identifier[domain_type] in mapping:
                                     domain_name = str(mapping[segment_identifier[domain_type]])
-                                # print ("%s: %s" %(domain_name, domain_segment_id))
+                                # logging.debug("%s: %s" %(domain_name, domain_segment_id))
 
                                 # then check it exits
                                 start = mapping['start']['residue_number']
@@ -779,14 +779,14 @@ def domains(pdbid):
     obj_dict = {}
     chain_dict = {}
     if stored.domain_dict:
-        # pprint(domain_dict)
+        # logging.debug(domain_dict)
         for domain_type in stored.domain_dict:
             for domain in stored.domain_dict[domain_type]:
-                # print (domain)
+                # logging.debug(domain)
                 for instance in stored.domain_dict[domain_type][domain]:
                     asym_list = []
                     entity_list = []
-                    # print (instance)
+                    # logging.debug(instance)
                     object_selection = []
                     pymol_selection = ""
                     for segment in stored.domain_dict[domain_type][domain][instance]:
@@ -810,14 +810,14 @@ def domains(pdbid):
                                 pymol_selection += "(%s) or " % (o)
                         else:
                             pymol_selection += "%s" % (o)
-                    # print (pymol_selection)
+                    # logging.debug(pymol_selection)
                     objectName = "%s_%s_%s" % (domain_type, domain, instance)
                     obj_dict.update({objectName: {'asym_list': asym_list, 'entity_list': entity_list}})
                     cmd.select("test_select", pymol_selection)
                     cmd.create(objectName, "test_select")
 
             for chain in chain_dict:
-                print(chain)
+                logging.debug(chain)
                 c_select = "chain %s and %s" % (chain_dict[chain]['chain'], pdbid)
 
                 entity_id = chain_dict[chain]['entity_id']
@@ -829,9 +829,9 @@ def domains(pdbid):
                 cmd.show(display_type, c_select)
                 cmd.color("grey", c_select)
             num = 1
-            # print (obj_dict)
+            # logging.debug(obj_dict)
             for obj in obj_dict:
-                # print (obj)
+                # logging.debug(obj)
                 cmd.enable(obj)
                 # domain can span multiple asym_id's, could be different type
                 for i, a in enumerate(obj_dict[obj]['asym_list']):
@@ -843,7 +843,7 @@ def domains(pdbid):
                     display_type = poly_display_type(a, 'polypeptide', length)
                     cmd.show(display_type, obj)
                     colour = colour_return(num)
-                    # print (colour)
+                    # logging.debug(colour)
                     cmd.color(colour, obj)
                     num += 1
 
@@ -863,7 +863,7 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
     try:
         cmd.set('cif_keepinmemory')
     except:
-        print('version of pymol does not support keeping all cif items')
+        logging.exception('version of pymol does not support keeping all cif items')
 
     # check the PDB code actually exists.
     url = summaryURL + pdbid
@@ -877,7 +877,7 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
         stored.molecule_dict = {}
         stored.residue_dict = {}
 
-        print('pdbid: %s' % (pdbid))
+        logging.debug('pdbid: %s' % (pdbid))
         mid_pdb = pdbid[1:3]
 
         obj_list = cmd.get_object_list('all')
@@ -887,21 +887,21 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
             else:
                 # if local file exists then use it
                 if os.path.exists("%s.cif" % (pdbid)):
-                    print("CIF found in current directory")
+                    logging.debug("CIF found in current directory")
                     file_path = "%s.cif" % (pdbid)
                 else:
-                    print("fetching %s" % (pdbid))
+                    logging.debug("fetching %s" % (pdbid))
                     try:
                         # connect mode 4 works only with version 1.7 of pymol
                         cmd.set('assembly', '')
                         file_path = updated_ftp % pdbid
-                        print('setting connect mode to mode 4')
+                        logging.debug('setting connect mode to mode 4')
                         cmd.set('connect_mode', 4)
                     except:
-                        print('pymol version does not support assemblies or connect mode 4')
+                        logging.exception('pymol version does not support assemblies or connect mode 4')
                         file_path = ebi_ftp % (mid_pdb, pdbid)
 
-            print('File to load: %s' % file_path)
+            logging.debug('File to load: %s' % file_path)
             cmd.load(file_path, pdbid, format="cif")
         cmd.hide("everything", pdbid)
         worker_functions().count_poly(pdbid)
@@ -924,17 +924,17 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
             show_assemblies(pdbid, file_path)
             Validation().launch_validation(pdbid)
         else:
-            print("provide a method")
+            logging.warning("provide a method")
         cmd.zoom(pdbid, complete=1)
 
     elif mmCIF_file:
-        print('no PDB ID, show assemblies from mmCIF file')
+        logging.warning('no PDB ID, show assemblies from mmCIF file')
         cmd.load(mmCIF_file, pdbid, format="cif")
         # worker_functions().count_poly(pdbid)
         show_assemblies(pdbid, mmCIF_file)
 
     else:
-        print("please provide a 4 letter PDB code")
+        logging.error("please provide a 4 letter PDB code")
 
 
 def GetPdbId(label):
@@ -1058,7 +1058,7 @@ def usage():
         Usage
             pymol PDB_plugin.py mmCIF_file_name
         """
-    print((usage))
+    print(usage)
     # pymol.cmd.quit()
 
 
@@ -1068,7 +1068,7 @@ if __name__ == '__main__':
     mmCIF_file = None
     pdbid = None
     if len(sys.argv) > 1:
-        print(sys.argv)
+        logging.debug(sys.argv)
         for arr in sys.argv:
             pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
             mmCIF_file_RE = re.compile(r'mmCIF_file=(.*)')
@@ -1079,8 +1079,8 @@ if __name__ == '__main__':
                 mmCIF_file = mmCIF_file_RE.match(arr).group(1)
 
         if pdbid or mmCIF_file:
-            print('pdbid: %s' % pdbid)
-            print('mmCIF file: %s' % mmCIF_file)
+            logging.debug('pdbid: %s' % pdbid)
+            logging.debug('mmCIF file: %s' % mmCIF_file)
             PDBe_startup(pdbid, 'all', mmCIF_file=mmCIF_file)
         else:
-            print("Please provide a pdbid or mmCIF_file=FILE after -- ")
+            logging.error("Please provide a pdbid or mmCIF_file=FILE after -- ")
