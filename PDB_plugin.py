@@ -1,3 +1,48 @@
+# Metadata for Plugin Manager
+#
+# Authors: PDBe, Artur.Klauser@computer.org
+# License: BSD-2-Clause
+# Version: 2.0.0a
+# Citation-Required: No
+"""
+Described at PyMOL wiki:
+https://pymolwiki.org/index.php/PDB_plugin
+
+--- original plugin ---
+Authors : PDBe
+Date    : 2016
+
+--- enhancements ---
+Authors : Artur.Klauser@computer.org
+Date    : 2019
+
+DESCRIPTION
+
+    Fetches the specified data set from PDB and breaks it into multiple
+    objects based on the criteria named by the function.
+
+USAGE
+
+    PDB_Analysis_Assemblies pdb_id
+    PDB_Analysis_Molecules pdb_id
+    PDB_Analysis_Domains pdb_id
+    PDB_Analysis_Validation pdb_id
+    count_chain selection
+
+ARGUMENTS
+
+    pdb_id = string: 4-character PDB entry ID
+    selection = string: selection-expression or name-pattern {default: (all)}.
+
+EXAMPLES
+
+    PDB_Analysis_Molecules 3mzw
+
+NOTES
+
+    For detailed descriptions see help on individual commands.
+"""
+
 # parsing the input
 import json
 import datetime
@@ -45,7 +90,7 @@ empty_cif_list = ["", ".", "?", None]
 
 
 class ApiCall:
-    '''functions specific to API calls'''
+    """functions specific to API calls"""
 
     def __init__(self, url):
         self.url = url
@@ -77,7 +122,7 @@ class ApiCall:
 
 # url handling
 def url_response_urllib2(url, description):
-    '''try several times to get a response from the API'''
+    """try several times to get a response from the API"""
     data = None
     try:
         import urllib2
@@ -981,19 +1026,99 @@ def PDBeAssemblyDialog():
 
 
 def PDBe_entities(pdbid):
-    """launch PDBe entity"""
+    """
+DESCRIPTION
+
+    Fetches the specified entry from PDB and highlights the chemically
+    distinct molecules, including proteins, nucleic acids and ligands. Each
+    molecule is given a unique colour and selected as a different object.
+    Polymers (protein, DNA and RNA chains) are shown as cartoon or ribbon
+    representation and ligands are shown as spheres.
+
+USAGE
+
+    PDB_Analysis_Molecules pdb_id
+
+ARGUMENTS
+
+    pdb_id = string: 4-character PDB entry ID
+
+EXAMPLES
+
+    PDB_Analysis_Molecules 3l2p
+    """
     PDBe_startup(pdbid, "entity")
 
 
 def PDBe_domains(pdbid):
+    """
+DESCRIPTION
+
+    Fetches the specified entry from PDB and highlights the Pfam, Rfam, SCOP
+    and CATH domains. Each domain is coloured in a different colour and
+    selected as a different object. This enables each domain to be turned on
+    and off with PyMOL. The Domains Plugin also highlights chemically
+    distinct molecules and domains are overlaid on these molecules.
+
+USAGE
+
+    PDB_Analysis_Domains pdb_id
+
+ARGUMENTS
+
+    pdb_id = string: 4-character PDB entry ID
+
+EXAMPLES
+
+    PDB_Analysis_Domains 3b43
+    """
     PDBe_startup(pdbid, "domains")
 
 
 def PDBe_validation(pdbid):
+    """
+DESCRIPTION
+
+    Fetches the specified entry from PDB and overlays geometric validation.
+    Geometry outliers are coloured as per the PDB validation report:
+    Residues with no geometric outliers are shown in green. Residues with one
+    geometric outliers are shown in yellow. Residues with two geometric
+    outliers are shown in orange. Residues with three or more geometric
+    outliers are shown in red.
+
+USAGE
+
+    PDB_Analysis_Validation pdb_id
+
+ARGUMENTS
+
+    pdb_id = string: 4-character PDB entry ID
+
+EXAMPLES
+
+    PDB_Analysis_Validation 2gc2
+    """
     PDBe_startup(pdbid, "validation")
 
 
 def PDBe_assemblies(pdbid):
+    """
+DESCRIPTION
+
+    Fetches the specified entry from PDB and highlights the assemblies.
+
+USAGE
+
+    PDB_Analysis_Assemblies pdb_id
+
+ARGUMENTS
+
+    pdb_id = string: 4-character PDB entry ID
+
+EXAMPLES
+
+    PDB_Analysis_Assemblies 5j96
+    """
     PDBe_startup(pdbid, "show_assembly")
 
 
@@ -1004,6 +1129,23 @@ pymol.cmd.extend("PDB_Analysis_Assemblies", PDBe_assemblies)
 
 
 def count_chain(selection='all'):
+    """
+DESCRIPTION
+
+    Prints the chain names and number of chains in the selection.
+
+USAGE
+
+    count_chain selection
+
+ARGUMENTS
+
+    selection = string: selection-expression or name-pattern {default: (all)}.
+
+EXAMPLES
+
+    count_chain visible
+    """
     stored.chains = set()
     pymol.cmd.iterate(selection, 'stored.chains.add(chain)')
     print(stored.chains)
@@ -1084,3 +1226,5 @@ if __name__ == '__main__':
             PDBe_startup(pdbid, 'all', mmCIF_file=mmCIF_file)
         else:
             logging.error("Please provide a pdbid or mmCIF_file=FILE after -- ")
+
+# vi:expandtab:smarttab:sw=4
