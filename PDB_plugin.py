@@ -1022,7 +1022,8 @@ def PDBeAssemblyDialog():
 
 
 
-def PDBe_molecules(pdbid):
+@cmd.extend
+def PDB_Analysis_Molecules(pdbid):
     """
 DESCRIPTION
 
@@ -1047,7 +1048,8 @@ EXAMPLES
     PDBe_startup(pdbid, "molecules")
 
 
-def PDBe_domains(pdbid):
+@cmd.extend
+def PDB_Analysis_Domains(pdbid):
     """
 DESCRIPTION
 
@@ -1072,8 +1074,10 @@ EXAMPLES
     PDBe_startup(pdbid, "domains")
 
 
-def PDBe_validation(pdbid):
+@cmd.extend
+def PDB_Analysis_Validation(pdbid):
     """
+    '''
 DESCRIPTION
 
     Fetches the specified entry from PDB and overlays geometric validation.
@@ -1098,7 +1102,8 @@ EXAMPLES
     PDBe_startup(pdbid, "validation")
 
 
-def PDBe_assemblies(pdbid):
+@cmd.extend
+def PDB_Analysis_Assemblies(pdbid):
     """
 DESCRIPTION
 
@@ -1119,12 +1124,7 @@ EXAMPLES
     PDBe_startup(pdbid, "assemblies")
 
 
-pymol.cmd.extend("PDB_Analysis_Molecules", PDBe_molecules)
-pymol.cmd.extend("PDB_Analysis_Domains", PDBe_domains)
-pymol.cmd.extend("PDB_Analysis_Validation", PDBe_validation)
-pymol.cmd.extend("PDB_Analysis_Assemblies", PDBe_assemblies)
-
-
+@cmd.extend
 def count_chain(selection='all'):
     """
 DESCRIPTION
@@ -1148,9 +1148,6 @@ EXAMPLES
     print(stored.chains)
     print("Number of chains: %s" % (len(stored.chains)))
     return len(stored.chains)
-
-
-pymol.cmd.extend("count_chain", count_chain)
 
 
 def Initialize():
