@@ -27,7 +27,7 @@ USAGE
     PDB_Analysis_Molecules pdb_id
     PDB_Analysis_Domains pdb_id
     PDB_Analysis_Validation pdb_id
-    count_chain selection
+    count_chains selection
 
 ARGUMENTS
 
@@ -1125,7 +1125,7 @@ EXAMPLES
 
 
 @cmd.extend
-def count_chain(selection='all'):
+def count_chains(selection='all'):
     """
 DESCRIPTION
 
@@ -1133,7 +1133,7 @@ DESCRIPTION
 
 USAGE
 
-    count_chain selection
+    count_chains selection
 
 ARGUMENTS
 
@@ -1141,7 +1141,7 @@ ARGUMENTS
 
 EXAMPLES
 
-    count_chain visible
+    count_chains visible
     """
     stored.chains = set()
     pymol.cmd.iterate(selection, 'stored.chains.add(chain)')
