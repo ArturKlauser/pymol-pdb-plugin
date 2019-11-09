@@ -616,7 +616,7 @@ class Validation:
         # logging.debug(stored.residue_dict)
 
 
-def entities(pdbid):
+def show_entities(pdbid):
     logging.debug('Display entities')
     cmd.set("cartoon_transparency", 0.3, pdbid)
     cmd.set("ribbon_transparency", 0.3, pdbid)
@@ -819,7 +819,7 @@ def mapping(pdbid):
                                                      'entity_id': entity_id}]})
 
 
-def domains(pdbid):
+def show_domains(pdbid):
     mapping(pdbid)
     obj_dict = {}
     chain_dict = {}
@@ -951,21 +951,18 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
         cmd.hide("everything", pdbid)
         worker_functions().count_poly(pdbid)
 
-        if method == "entity":
-            entities(pdbid)
+        if method == "molecules":
+            show_entities(pdbid)
         elif method == "domains":
-            entities(pdbid)
-            domains(pdbid)
+            show_entities(pdbid)
+            show_domains(pdbid)
         elif method == "validation":
             Validation().launch_validation(pdbid)
         elif method == 'assemblies':
-            entities(pdbid)
-            show_assemblies(pdbid, file_path)
-        elif method == 'show_assembly':
             show_assemblies(pdbid, file_path)
         elif method == 'all':
-            entities(pdbid)
-            domains(pdbid)
+            show_entities(pdbid)
+            show_domains(pdbid)
             show_assemblies(pdbid, file_path)
             Validation().launch_validation(pdbid)
         else:
@@ -1003,9 +1000,9 @@ def PDBeLoaderDialog():
     if pdbid: PDBe_startup(pdbid, "all")
 
 
-def PDBeEntityDialog():
+def PDBeMoleculeDialog():
     pdbid = GetPdbId('Highlight chemically distinct molecules in a PDB entry.')
-    if pdbid: PDBe_startup(pdbid, "entity")
+    if pdbid: PDBe_startup(pdbid, "molecules")
 
 
 def PDBeDomainDialog():
@@ -1021,11 +1018,11 @@ def PDBeValidationDialog():
 
 def PDBeAssemblyDialog():
     pdbid = GetPdbId('Display assemblies for a PDB entry.')
-    if pdbid: PDBe_startup(pdbid, "show_assembly")
+    if pdbid: PDBe_startup(pdbid, "assemblies")
 
 
 
-def PDBe_entities(pdbid):
+def PDBe_molecules(pdbid):
     """
 DESCRIPTION
 
@@ -1047,7 +1044,7 @@ EXAMPLES
 
     PDB_Analysis_Molecules 3l2p
     """
-    PDBe_startup(pdbid, "entity")
+    PDBe_startup(pdbid, "molecules")
 
 
 def PDBe_domains(pdbid):
@@ -1119,10 +1116,10 @@ EXAMPLES
 
     PDB_Analysis_Assemblies 5j96
     """
-    PDBe_startup(pdbid, "show_assembly")
+    PDBe_startup(pdbid, "assemblies")
 
 
-pymol.cmd.extend("PDB_Analysis_Molecules", PDBe_entities)
+pymol.cmd.extend("PDB_Analysis_Molecules", PDBe_molecules)
 pymol.cmd.extend("PDB_Analysis_Domains", PDBe_domains)
 pymol.cmd.extend("PDB_Analysis_Validation", PDBe_validation)
 pymol.cmd.extend("PDB_Analysis_Assemblies", PDBe_assemblies)
@@ -1185,7 +1182,7 @@ def __init_plugin__(app=None):
         from pymol.plugins import addmenuitemqt
 
         addmenuitemqt('PDB Analysis|All', PDBeLoaderDialog)
-        addmenuitemqt('PDB Analysis|Molecules', PDBeEntityDialog)
+        addmenuitemqt('PDB Analysis|Molecules', PDBeMoleculeDialog)
         addmenuitemqt('PDB Analysis|Domains', PDBeDomainDialog)
         addmenuitemqt('PDB Analysis|Validation', PDBeValidationDialog)
         addmenuitemqt('PDB Analysis|Assemblies', PDBeAssemblyDialog)
