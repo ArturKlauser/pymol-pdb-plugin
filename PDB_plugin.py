@@ -43,6 +43,8 @@ NOTES
     For detailed descriptions see help on individual commands.
 """
 
+from __future__ import print_function
+
 # parsing the input
 import json
 import datetime
@@ -485,7 +487,7 @@ class Validation:
             ###this takes too long for really large entries.
             # Validation().per_chain_per_residue_validation(pdbid, res_data, rama_data)
 
-    """validation of all polymeric enties"""
+    """validation of all polymeric entries"""
 
     def validation_selection(self, selection, display_id):
         # logging.debug(selection)
@@ -1021,8 +1023,49 @@ def PDBeAssemblyDialog():
     if pdbid: PDBe_startup(pdbid, "assemblies")
 
 
+class PdbIdShortcut(cmd.Shortcut):
+    """
+    PDB entry ID autocomplete helper: we don't have the whole set of valid keys
+    in the PDB, but we try to guide the user to filling in a valid key and
+    verify full-length keys with the PDB, showing the entry title as guidance.
+    """
+    def interpret(self, key, mode=0):
+        # The filler is a 'space' but ordered after visible ASCII chars. We use
+        # it to convince autocomplete that there is still more than 1 option
+        # available, even though we only want to show one, which is just a sort
+        # of 'regular expression' to guide the user.
+        filler = '\x7f'
+        if len(key) == 0:
+            # Returning a list indicates that there are still >1 options.
+            return ['[0-9]' + '[alphanumeric]' * 3, filler]
+        elif len(key) < 4:
+            pdb_id_pattern = re.compile(r'\d[a-zA-Z0-9]{0,3}$')
+            if re.match(pdb_id_pattern, key) is None:
+                return None  # key doesn't match PDB ID format
+            # Returning a list indicates that there are still >1 options.
+            return [key + '[alphanumeric]' * (4 - len(key)), filler]
+        else:
+            url = summaryURL + key
+            summary = url_response(url, "summary")
+            # If the key doesn't return a valid description return None to
+            # indicate that the key is invalid.
+            if not summary:
+                return None
+            key_list = summary.get(key.lower(), None)
+            if not key_list:
+                return None
+            if len(key_list) != 1:
+                return None
+            title = key_list[0].get('title', None)
+            if not title:
+                return None
+            # We've got a valid key. Show the title of that PDB entry to the
+            # user and make the key the only possible autocomplete match.
+            print(key + ':', title)
+            return key
 
-@cmd.extend
+
+@cmd.extendaa([lambda: PdbIdShortcut(), 'PDB Entry Id', ''])
 def PDB_Analysis_Molecules(pdbid):
     """
 DESCRIPTION
@@ -1048,7 +1091,7 @@ EXAMPLES
     PDBe_startup(pdbid, "molecules")
 
 
-@cmd.extend
+@cmd.extendaa([lambda: PdbIdShortcut(), 'PDB Entry Id', ''])
 def PDB_Analysis_Domains(pdbid):
     """
 DESCRIPTION
@@ -1074,7 +1117,7 @@ EXAMPLES
     PDBe_startup(pdbid, "domains")
 
 
-@cmd.extend
+@cmd.extendaa([lambda: PdbIdShortcut(), 'PDB Entry Id', ''])
 def PDB_Analysis_Validation(pdbid):
     """
     '''
@@ -1102,7 +1145,7 @@ EXAMPLES
     PDBe_startup(pdbid, "validation")
 
 
-@cmd.extend
+@cmd.extendaa([lambda: PdbIdShortcut(), 'PDB Entry Id', ''])
 def PDB_Analysis_Assemblies(pdbid):
     """
 DESCRIPTION
@@ -1124,7 +1167,7 @@ EXAMPLES
     PDBe_startup(pdbid, "assemblies")
 
 
-@cmd.extend
+@cmd.extendaa(cmd.auto_arg[0]['count_atoms'])
 def count_chains(selection='(all)', state=0):
     """
 DESCRIPTION
@@ -1226,4 +1269,4 @@ if __name__ == '__main__':
         else:
             logging.error("Please provide a pdbid or mmCIF_file=FILE after -- ")
 
-# vi:expandtab:smarttab:sw=4
+# vi:expandtab:smarttab:sw=4:tw=80
