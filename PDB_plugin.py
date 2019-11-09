@@ -1125,29 +1125,34 @@ EXAMPLES
 
 
 @cmd.extend
-def count_chains(selection='all'):
+def count_chains(selection='(all)', state=0):
     """
 DESCRIPTION
 
-    Prints the chain names and number of chains in the selection.
+    "count_chains" returns the number of chains in the selection.
 
 USAGE
 
-    count_chains selection
+    count_chains [ selection [, state ]]
+
 
 ARGUMENTS
 
     selection = string: selection-expression or name-pattern {default: (all)}.
+    state = int: object state, -1 for current state, 0 for all states
+    {default: 0 (all states)}
 
 EXAMPLES
 
     count_chains visible
+
+SEE ALSO
+
+    get_chains
     """
-    stored.chains = set()
-    pymol.cmd.iterate(selection, 'stored.chains.add(chain)')
-    print(stored.chains)
-    print("Number of chains: %s" % (len(stored.chains)))
-    return len(stored.chains)
+    n = len(cmd.get_chains(selection, state))
+    print('count_chains: %s chains' % n)
+    return n
 
 
 def Initialize():
