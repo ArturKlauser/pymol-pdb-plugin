@@ -193,7 +193,7 @@ def url_response(url, description):
     return data
 
 
-pymolcolours = [
+pymolcolors = [
     'red', 'green', 'blue', 'yellow', 'magenta', 'cyan',
     'tv_red', 'tv_green', 'tv_blue', 'tv_yellow', 'lightmagenta', 'palecyan',
     'raspberry', 'chartreuse', 'marine', 'paleyellow', 'hotpink', 'aquamarine',
@@ -207,14 +207,14 @@ pymolcolours = [
     'brown',
 ]
 
-validation_background_colour = [0.4, 1.0, 0.4]
-cmd.set_color('validation_green_background', validation_background_colour)
-validation_colours = ['yellow', 'orange', 'red']
+validation_background_color = [0.4, 1.0, 0.4]
+cmd.set_color('validation_green_background', validation_background_color)
+validation_colors = ['yellow', 'orange', 'red']
 
 
 def get_color(num):
     """Returns a color name from predetermined set, reusing as necessary."""
-    return pymolcolours[n % len(pymolcolours)]
+    return pymolcolors[n % len(pymolcolors)]
 
 
 def poly_display_type(asym, mol_type, length):
@@ -486,17 +486,17 @@ class Validation:
         # uses a list so 0 means that there is one outlier for this residue.
 
         if selection in stored.residue_dict:
-            colour_num = stored.residue_dict[selection] + 1
-            stored.residue_dict[selection] = colour_num
+            color_num = stored.residue_dict[selection] + 1
+            stored.residue_dict[selection] = color_num
         else:
             stored.residue_dict.update({selection: 0})
-            colour_num = 0
+            color_num = 0
 
-        if colour_num > 2:
-            colour_num = 2
-        residue_colour = validation_colours[colour_num]
-        # logging.debug(residue_colour)
-        cmd.color(residue_colour, selection)
+        if color_num > 2:
+            color_num = 2
+        residue_color = validation_colors[color_num]
+        # logging.debug(residue_color)
+        cmd.color(residue_color, selection)
 
     def geometric_validation(self, pdbid, res_data, chain=False, model=1):
         """check for geometric validation outliers in res_data """
@@ -565,7 +565,7 @@ class Validation:
                         logging.debug('no %s' % (k))
 
     def per_residue_validation(self, pdbid, res_data, rama_data):
-        """validation of all outliers, coloured by number of outliers"""
+        """validation of all outliers, colored by number of outliers"""
 
         # display only polymers
         if stored.molecule_dict == {}:
@@ -599,7 +599,7 @@ class Validation:
                                 # logging.debug(selection)
                                 cmd.show(display_type, selection)
 
-        cmd.colour('validation_green_background', pdbid)
+        cmd.color('validation_green_background', pdbid)
         # display(pdbid, image_type)
         cmd.enable(pdbid)
 
@@ -721,10 +721,10 @@ def show_entities(pdbid):
                 # logging.debug(display_type)
                 cmd.show(display_type, objectName)
 
-                # colour by entity.
-                colour = get_color(int(entity['entity_id']))
-                # logging.debug(colour)
-                cmd.color(colour, objectName)
+                # color by entity.
+                color = get_color(int(entity['entity_id']))
+                # logging.debug(color)
+                cmd.color(color, objectName)
 
     cmd.delete('test_select')
     # cmd.show('cartoon', pdbid)
@@ -880,9 +880,9 @@ def show_domains(pdbid):
                             length = entity['length']
                     display_type = poly_display_type(a, 'polypeptide', length)
                     cmd.show(display_type, obj)
-                    colour = get_color(num)
-                    # logging.debug(colour)
-                    cmd.color(colour, obj)
+                    color = get_color(num)
+                    # logging.debug(color)
+                    cmd.color(color, obj)
                     num += 1
 
             cmd.delete('test_select')
@@ -1063,7 +1063,7 @@ DESCRIPTION
 
     Fetches the specified entry from PDB and highlights the chemically
     distinct molecules, including proteins, nucleic acids and ligands. Each
-    molecule is given a unique colour and selected as a different object.
+    molecule is given a unique color and selected as a different object.
     Polymers (protein, DNA and RNA chains) are shown as cartoon or ribbon
     representation and ligands are shown as spheres.
 
@@ -1088,10 +1088,10 @@ def PDB_Analysis_Domains(pdbid):
 DESCRIPTION
 
     Fetches the specified entry from PDB and highlights the Pfam, Rfam, SCOP
-    and CATH domains. Each domain is coloured in a different colour and
-    selected as a different object. This enables each domain to be turned on
-    and off with PyMOL. The Domains Plugin also highlights chemically
-    distinct molecules and domains are overlaid on these molecules.
+    and CATH domains. Each domain is colored in a different color and selected
+    as a different object. This enables each domain to be turned on and off with
+    PyMOL. The Domains Plugin also highlights chemically distinct molecules and
+    domains are overlaid on these molecules.
 
 USAGE
 
@@ -1115,7 +1115,7 @@ def PDB_Analysis_Validation(pdbid):
 DESCRIPTION
 
     Fetches the specified entry from PDB and overlays geometric validation.
-    Geometry outliers are coloured as per the PDB validation report:
+    Geometry outliers are colored as per the PDB validation report:
     Residues with no geometric outliers are shown in green. Residues with one
     geometric outliers are shown in yellow. Residues with two geometric
     outliers are shown in orange. Residues with three or more geometric
