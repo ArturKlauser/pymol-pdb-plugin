@@ -212,18 +212,9 @@ cmd.set_color('validation_green_background', validation_background_colour)
 validation_colours = ['yellow', 'orange', 'red']
 
 
-def colour_return(num):
-    colournum = ''
-    factor = 1
-    while num >= len(pymolcolours):
-        # logging.debug(num)
-        num = num - (len(pymolcolours) * factor)
-        # logging.debug(num)
-        factor = factor + 1
-    else:
-        colournum = num
-    colour = pymolcolours[colournum]
-    return colour
+def get_color(num):
+    """Returns a color name from predetermined set, reusing as necessary."""
+    return pymolcolours[n % len(pymolcolours)]
 
 
 def poly_display_type(asym, mol_type, length):
@@ -731,7 +722,7 @@ def show_entities(pdbid):
                 cmd.show(display_type, objectName)
 
                 # colour by entity.
-                colour = colour_return(int(entity['entity_id']))
+                colour = get_color(int(entity['entity_id']))
                 # logging.debug(colour)
                 cmd.color(colour, objectName)
 
@@ -889,7 +880,7 @@ def show_domains(pdbid):
                             length = entity['length']
                     display_type = poly_display_type(a, 'polypeptide', length)
                     cmd.show(display_type, obj)
-                    colour = colour_return(num)
+                    colour = get_color(num)
                     # logging.debug(colour)
                     cmd.color(colour, obj)
                     num += 1
