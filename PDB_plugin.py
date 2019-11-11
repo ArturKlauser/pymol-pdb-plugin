@@ -193,28 +193,42 @@ def url_response(url, description):
     return data
 
 
-pymolcolors = [
-    'red', 'green', 'blue', 'yellow', 'magenta', 'cyan',
-    'tv_red', 'tv_green', 'tv_blue', 'tv_yellow', 'lightmagenta', 'palecyan',
-    'raspberry', 'chartreuse', 'marine', 'paleyellow', 'hotpink', 'aquamarine',
-    'darksalmon', 'splitpea', 'slate', 'yelloworange', 'pink', 'greencyan',
-    'salmon', 'smudge', 'lightblue', 'limon', 'lightpink', 'teal',
-    'deepsalmon', 'palegreen', 'skyblue', 'wheat', 'dirtyviolet', 'deepteal',
-    'warmpink', 'limegreen', 'purpleblue', 'sand', 'violet', 'lightteal',
-    'firebrick', 'lime', 'deepblue', 'violetpurple',
-    'ruby', 'limon', 'density', 'purple',
-    'chocolate', 'forest', 'deeppurple',
-    'brown',
-]
+class Color(object):
+    """Manage use of colors."""
 
-validation_background_color = [0.4, 1.0, 0.4]
-cmd.set_color('validation_green_background', validation_background_color)
-validation_colors = ['yellow', 'orange', 'red']
+    _object_colors = [
+        'red', 'green', 'blue', 'yellow', 'magenta', 'cyan', 'tv_red',
+        'tv_green', 'tv_blue', 'tv_yellow', 'lightmagenta', 'palecyan',
+        'raspberry', 'chartreuse', 'marine', 'paleyellow', 'hotpink',
+        'aquamarine', 'darksalmon', 'splitpea', 'slate', 'yelloworange', 'pink',
+        'greencyan', 'salmon', 'smudge', 'lightblue', 'limon', 'lightpink',
+        'teal', 'deepsalmon', 'palegreen', 'skyblue', 'wheat', 'dirtyviolet',
+        'deepteal', 'warmpink', 'limegreen', 'purpleblue', 'sand', 'violet',
+        'lightteal', 'firebrick', 'lime', 'deepblue', 'violetpurple', 'ruby',
+        'limon', 'density', 'purple', 'chocolate', 'forest', 'deeppurple',
+        'brown',
+    ]
+    _validation_colors = ['yellow', 'orange', 'red']
 
+    @classmethod
+    def set_object_color(cls, color_num, obj):
+        """Colors object from predetermined set, reusing as necessary."""
+        color = cls._object_colors[color_num % len(cls._object_colors)]
+        cmd.color(color, obj)
 
-def get_color(num):
-    """Returns a color name from predetermined set, reusing as necessary."""
-    return pymolcolors[n % len(pymolcolors)]
+    @classmethod
+    def set_validation_color(cls, color_num, obj):
+        """Colors object from predetermined set, reusing as necessary."""
+        color = cls._validation_colors[color_num % len(cls._validation_colors)]
+        cmd.color(color, obj)
+
+    @classmethod
+    def set_validation_background_color(cls, obj):
+        """Colors object with validation background color."""
+        color = 'validation_background_color'
+        # Define this as a new color name.
+        cmd.set_color(color, [0.4, 1.0, 0.4])
+        cmd.color(color, obj)
 
 
 def poly_display_type(asym, mol_type, length):
@@ -494,9 +508,7 @@ class Validation:
 
         if color_num > 2:
             color_num = 2
-        residue_color = validation_colors[color_num]
-        # logging.debug(residue_color)
-        cmd.color(residue_color, selection)
+        Color.set_validation_color(color_num, selection)
 
     def geometric_validation(self, pdbid, res_data, chain=False, model=1):
         """check for geometric validation outliers in res_data """
@@ -599,7 +611,7 @@ class Validation:
                                 # logging.debug(selection)
                                 cmd.show(display_type, selection)
 
-        cmd.color('validation_green_background', pdbid)
+        Color.set_validation_background_color(pdbid)
         # display(pdbid, image_type)
         cmd.enable(pdbid)
 
@@ -722,9 +734,7 @@ def show_entities(pdbid):
                 cmd.show(display_type, objectName)
 
                 # color by entity.
-                color = get_color(int(entity['entity_id']))
-                # logging.debug(color)
-                cmd.color(color, objectName)
+                Color.set_object_color(int(entity['entity_id']), objectName)
 
     cmd.delete('test_select')
     # cmd.show('cartoon', pdbid)
@@ -880,9 +890,7 @@ def show_domains(pdbid):
                             length = entity['length']
                     display_type = poly_display_type(a, 'polypeptide', length)
                     cmd.show(display_type, obj)
-                    color = get_color(num)
-                    # logging.debug(color)
-                    cmd.color(color, obj)
+                    Color.set_object_color(num, obj)
                     num += 1
 
             cmd.delete('test_select')
