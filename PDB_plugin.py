@@ -60,18 +60,6 @@ from pymol import cmd
 from pymol import stored
 from chempy.cif import *
 
-# API calls
-server_root = 'https://www.ebi.ac.uk/pdbe/api/'
-summaryURL = server_root + 'pdb/entry/summary/'
-poly_seq_schemeURL = server_root + 'pdb/entry/residue_listing/'
-protein_mappingURL = server_root + 'mappings/'
-nucleic_mappingURL = server_root + 'nucleic_mappings/'
-# seqURL = server_root + 'mappings/sequence_domains/entry/'
-moleculesURL = server_root + 'pdb/entry/molecules/'
-validationURL = server_root + 'validation/global-percentiles/entry/'
-validation_residueURL = server_root + 'validation/protein-RNA-DNA-geometry-outlier-residues/entry/'
-validation_ramaURL = server_root + 'validation/protein-ramachandran-sidechain-outliers/entry/'
-
 # ftp site
 ebi_ftp = 'ftp://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/mmCIF/%s/%s.cif.gz'
 # clean mmcif
@@ -85,8 +73,6 @@ stored.poly_count = 0
 stored.residue_dict = {}
 stored.ca_p_only = []
 stored.entities = {}
-
-# cmd.set('connect_mode', 4)
 
 empty_cif_list = ['', '.', '?', None]
 
@@ -182,15 +168,64 @@ def url_response_urllib2(url, description):
     return data
 
 
-# url handling
-def url_response(url, description):
-    logging.debug(description)
-    try:
-        import requests
-        data = ApiCall(url=url).return_data()
-    except:
-        data = url_response_urllib2(url=url, description=description)
-    return data
+class PdbApi(object):
+    """Handles getting data from the PDB API service."""
+
+    def __init__(self, server_root = 'https://www.ebi.ac.uk/pdbe/api'):
+        # TODO(r2r): incorporate ApiCall and url_response_urllib2
+        # TODO(r2r): figure out which URL library is available
+        self._server_root = server_root.rstrip('/')
+
+    def get_summary(self, pdbid):
+        url = self._get_url('pdb/entry/summary', pdbid)
+        return self._get_data(url, 'summary')
+
+    def get_molecules(self, pdbid):
+        url = self._get_url('pdb/entry/molecules', pdbid)
+        return self._get_data(url, 'molecules')
+
+    def get_seq_scheme(self, pdbid):
+        url = self._get_url('pdb/entry/residue_listing', pdbid)
+        return self._get_data(url, 'seq_scheme')
+
+    def get_protein_domains(self, pdbid):
+        url = self._get_url('mappings', pdbid)
+        return self._get_data(url, 'protein_domains')
+
+    def get_nucleic_domains(self, pdbid):
+        url = self._get_url('nucleic_mappings', pdbid)
+        return self._get_data(url, 'nucleic_domains')
+
+    def get_validation(self, pdbid):
+        url = self._get_url('validation/global-percentiles/entry', pdbid)
+        return self._get_data(url, 'validation')
+
+    def get_residue_validation(self, pdbid):
+        url = self._get_url(
+            'validation/protein-RNA-DNA-geometry-outlier-residues/entry', pdbid)
+        return self._get_data(url, 'residue validation')
+
+    def get_rama_validation(self, pdbid):
+        url = self._get_url(
+            'validation/protein-ramachandran-sidechain-outliers/entry', pdbid)
+        return self._get_data(url, 'rama validation')
+
+    def _get_url(self, api_url, pdbid):
+        url = '/'.join((self._server_root, api_url, pdbid))
+        logging.debug('url:', url)
+        return url
+
+    def _get_data(self, url, description):
+        logging.debug(description)
+        try:
+            import requests
+            data = ApiCall(url=url).return_data()
+        except:
+            data = url_response_urllib2(url=url, description=description)
+        return data
+
+# FIXME(r2r): don't leave this as global variable
+pdb = PdbApi()
 
 
 class Color(object):
@@ -263,10 +298,9 @@ class worker_functions():
         cmd.set('sphere_transparency', trans_value, selection)
 
     def count_poly(self, pdbid):
-        url = moleculesURL + pdbid
         # global molecule_dict
         if stored.molecule_dict == {}:
-            stored.molecule_dict = url_response(url, 'molecules')
+            stored.molecule_dict = pdb.get_molecules(pdbid)
         if pdbid in stored.molecule_dict:
             for entity in stored.molecule_dict[pdbid]:
                 # add ca only list
@@ -280,8 +314,7 @@ class worker_functions():
 
 def poly_seq_scheme(pdbid):
     """build a dictionary like poly_seq_scheme"""
-    url = poly_seq_schemeURL + pdbid
-    data = url_response(url, 'seq_scheme')
+    data = pdb.get_seq_scheme(pdbid)
     if pdbid in data:
         for entity in data[pdbid]['molecules']:
             for chain in entity['chains']:
@@ -473,17 +506,13 @@ def insert_code(asym_id, CIFnum):
 class Validation:
     def launch_validation(self, pdbid):
 
-        url = validationURL + pdbid
-        val_data = url_response(url, 'validation')
+        val_data = pdb.get_validation(pdbid)
 
         if val_data:
             logging.debug('There is validation for this entry')
 
-            url = validation_residueURL + pdbid
-            res_data = url_response(url, 'residue validation')
-
-            url = validation_ramaURL + pdbid
-            rama_data = url_response(url, 'rama validation')
+            res_data = pdb.get_residue_validation(pdbid)
+            rama_data = pdb.get_rama_validation(pdbid)
 
             self.per_residue_validation(pdbid, res_data, rama_data)
         else:
@@ -581,8 +610,7 @@ class Validation:
 
         # display only polymers
         if stored.molecule_dict == {}:
-            url = moleculesURL + pdbid
-            stored.molecule_dict = url_response(url, 'molecules')
+            stored.molecule_dict = pdb.get_molecules(pdbid)
         if pdbid in stored.molecule_dict:
             for entity in stored.molecule_dict[pdbid]:
                 # logging.debug(entity)
@@ -625,10 +653,9 @@ def show_entities(pdbid):
     logging.debug('Display entities')
     cmd.set('cartoon_transparency', 0.3, pdbid)
     cmd.set('ribbon_transparency', 0.3, pdbid)
-    url = moleculesURL + pdbid
     num = 1
     if stored.molecule_dict == {}:
-        stored.molecule_dict = url_response(url, 'molecules')
+        stored.molecule_dict = pdb.get_molecules(pdbid)
     if pdbid in stored.molecule_dict:
         for entity in stored.molecule_dict[pdbid]:
             entity_name = ''
@@ -767,10 +794,8 @@ def mapping(pdbid):
         poly_seq_scheme(pdbid)
     domain_to_make = ['CATH', 'SCOP', 'Pfam', 'Rfam']
     segment_identifier = {'CATH': 'domain', 'SCOP': 'scop_id', 'Pfam': '', 'Rfam': ''}
-    protein_url = protein_mappingURL + pdbid
-    nucleic_url = nucleic_mappingURL + pdbid
-    protein_domains = url_response(protein_url, 'protein_domains')
-    nucleic_domains = url_response(nucleic_url, 'nucleic_domains')
+    protein_domains = pdb.get_protein_domains(pdbid)
+    nucleic_domains = pdb.get_nucleic_domains(pdbid)
     for data in [protein_domains, nucleic_domains]:
         if data == {}:
             logging.debug('no domain information for this entry')
@@ -912,8 +937,7 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
         logging.exception('version of pymol does not support keeping all cif items')
 
     # check the PDB code actually exists.
-    url = summaryURL + pdbid
-    summary = url_response(url, 'summary')
+    summary = pdb.get_summary(pdbid)
 
     if summary:
 
@@ -1044,8 +1068,7 @@ class PdbIdShortcut(cmd.Shortcut):
             # Returning a list indicates that there are still >1 options.
             return [key + '[alphanumeric]' * (4 - len(key)), filler]
         else:
-            url = summaryURL + key
-            summary = url_response(url, 'summary')
+            summary = pdb.get_summary(key)
             # If the key doesn't return a valid description return None to
             # indicate that the key is invalid.
             if not summary:
