@@ -45,15 +45,16 @@ NOTES
 
 from __future__ import print_function
 
-# parsing the input
-import json
 import datetime
-import socket
-import re, os
-import time
-import sys
-import random
+import importlib  # needs at least python 2.7
+import json  # parsing the input
 import logging
+import os
+import random
+import re
+import socket
+import sys
+import time
 
 import pymol
 from pymol import cmd
@@ -77,152 +78,172 @@ stored.entities = {}
 empty_cif_list = ['', '.', '?', None]
 
 
-class ApiCall:
-    """functions specific to API calls"""
+class PdbFetcher(object):
+    """Downloads PDB data from URLs.
 
-    def __init__(self, url):
-        self.url = url
-        self.data = {}
+    This class tries to use one of several libraries to get the data, depending
+    on which are installed on the system.
+    """
 
-    def return_data(self):
-        try:
-            import requests
-        except Exception as e:
-            logging.exception(e)
-            return self.data
-        self.encode_url()
-        r = requests.get(url=self.url, timeout=60)
-        if r.status_code == 200:
-            json_data = r.json()
-            self.data = json_data
-        elif r.status_code == 404:
-            self.data = {}
+    def __init__(self):
+        self._modules = {}  # Modules loaded by this class - like sys.modules.
+        self._fetcher = None  # Fetcher method to use for get_data.
 
-        else:
-            logging.debug(r.status_code, r.reason)
-            self.data = {}
-
-        return self.data
-
-    def encode_url(self):
-        self.url = re.sub(' ', '%20', self.url)
-
-
-# url handling
-def url_response_urllib2(url, description):
-    """try several times to get a response from the API"""
-    data = None
-    try:
-        import urllib2
-    except Exception as e:
-        logging.exception(e)
-        return data
-    data_response = False
-    tries = 1
-    limit = 5
-    logging.debug(url)
-    date = datetime.datetime.now().strftime('%Y,%m,%d  %H:%M')
-    while tries < limit:
-        try:
-            response = urllib2.urlopen(url, None, 60)
-        except urllib2.HTTPError as e:
-            logging.debug('##############')
-            logging.debug('%s HTTP API error - %s, error code - %s, try %s' % (date, description, e.code, str(tries)))
-            # logging.debug(e.code)
-            if e.code == 404:
-                data_response = True
-                data = {}
+        # Figure out which library we can use to fetch data.
+        import_errors = []
+        for lib in ('requests', 'urllib2', 'urllib.request', 'urllib.error'):
+            try:
+                self._modules[lib] = importlib.import_module(lib)
+            except Exception as e:
+                import_errors.append(e)
+                continue
+        
+            if 'requests' in self._modules:
+                # Module 'requests' works on python 2.x and 3.x.
+                logging.debug('using requests module')
+                self._fetcher = self._get_data_with_requests
                 break
-            else:
+            elif 'urllib2' in self._modules:
+                # Module 'urllib2' works on python 2.x.
+                # However, the fetcher code uses the python 3.x split up naming
+                # conventions, so point those names to the right place.
+                logging.debug('using urllib2 module in python 2.x')
+                self._modules['urllib.request'] = self._modules['urllib2']
+                self._modules['urllib.error'] = self._modules['urllib2']
+                self._fetcher = self._get_data_with_urllib
+                break
+            elif ('urllib.request' in self._modules and
+                  'urllib.error' in self._modules):
+                # Module 'urllib.[request,errors]' works on python 3.x.
+                logging.debug('using urllib module in python 3.x')
+                self._fetcher = self._get_data_with_urllib
+                break
+        if not self._fetcher:
+            raise Exception(__name__.split('.')[-1] +
+                ": PDB can't be accessed due to missing python libraries:\n" +
+                '\n'.join(['    ' + str(e) for e in import_errors]) +
+                '\n==> Install one of them!')
+
+    def get_data(self, url, description):
+        """Returns PDB data from the given URL."""
+        logging.debug(description)
+        url = self._quote(url)
+        return self._fetcher(url, description)
+
+    @staticmethod
+    def _quote(url):
+        """Returns URL with space escaped."""
+        return re.sub(' ', '%20', url)
+
+    def _get_data_with_requests(self, url, description):
+        """Uses requests module to fetch and return data from the PDB URL."""
+        requests = self._modules['requests']
+        response = requests.get(url=url, timeout=60)
+        if response.status_code == 200:
+            data = response.json()
+        elif response.status_code == 404:
+            data = {}
+        else:
+            logging.debug(response.status_code, response.reason)
+            data = {}
+
+        return data
+
+    def _get_data_with_urllib(self, url, description):
+        """Uses urllib module to fetch and return data from the PDB URL."""
+        urllib2_request = self._modules['urllib.request']
+        urllib2_error = self._modules['urllib.error']
+        data = {}
+        data_response = False
+        limit = 5
+        logging.debug(url)
+        date = datetime.datetime.now().strftime('%Y,%m,%d  %H:%M')
+        for tries in range(1, limit + 1):
+            try:
+                response = urllib2_request.urlopen(url, None, 60)
+            except urllib2_error.HTTPError as e:
+                logging.debug(
+                    '%s HTTP API error - %s, error code - %s, try %d' % (
+                    date, description, e.code, tries))
+                # logging.debug(e.code)
+                if e.code == 404:
+                    data_response = True
+                    break
+                else:
+                    # logging.debug(entry_url)
+                    time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
+                    logging.debug(e)
+            except urllib2_error.URLError as e:
+                logging.debug('%s URL API error - %s, try %d' % (
+                              date, e, tries))
                 # logging.debug(entry_url)
                 time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
-                tries += 1
                 logging.debug(e)
-                data = {}
-        except urllib2.URLError as e:
-            logging.debug('##############')
-            logging.debug('%s URL API error - %s, try %s' % (date, e, str(tries)))
-            # logging.debug(entry_url)
-            time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
-            tries += 1
-            logging.debug(e)
-            data = {}
-        except socket.timeout as e:
-            logging.debug('##############')
-            logging.debug('%s Timeout API error - %s, try %s' % (date, e, str(tries)))
-            # logging.debug(entry_url)
-            time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
-            tries += 1
-            logging.debug(e)
-            data = {}
-        else:
-            logging.debug('received a response from the ' + description + ' API after ' + str(tries) + ' tries.')
-            data = json.load(response)
-            data_response = True
-            break
+            except socket.timeout as e:
+                logging.debug('%s Timeout API error - %s, try %d' % (
+                              date, e, tries))
+                # logging.debug(entry_url)
+                time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
+                logging.debug(e)
+            else:
+                logging.debug(
+                    'received a response from the %s API after %d tries' % (
+                    description, tries))
+                data = json.load(response)
+                data_response = True
+                break
 
-    if not data_response:
-        logging.debug('No response from the %s API' % description)
-        # cmd.quit(1)
+        if not data_response:
+            logging.error('No response from the %s API' % description)
 
-    return data
+        return data
 
 
 class PdbApi(object):
     """Handles getting data from the PDB API service."""
 
     def __init__(self, server_root = 'https://www.ebi.ac.uk/pdbe/api'):
-        # TODO(r2r): incorporate ApiCall and url_response_urllib2
-        # TODO(r2r): figure out which URL library is available
         self._server_root = server_root.rstrip('/')
+        self._fetcher = PdbFetcher()
 
     def get_summary(self, pdbid):
         url = self._get_url('pdb/entry/summary', pdbid)
-        return self._get_data(url, 'summary')
+        return self._fetcher.get_data(url, 'summary')
 
     def get_molecules(self, pdbid):
         url = self._get_url('pdb/entry/molecules', pdbid)
-        return self._get_data(url, 'molecules')
+        return self._fetcher.get_data(url, 'molecules')
 
     def get_seq_scheme(self, pdbid):
         url = self._get_url('pdb/entry/residue_listing', pdbid)
-        return self._get_data(url, 'seq_scheme')
+        return self._fetcher.get_data(url, 'seq_scheme')
 
     def get_protein_domains(self, pdbid):
         url = self._get_url('mappings', pdbid)
-        return self._get_data(url, 'protein_domains')
+        return self._fetcher.get_data(url, 'protein_domains')
 
     def get_nucleic_domains(self, pdbid):
         url = self._get_url('nucleic_mappings', pdbid)
-        return self._get_data(url, 'nucleic_domains')
+        return self._fetcher.get_data(url, 'nucleic_domains')
 
     def get_validation(self, pdbid):
         url = self._get_url('validation/global-percentiles/entry', pdbid)
-        return self._get_data(url, 'validation')
+        return self._fetcher.get_data(url, 'validation')
 
     def get_residue_validation(self, pdbid):
         url = self._get_url(
             'validation/protein-RNA-DNA-geometry-outlier-residues/entry', pdbid)
-        return self._get_data(url, 'residue validation')
+        return self._fetcher.get_data(url, 'residue validation')
 
     def get_rama_validation(self, pdbid):
         url = self._get_url(
             'validation/protein-ramachandran-sidechain-outliers/entry', pdbid)
-        return self._get_data(url, 'rama validation')
+        return self._fetcher.get_data(url, 'rama validation')
 
     def _get_url(self, api_url, pdbid):
         url = '/'.join((self._server_root, api_url, pdbid))
         logging.debug('url:', url)
         return url
-
-    def _get_data(self, url, description):
-        logging.debug(description)
-        try:
-            import requests
-            data = ApiCall(url=url).return_data()
-        except:
-            data = url_response_urllib2(url=url, description=description)
-        return data
 
 # FIXME(r2r): don't leave this as global variable
 pdb = PdbApi()
