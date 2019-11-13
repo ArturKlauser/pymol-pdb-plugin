@@ -908,7 +908,7 @@ def show_assemblies(pdbid, mmCIF_file):
         logging.debug('pymol version does not support assemblies')
 
 
-def mapping(pdbid):
+def map_domains(pdbid):
     """make domain objects"""
     if not stored.seq_scheme:
         poly_seq_scheme(pdbid)
@@ -988,89 +988,84 @@ def mapping(pdbid):
 
 
 def show_domains(pdbid):
-    mapping(pdbid)
-    obj_dict = {}
-    chain_dict = {}
-    if stored.domains:
-        # logging.debug(domain_dict)
-        for domain_type in stored.domains:
-            for domain in stored.domains[domain_type]:
-                # logging.debug(domain)
-                for instance in stored.domains[domain_type][domain]:
-                    asym_list = []
-                    entity_list = []
-                    # logging.debug(instance)
-                    object_selection = []
-                    pymol_selection = ''
-                    for segment in stored.domains[domain_type][domain][
-                            instance]:
-                        PDBstart = segment['start']
-                        PDBend = segment['end']
-                        chain = segment['chain']
-                        asym_id = segment['asym_id']
-                        entity_id = segment['entity_id']
+    map_domains(pdbid)
 
-                        asym_list.append(asym_id)
-                        entity_list.append(entity_id)
-                        chain_dict.update(
-                            {asym_id: {
-                                'chain': chain,
-                                'entity_id': entity_id
-                            }})
+    if not stored.domains:
+        return
 
-                        selection = 'chain %s and resi %s-%s and %s' % (
-                            chain, PDBstart, PDBend, pdbid)
-                        object_selection.append(selection)
-                    for o in object_selection:
-                        if len(object_selection) > 1:
-                            if o == object_selection[-1]:
-                                pymol_selection += '(%s)' % (o)
-                            else:
-                                pymol_selection += '(%s) or ' % (o)
+    objects = {}
+    chains = {}
+    # logging.debug(stored.domains)
+    for domain_type in stored.domains:
+        for domain in stored.domains[domain_type]:
+            # logging.debug(domain)
+            for instance in stored.domains[domain_type][domain]:
+                asym_list = []
+                entity_list = []
+                # logging.debug(instance)
+                object_selection = []
+                pymol_selection = ''
+                for segment in stored.domains[domain_type][domain][instance]:
+                    pdb_start = segment['start']
+                    pdb_end = segment['end']
+                    chain = segment['chain']
+                    asym_id = segment['asym_id']
+                    entity_id = segment['entity_id']
+
+                    asym_list.append(asym_id)
+                    entity_list.append(entity_id)
+                    chains[asym_id] = {'chain': chain, 'entity_id': entity_id}
+
+                    selection = 'chain %s and resi %s-%s and %s' % (
+                        chain, pdb_start, pdb_end, pdbid)
+                    object_selection.append(selection)
+                for o in object_selection:
+                    if len(object_selection) > 1:
+                        if o == object_selection[-1]:
+                            pymol_selection += '(%s)' % (o)
                         else:
-                            pymol_selection += '%s' % (o)
-                    # logging.debug(pymol_selection)
-                    objectName = '%s_%s_%s' % (domain_type, domain, instance)
-                    obj_dict.update({
-                        objectName: {
-                            'asym_list': asym_list,
-                            'entity_list': entity_list
-                        }
-                    })
-                    cmd.select('test_select', pymol_selection)
-                    cmd.create(objectName, 'test_select')
+                            pymol_selection += '(%s) or ' % (o)
+                    else:
+                        pymol_selection += '%s' % (o)
+                # logging.debug(pymol_selection)
+                object_name = '%s_%s_%s' % (domain_type, domain, instance)
+                objects[object_name] = {
+                    'asym_list': asym_list,
+                    'entity_list': entity_list
+                }
+                cmd.select('test_select', pymol_selection)
+                cmd.create(object_name, 'test_select')
 
-            for chain in chain_dict:
-                logging.debug(chain)
-                c_select = 'chain %s and %s' % (chain_dict[chain]['chain'],
-                                                pdbid)
+        for chain in chains:
+            logging.debug(chain)
+            c_select = 'chain %s and %s' % (chains[chain]['chain'], pdbid)
 
-                entity_id = chain_dict[chain]['entity_id']
+            entity_id = chains[chain]['entity_id']
+            length = None
+            for molecule in stored.molecules[pdbid]:
+                if entity_id == molecule['entity_id']:
+                    length = molecule['length']
+            display_type = poly_display_type(chain, 'polypeptide', length)
+            cmd.show(display_type, c_select)
+            cmd.color('grey', c_select)
+        num = 1
+        # logging.debug(objects)
+        for object_name in objects:
+            # logging.debug(object_name)
+            cmd.enable(object_name)
+            # domain can span multiple asym_id's, could be different type
+            for i, a in enumerate(objects[object_name]['asym_list']):
+                entity_id = objects[object_name]['entity_list'][i]
                 length = None
                 for molecule in stored.molecules[pdbid]:
                     if entity_id == molecule['entity_id']:
                         length = molecule['length']
-                display_type = poly_display_type(chain, 'polypeptide', length)
-                cmd.show(display_type, c_select)
-                cmd.color('grey', c_select)
-            num = 1
-            # logging.debug(obj_dict)
-            for obj in obj_dict:
-                # logging.debug(obj)
-                cmd.enable(obj)
-                # domain can span multiple asym_id's, could be different type
-                for i, a in enumerate(obj_dict[obj]['asym_list']):
-                    entity_id = obj_dict[obj]['entity_list'][i]
-                    length = None
-                    for molecule in stored.molecules[pdbid]:
-                        if entity_id == molecule['entity_id']:
-                            length = molecule['length']
-                    display_type = poly_display_type(a, 'polypeptide', length)
-                    cmd.show(display_type, obj)
-                    Color.set_object_color(num, obj)
-                    num += 1
+                display_type = poly_display_type(a, 'polypeptide', length)
+                cmd.show(display_type, object_name)
+                Color.set_object_color(num, object_name)
+                num += 1
 
-            cmd.delete('test_select')
+        cmd.delete('test_select')
 
 
 def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
