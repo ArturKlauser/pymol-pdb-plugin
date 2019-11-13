@@ -1158,50 +1158,60 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
         logging.error('please provide a 4 letter PDB code')
 
 
-def GetPdbId(label):
-    from pymol.Qt import QtWidgets
+class PdbeGui(object):
+    """Handles the GUI aspects of this pluing."""
 
-    pdbid, ok_pressed = QtWidgets.QInputDialog.getText(
-        None, 'PDB Loader Service', label + '\nPlease enter a 4-digit PDB ID:',
-        QtWidgets.QLineEdit.Normal, '')
+    def __init__(self):
+        # Make sure we can load the GUI library at startup.
+        try:
+            self._qt = importlib.import_module('pymol.Qt')
+        except Exception as e:
+            logging.exception(e)
+            raise Exception(
+                __name__.split('.')[-1] +
+                ": Can't start GUI due to missing python libraries:\n" +
+                '    ' + str(e))
 
-    if ok_pressed:
-        return pdbid
-    else:
-        return None
+    def _get_pdbid(self, label):
+        """Gets a PDB entry ID from a dialog window and returns it."""
+        pdbid, ok_pressed = self._qt.QtWidgets.QInputDialog.getText(
+            None, 'PDB Loader Service',
+            label + '\nPlease enter a 4-digit PDB ID:',
+            self._qt.QtWidgets.QLineEdit.Normal, '')
 
+        if ok_pressed:
+            return pdbid
+        else:
+            return None
 
-def PDBeLoaderDialog():
-    pdbid = GetPdbId(
-        'Highlight chemically distinct molecules, domains and assemblies in a'
-        ' PDB entry.')
-    if pdbid:
-        PDBe_startup(pdbid, 'all')
+    def analyze_all(self):
+        pdbid = self._get_pdbid(
+            'Highlight chemically distinct molecules, domains and assemblies'
+            ' in a PDB entry.')
+        if pdbid:
+            PDBe_startup(pdbid, 'all')
 
+    def analyze_molecules(self):
+        pdbid = self._get_pdbid(
+            'Highlight chemically distinct molecules in a PDB entry.')
+        if pdbid:
+            PDBe_startup(pdbid, 'molecules')
 
-def PDBeMoleculeDialog():
-    pdbid = GetPdbId('Highlight chemically distinct molecules in a PDB entry.')
-    if pdbid:
-        PDBe_startup(pdbid, 'molecules')
+    def analyze_domains(self):
+        pdbid = self._get_pdbid(
+            'Display Pfam, SCOP, CATH and Rfam domains on a PDB entry.')
+        if pdbid:
+            PDBe_startup(pdbid, 'domains')
 
+    def analyze_validation(self):
+        pdbid = self._get_pdbid('Display geometric outliers on a PDB entry.')
+        if pdbid:
+            PDBe_startup(pdbid, 'validation')
 
-def PDBeDomainDialog():
-    pdbid = GetPdbId(
-        'Display Pfam, SCOP, CATH and Rfam domains on a PDB entry.')
-    if pdbid:
-        PDBe_startup(pdbid, 'domains')
-
-
-def PDBeValidationDialog():
-    pdbid = GetPdbId('Display geometric outliers on a PDB entry.')
-    if pdbid:
-        PDBe_startup(pdbid, 'validation')
-
-
-def PDBeAssemblyDialog():
-    pdbid = GetPdbId('Display assemblies for a PDB entry.')
-    if pdbid:
-        PDBe_startup(pdbid, 'assemblies')
+    def analyze_assemblies(self):
+        pdbid = self._get_pdbid('Display assemblies for a PDB entry.')
+        if pdbid:
+            PDBe_startup(pdbid, 'assemblies')
 
 
 class PdbIdShortcut(cmd.Shortcut):
@@ -1403,15 +1413,17 @@ def Initialize():
 # Run when used as a plugin.
 def __init_plugin__(app=None):
     Initialize()
+    gui = PdbeGui()
     try:
         # Simply add the menu entry and callback
         from pymol.plugins import addmenuitemqt
 
-        addmenuitemqt('PDB Analysis|All', PDBeLoaderDialog)
-        addmenuitemqt('PDB Analysis|Molecules', PDBeMoleculeDialog)
-        addmenuitemqt('PDB Analysis|Domains', PDBeDomainDialog)
-        addmenuitemqt('PDB Analysis|Validation', PDBeValidationDialog)
-        addmenuitemqt('PDB Analysis|Assemblies', PDBeAssemblyDialog)
+        submenu = 'PDB Analysis|'
+        addmenuitemqt(submenu + 'All', lambda: gui.analyze_all())
+        addmenuitemqt(submenu + 'Molecules', lambda: gui.analyze_molecules())
+        addmenuitemqt(submenu + 'Domains', lambda: gui.analyze_domains())
+        addmenuitemqt(submenu + 'Validation', lambda: gui.analyze_validation())
+        addmenuitemqt(submenu + 'Assemblies', lambda: gui.analyze_assemblies())
 
     except Exception as e:
         logging.error('unable to make menu items')
