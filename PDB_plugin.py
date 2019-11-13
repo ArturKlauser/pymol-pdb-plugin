@@ -357,26 +357,27 @@ def poly_display_type(asym, molecule_type, length):
     return display_type
 
 
-class worker_functions():
+class WorkerFunctions(object):
 
-    def trans_setting(self, selection, trans_value):
-        cmd.set('cartoon_transparency', trans_value, selection)
-        cmd.set('ribbon_transparency', trans_value, selection)
-        cmd.set('stick_transparency', trans_value, selection)
-        cmd.set('sphere_transparency', trans_value, selection)
+    @staticmethod
+    def set_transparency(selection, transparency):
+        cmd.set('cartoon_transparency', transparency, selection)
+        cmd.set('ribbon_transparency', transparency, selection)
+        cmd.set('stick_transparency', transparency, selection)
+        cmd.set('sphere_transparency', transparency, selection)
 
-    def count_poly(self, pdbid):
-        # global molecule_dict
-        if stored.molecules == {}:
+    @staticmethod
+    def count_poly(pdbid):
+        # global molecules
+        if not stored.molecules:
             stored.molecules = pdb.get_molecules(pdbid)
-        if pdbid in stored.molecules:
-            for molecule in stored.molecules[pdbid]:
-                # add ca only list
-                if molecule['ca_p_only'] != False:
-                    for a in molecule['in_struct_asyms']:
-                        stored.ca_p_only.add(a)
-                if molecule['molecule_type'] not in ['water', 'bound']:
-                    stored.poly_count += 1
+        for molecule in stored.molecules.get(pdbid, []):
+            # add ca only list
+            if molecule['ca_p_only'] != False:
+                for a in molecule['in_struct_asyms']:
+                    stored.ca_p_only.add(a)
+            if molecule['molecule_type'] not in ['water', 'bound']:
+                stored.poly_count += 1
 
 
 def poly_seq_scheme(pdbid):
@@ -890,7 +891,7 @@ def show_assemblies(pdbid, mmCIF_file):
     """iterate through the assemblies and output images"""
     logging.info('Generating assemblies')
     # cmd.hide('everything')
-    worker_functions().trans_setting('all', 0.0)
+    WorkerFunctions.set_transparency('all', 0.0)
 
     try:
         assemblies = cmd.get_assembly_ids(pdbid)  # list or None
@@ -1127,7 +1128,7 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
             logging.debug('File to load: %s' % file_path)
             cmd.load(file_path, pdbid, format='cif')
         cmd.hide('everything', pdbid)
-        worker_functions().count_poly(pdbid)
+        WorkerFunctions.count_poly(pdbid)
 
         if method == 'molecules':
             show_molecules(pdbid)
@@ -1150,7 +1151,7 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
     elif mmCIF_file:
         logging.warning('no PDB ID, show assemblies from mmCIF file')
         cmd.load(mmCIF_file, pdbid, format='cif')
-        # worker_functions().count_poly(pdbid)
+        # WorkerFunctions.count_poly(pdbid)
         show_assemblies(pdbid, mmCIF_file)
 
     else:
