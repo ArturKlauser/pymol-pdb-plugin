@@ -1214,7 +1214,7 @@ class PdbeGui(object):
             PDBe_startup(pdbid, 'assemblies')
 
 
-class PdbIdShortcut(cmd.Shortcut):
+class PdbIdAutocomplete(cmd.Shortcut):
     """
     PDB entry ID autocomplete helper: we don't have the whole set of valid keys
     in the PDB, but we try to guide the user to filling in a valid key and
@@ -1227,6 +1227,7 @@ class PdbIdShortcut(cmd.Shortcut):
         # available, even though we only want to show one, which is just a sort
         # of 'regular expression' to guide the user.
         filler = '\x7f'
+        key = key.lower()
         if len(key) == 0:
             # Returning a list indicates that there are still >1 options.
             return ['[0-9]' + '[alphanumeric]' * 3, filler]
@@ -1240,15 +1241,9 @@ class PdbIdShortcut(cmd.Shortcut):
             summary = pdb.get_summary(key)
             # If the key doesn't return a valid description return None to
             # indicate that the key is invalid.
-            if not summary:
-                return None
-            key_list = summary.get(key.lower(), None)
-            if not key_list:
-                return None
-            if len(key_list) != 1:
-                return None
-            title = key_list[0].get('title', None)
-            if not title:
+            try:
+                title = summary[key][0]['title']
+            except:
                 return None
             # We've got a valid key. Show the title of that PDB entry to the
             # user and make the key the only possible autocomplete match.
@@ -1256,7 +1251,7 @@ class PdbIdShortcut(cmd.Shortcut):
             return key
 
 
-@cmd.extendaa([lambda: PdbIdShortcut(), 'PDB Entry Id', ''])
+@cmd.extendaa([lambda: PdbIdAutocomplete(), 'PDB Entry Id', ''])
 def PDB_Analysis_Molecules(pdbid):
     """
 DESCRIPTION
@@ -1282,7 +1277,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'molecules')
 
 
-@cmd.extendaa([lambda: PdbIdShortcut(), 'PDB Entry Id', ''])
+@cmd.extendaa([lambda: PdbIdAutocomplete(), 'PDB Entry Id', ''])
 def PDB_Analysis_Domains(pdbid):
     """
 DESCRIPTION
@@ -1308,7 +1303,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'domains')
 
 
-@cmd.extendaa([lambda: PdbIdShortcut(), 'PDB Entry Id', ''])
+@cmd.extendaa([lambda: PdbIdAutocomplete(), 'PDB Entry Id', ''])
 def PDB_Analysis_Validation(pdbid):
     """
     '''
@@ -1336,7 +1331,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'validation')
 
 
-@cmd.extendaa([lambda: PdbIdShortcut(), 'PDB Entry Id', ''])
+@cmd.extendaa([lambda: PdbIdAutocomplete(), 'PDB Entry Id', ''])
 def PDB_Analysis_Assemblies(pdbid):
     """
 DESCRIPTION
