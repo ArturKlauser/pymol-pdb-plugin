@@ -62,19 +62,18 @@ from pymol import stored
 from chempy.cif import *
 
 # ftp site
-ebi_ftp = 'ftp://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/mmCIF/%s/%s.cif.gz'
+_EBI_FTP = 'ftp://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/mmCIF/%s/%s.cif.gz'
 # clean mmcif
-updated_ftp = 'https://www.ebi.ac.uk/pdbe/static/entry/%s_updated.cif.gz'
+_UPDATED_FTP = 'https://www.ebi.ac.uk/pdbe/static/entry/%s_updated.cif.gz'
+_EMPTY_CIF = frozenset(['', '.', '?', None])
 
 # dictionaries
-stored.domain_dict = {}
+stored.domains = {}
 stored.seq_scheme = {}
-stored.molecule_dict = {}
+stored.molecules = {}
 stored.poly_count = 0
-stored.residue_dict = {}
-stored.ca_p_only = []
-
-empty_cif_list = ['', '.', '?', None]
+stored.residues = {}
+stored.ca_p_only = set()
 
 
 class PdbFetcher(object):
@@ -352,7 +351,9 @@ def poly_display_type(asym, mol_type, length):
         if re.search('saccharide', mol_type):
             display_type = 'sticks'
 
-    # logging.debug('asym: %s, mol_type: %s, length: %s, display_type: %s' %(asym, mol_type, length, display_type))
+    # logging.debug(
+    #     'asym: %s, molecule_type: %s, length: %s, display_type: %s' %
+    #     (asym, molecule_type, length, display_type))
     return display_type
 
 
@@ -366,15 +367,14 @@ class worker_functions():
 
     def count_poly(self, pdbid):
         # global molecule_dict
-        if stored.molecule_dict == {}:
-            stored.molecule_dict = pdb.get_molecules(pdbid)
-        if pdbid in stored.molecule_dict:
-            for entity in stored.molecule_dict[pdbid]:
+        if stored.molecules == {}:
+            stored.molecules = pdb.get_molecules(pdbid)
+        if pdbid in stored.molecules:
+            for entity in stored.molecules[pdbid]:
                 # add ca only list
                 if entity['ca_p_only'] != False:
                     for a in entity['in_struct_asyms']:
-                        if a not in stored.ca_p_only:
-                            stored.ca_p_only.append(a)
+                        stored.ca_p_only.add(a)
                 if entity['molecule_type'] not in ['water', 'bound']:
                     stored.poly_count += 1
 
@@ -492,8 +492,8 @@ def check_range_observed(asym_id, start, end, unobs):
         while nextCIF < end:
             currentPDB = stored.seq_scheme[asym_id][currentCIF]['PDBnum']
             nextPDB = stored.seq_scheme[asym_id][nextCIF]['PDBnum']
-            if currentPDB not in empty_cif_list:
-                if nextPDB in empty_cif_list:
+            if currentPDB not in _EMPTY_CIF:
+                if nextPDB in _EMPTY_CIF:
                     startPDB = stored.seq_scheme[asym_id][blockStartCIF][
                         'PDBnum']
                     swap = checkOrder(startPDB, currentPDB)
@@ -643,11 +643,11 @@ class Validation:
 
         # uses a list so 0 means that there is one outlier for this residue.
 
-        if selection in stored.residue_dict:
-            color_num = stored.residue_dict[selection] + 1
-            stored.residue_dict[selection] = color_num
+        if selection in stored.residues:
+            color_num = stored.residues[selection] + 1
+            stored.residues[selection] = color_num
         else:
-            stored.residue_dict.update({selection: 0})
+            stored.residues.update({selection: 0})
             color_num = 0
 
         if color_num > 2:
@@ -734,10 +734,10 @@ class Validation:
         """validation of all outliers, colored by number of outliers"""
 
         # display only polymers
-        if stored.molecule_dict == {}:
-            stored.molecule_dict = pdb.get_molecules(pdbid)
-        if pdbid in stored.molecule_dict:
-            for entity in stored.molecule_dict[pdbid]:
+        if stored.molecules == {}:
+            stored.molecules = pdb.get_molecules(pdbid)
+        if pdbid in stored.molecules:
+            for entity in stored.molecules[pdbid]:
                 # logging.debug(entity)
                 mol_type = entity['molecule_type']
                 ca_only_list = []
@@ -773,7 +773,7 @@ class Validation:
         self.geometric_validation(pdbid, res_data)
         self.ramachandran_validation(pdbid, rama_data)
 
-        # logging.debug(stored.residue_dict)
+        # logging.debug(stored.residues)
 
 
 def show_entities(pdbid):
@@ -781,10 +781,10 @@ def show_entities(pdbid):
     cmd.set('cartoon_transparency', 0.3, pdbid)
     cmd.set('ribbon_transparency', 0.3, pdbid)
     num = 1
-    if stored.molecule_dict == {}:
-        stored.molecule_dict = pdb.get_molecules(pdbid)
-    if pdbid in stored.molecule_dict:
-        for entity in stored.molecule_dict[pdbid]:
+    if stored.molecules == {}:
+        stored.molecules = pdb.get_molecules(pdbid)
+    if pdbid in stored.molecules:
+        for entity in stored.molecules[pdbid]:
             entity_name = ''
             if entity['molecule_name']:
                 if len(entity['molecule_name']) > 1:
@@ -964,7 +964,7 @@ def mapping(pdbid):
                                             start = y['PDBstart']
                                             end = y['PDBend']
                                             try:
-                                                stored.domain_dict[domain_type][
+                                                stored.domains[domain_type][
                                                     domain][domain_name].append(
                                                         {
                                                             'asym_id':
@@ -979,7 +979,7 @@ def mapping(pdbid):
                                                                 entity_id
                                                         })
                                             except:
-                                                stored.domain_dict.setdefault(domain_type, {}) \
+                                                stored.domains.setdefault(domain_type, {}) \
                                                     .setdefault(domain, {}) \
                                                     .update({domain_name: [
                                                     {'asym_id': asym_id, 'chain': chain, 'start': start, 'end': end,
@@ -990,18 +990,18 @@ def show_domains(pdbid):
     mapping(pdbid)
     obj_dict = {}
     chain_dict = {}
-    if stored.domain_dict:
+    if stored.domains:
         # logging.debug(domain_dict)
-        for domain_type in stored.domain_dict:
-            for domain in stored.domain_dict[domain_type]:
+        for domain_type in stored.domains:
+            for domain in stored.domains[domain_type]:
                 # logging.debug(domain)
-                for instance in stored.domain_dict[domain_type][domain]:
+                for instance in stored.domains[domain_type][domain]:
                     asym_list = []
                     entity_list = []
                     # logging.debug(instance)
                     object_selection = []
                     pymol_selection = ''
-                    for segment in stored.domain_dict[domain_type][domain][
+                    for segment in stored.domains[domain_type][domain][
                             instance]:
                         PDBstart = segment['start']
                         PDBend = segment['end']
@@ -1046,7 +1046,7 @@ def show_domains(pdbid):
 
                 entity_id = chain_dict[chain]['entity_id']
                 length = None
-                for entity in stored.molecule_dict[pdbid]:
+                for entity in stored.molecules[pdbid]:
                     if entity_id == entity['entity_id']:
                         length = entity['length']
                 display_type = poly_display_type(chain, 'polypeptide', length)
@@ -1061,7 +1061,7 @@ def show_domains(pdbid):
                 for i, a in enumerate(obj_dict[obj]['asym_list']):
                     entity_id = obj_dict[obj]['entity_list'][i]
                     length = None
-                    for entity in stored.molecule_dict[pdbid]:
+                    for entity in stored.molecules[pdbid]:
                         if entity_id == entity['entity_id']:
                             length = entity['length']
                     display_type = poly_display_type(a, 'polypeptide', length)
@@ -1092,12 +1092,11 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
     summary = pdb.get_summary(pdbid)
 
     if summary:
-
         # clear the dictionaries
-        stored.domain_dict = {}
+        stored.domains = {}
         stored.seq_scheme = {}
-        stored.molecule_dict = {}
-        stored.residue_dict = {}
+        stored.molecules = {}
+        stored.residues = {}
 
         logging.debug('pdbid: %s' % (pdbid))
         mid_pdb = pdbid[1:3]
@@ -1116,14 +1115,14 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
                     try:
                         # connect mode 4 works only with version 1.7 of pymol
                         cmd.set('assembly', '')
-                        file_path = updated_ftp % pdbid
+                        file_path = _UPDATED_FTP % pdbid
                         logging.debug('setting connect mode to mode 4')
                         cmd.set('connect_mode', 4)
                     except:
                         logging.exception(
                             'pymol version does not support assemblies or connect mode 4'
                         )
-                        file_path = ebi_ftp % (mid_pdb, pdbid)
+                        file_path = _EBI_FTP % (mid_pdb, pdbid)
 
             logging.debug('File to load: %s' % file_path)
             cmd.load(file_path, pdbid, format='cif')
