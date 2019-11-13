@@ -1435,26 +1435,31 @@ def usage():
 
 
 # Run when used from the command line.
-if __name__ == '__main__':
+def main():
     Initialize()
-    mmCIF_file = None
+    mm_cif_file = None
     pdbid = None
-    if len(sys.argv) > 1:
-        logging.debug(sys.argv)
-        for arr in sys.argv:
-            pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
-            mmCIF_file_RE = re.compile(r'mmCIF_file=(.*)')
+    logging.debug(sys.argv)
+    for arg in sys.argv:
+        pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
+        mm_cif_file_re = re.compile(r'mmCIF_file=(.*)')
 
-            if pdb_id_re.match(arr):
-                pdbid = pdb_id_re.match(arr).group(0)
-            if mmCIF_file_RE.match(arr):
-                mmCIF_file = mmCIF_file_RE.match(arr).group(1)
+        match = pdb_id_re.match(arg)
+        if match:
+            pdbid = match.group(0)
+        match = mm_cif_file_re.match(arg)
+        if match:
+            mm_cif_file = match.group(1)
 
-        if pdbid or mmCIF_file:
-            logging.debug('pdbid: %s' % pdbid)
-            logging.debug('mmCIF file: %s' % mmCIF_file)
-            PDBe_startup(pdbid, 'all', mmCIF_file=mmCIF_file)
-        else:
-            logging.error('Please provide a pdbid or mmCIF_file=FILE after -- ')
+    if pdbid or mm_cif_file:
+        logging.debug('pdbid: %s' % pdbid)
+        logging.debug('mmCIF file: %s' % mm_cif_file)
+        PDBe_startup(pdbid, 'all', mm_cif_file=mm_cif_file)
+    else:
+        logging.error('Please provide a pdbid or mmCIF_file=FILE after -- ')
+
+
+if __name__ == '__main__':
+    main()
 
 # vi:expandtab:smarttab:sw=4:tw=80
