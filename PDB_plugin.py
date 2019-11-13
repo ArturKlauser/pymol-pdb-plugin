@@ -73,7 +73,6 @@ stored.molecule_dict = {}
 stored.poly_count = 0
 stored.residue_dict = {}
 stored.ca_p_only = []
-stored.entities = {}
 
 empty_cif_list = ['', '.', '?', None]
 
@@ -871,17 +870,6 @@ def show_entities(pdbid):
                             pymol_selection += '(%s) or ' % (o)
                     else:
                         pymol_selection += '%s' % (o)
-
-                try:
-                    stored.entities[pdbid]['entity'][entity['entity_id']][
-                        'selection']['selection_list'].append(pymol_selection)
-                    logging.debug('appended %s' % (pymol_selection))
-                except:
-                    stored.entities.setdefault(pdbid, {}) \
-                        .setdefault('entity', {}) \
-                        .setdefault(entity['entity_id'], {}) \
-                        .setdefault('selection', {}) \
-                        .update({'display_type': display_type, 'selection_list': [pymol_selection]})
 
                 # logging.debug(pymol_selection)
                 if len(objectName) > 250:
