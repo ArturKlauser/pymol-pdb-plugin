@@ -38,3 +38,9 @@ expected to get, i.e. why do you consider the current behavior an error.
 
 If you are sufficiently programming literate to fix an issue in the code,
 feel free to send a pull request.
+
+### Programming Style
+Please conform to the
+[Google Python style guide](http://google.github.io/styleguide/pyguide.html).
+The code in this repository is auto-formatted with
+(yapf)[https://github.com/google/yapf/] --style google.

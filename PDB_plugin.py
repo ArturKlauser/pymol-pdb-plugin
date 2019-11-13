@@ -97,7 +97,7 @@ class PdbFetcher(object):
             except Exception as e:
                 import_errors.append(e)
                 continue
-        
+
             if 'requests' in self._modules:
                 # Module 'requests' works on python 2.x and 3.x.
                 logging.debug('using requests module')
@@ -119,7 +119,8 @@ class PdbFetcher(object):
                 self._fetcher = self._get_data_with_urllib
                 break
         if not self._fetcher:
-            raise Exception(__name__.split('.')[-1] +
+            raise Exception(
+                __name__.split('.')[-1] +
                 ": PDB can't be accessed due to missing python libraries:\n" +
                 '\n'.join(['    ' + str(e) for e in import_errors]) +
                 '\n==> Install one of them!')
@@ -163,8 +164,8 @@ class PdbFetcher(object):
                 response = urllib2_request.urlopen(url, None, 60)
             except urllib2_error.HTTPError as e:
                 logging.debug(
-                    '%s HTTP API error - %s, error code - %s, try %d' % (
-                    date, description, e.code, tries))
+                    '%s HTTP API error - %s, error code - %s, try %d' %
+                    (date, description, e.code, tries))
                 # logging.debug(e.code)
                 if e.code == 404:
                     data_response = True
@@ -174,21 +175,21 @@ class PdbFetcher(object):
                     time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
                     logging.debug(e)
             except urllib2_error.URLError as e:
-                logging.debug('%s URL API error - %s, try %d' % (
-                              date, e, tries))
+                logging.debug('%s URL API error - %s, try %d' %
+                              (date, e, tries))
                 # logging.debug(entry_url)
                 time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
                 logging.debug(e)
             except socket.timeout as e:
-                logging.debug('%s Timeout API error - %s, try %d' % (
-                              date, e, tries))
+                logging.debug('%s Timeout API error - %s, try %d' %
+                              (date, e, tries))
                 # logging.debug(entry_url)
                 time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
                 logging.debug(e)
             else:
                 logging.debug(
-                    'received a response from the %s API after %d tries' % (
-                    description, tries))
+                    'received a response from the %s API after %d tries' %
+                    (description, tries))
                 data = json.load(response)
                 data_response = True
                 break
@@ -202,7 +203,7 @@ class PdbFetcher(object):
 class PdbApi(object):
     """Handles getting data from the PDB API service."""
 
-    def __init__(self, server_root = 'https://www.ebi.ac.uk/pdbe/api'):
+    def __init__(self, server_root='https://www.ebi.ac.uk/pdbe/api'):
         self._server_root = server_root.rstrip('/')
         self._fetcher = PdbFetcher()
 
@@ -245,6 +246,7 @@ class PdbApi(object):
         logging.debug('url:', url)
         return url
 
+
 # FIXME(r2r): don't leave this as global variable
 pdb = PdbApi()
 
@@ -253,15 +255,59 @@ class Color(object):
     """Manage use of colors."""
 
     _object_colors = [
-        'red', 'green', 'blue', 'yellow', 'magenta', 'cyan', 'tv_red',
-        'tv_green', 'tv_blue', 'tv_yellow', 'lightmagenta', 'palecyan',
-        'raspberry', 'chartreuse', 'marine', 'paleyellow', 'hotpink',
-        'aquamarine', 'darksalmon', 'splitpea', 'slate', 'yelloworange', 'pink',
-        'greencyan', 'salmon', 'smudge', 'lightblue', 'limon', 'lightpink',
-        'teal', 'deepsalmon', 'palegreen', 'skyblue', 'wheat', 'dirtyviolet',
-        'deepteal', 'warmpink', 'limegreen', 'purpleblue', 'sand', 'violet',
-        'lightteal', 'firebrick', 'lime', 'deepblue', 'violetpurple', 'ruby',
-        'limon', 'density', 'purple', 'chocolate', 'forest', 'deeppurple',
+        'red',
+        'green',
+        'blue',
+        'yellow',
+        'magenta',
+        'cyan',
+        'tv_red',
+        'tv_green',
+        'tv_blue',
+        'tv_yellow',
+        'lightmagenta',
+        'palecyan',
+        'raspberry',
+        'chartreuse',
+        'marine',
+        'paleyellow',
+        'hotpink',
+        'aquamarine',
+        'darksalmon',
+        'splitpea',
+        'slate',
+        'yelloworange',
+        'pink',
+        'greencyan',
+        'salmon',
+        'smudge',
+        'lightblue',
+        'limon',
+        'lightpink',
+        'teal',
+        'deepsalmon',
+        'palegreen',
+        'skyblue',
+        'wheat',
+        'dirtyviolet',
+        'deepteal',
+        'warmpink',
+        'limegreen',
+        'purpleblue',
+        'sand',
+        'violet',
+        'lightteal',
+        'firebrick',
+        'lime',
+        'deepblue',
+        'violetpurple',
+        'ruby',
+        'limon',
+        'density',
+        'purple',
+        'chocolate',
+        'forest',
+        'deeppurple',
         'brown',
     ]
     _validation_colors = ['yellow', 'orange', 'red']
@@ -312,6 +358,7 @@ def poly_display_type(asym, mol_type, length):
 
 
 class worker_functions():
+
     def trans_setting(self, selection, trans_value):
         cmd.set('cartoon_transparency', trans_value, selection)
         cmd.set('ribbon_transparency', trans_value, selection)
@@ -352,14 +399,26 @@ def poly_seq_scheme(pdbid):
                         PDBobs = False
 
                     try:
-                        stored.seq_scheme[asym_id].update({CIFnum: {'PDBnum': PDBnum, 'PDBinsCode': PDBinsCode,
-                                                                    'observed': PDBobs, 'residueName': residueName,
-                                                                    'chainID': chain_id}})
+                        stored.seq_scheme[asym_id].update({
+                            CIFnum: {
+                                'PDBnum': PDBnum,
+                                'PDBinsCode': PDBinsCode,
+                                'observed': PDBobs,
+                                'residueName': residueName,
+                                'chainID': chain_id
+                            }
+                        })
                     except:
                         stored.seq_scheme.update({asym_id: {}})
-                        stored.seq_scheme[asym_id].update({CIFnum: {'PDBnum': PDBnum, 'PDBinsCode': PDBinsCode,
-                                                                    'observed': PDBobs, 'residueName': residueName,
-                                                                    'chainID': chain_id}})
+                        stored.seq_scheme[asym_id].update({
+                            CIFnum: {
+                                'PDBnum': PDBnum,
+                                'PDBinsCode': PDBinsCode,
+                                'observed': PDBobs,
+                                'residueName': residueName,
+                                'chainID': chain_id
+                            }
+                        })
                         # logging.debug(seq_scheme)
 
 
@@ -436,43 +495,71 @@ def check_range_observed(asym_id, start, end, unobs):
             nextPDB = stored.seq_scheme[asym_id][nextCIF]['PDBnum']
             if currentPDB not in empty_cif_list:
                 if nextPDB in empty_cif_list:
-                    startPDB = stored.seq_scheme[asym_id][blockStartCIF]['PDBnum']
+                    startPDB = stored.seq_scheme[asym_id][blockStartCIF][
+                        'PDBnum']
                     swap = checkOrder(startPDB, currentPDB)
                     startPDBins = insert_code(asym_id, blockStartCIF)
                     currentPDB = insert_code(asym_id, currentCIF)
                     if swap == False:
-                        range_dict.append({'PDBstart': startPDBins, 'PDBend': currentPDB, 'chainID': chain})
+                        range_dict.append({
+                            'PDBstart': startPDBins,
+                            'PDBend': currentPDB,
+                            'chainID': chain
+                        })
                     else:
-                        range_dict.append({'PDBstart': currentPDB, 'PDBend': startPDBins, 'chainID': chain})
+                        range_dict.append({
+                            'PDBstart': currentPDB,
+                            'PDBend': startPDBins,
+                            'chainID': chain
+                        })
                     # move start to next block
                     blockStartCIF = nextCIF
 
                 else:
-                    currentPDB = int(stored.seq_scheme[asym_id][currentCIF]['PDBnum'])
+                    currentPDB = int(
+                        stored.seq_scheme[asym_id][currentCIF]['PDBnum'])
                     nextPDB = int(stored.seq_scheme[asym_id][nextCIF]['PDBnum'])
 
                     if nextPDB - currentPDB > 1:
                         # logging.debug('numbering not continues, positive jump - store as section')
-                        startPDB = stored.seq_scheme[asym_id][blockStartCIF]['PDBnum']
+                        startPDB = stored.seq_scheme[asym_id][blockStartCIF][
+                            'PDBnum']
                         swap = checkOrder(startPDB, currentPDB)
                         startPDBins = insert_code(asym_id, blockStartCIF)
                         currentPDB = insert_code(asym_id, currentCIF)
                         if swap == False:
-                            range_dict.append({'PDBstart': startPDBins, 'PDBend': currentPDB, 'chainID': chain})
+                            range_dict.append({
+                                'PDBstart': startPDBins,
+                                'PDBend': currentPDB,
+                                'chainID': chain
+                            })
                         else:
-                            range_dict.append({'PDBstart': currentPDB, 'PDBend': startPDBins, 'chainID': chain})
+                            range_dict.append({
+                                'PDBstart': currentPDB,
+                                'PDBend': startPDBins,
+                                'chainID': chain
+                            })
                             # move start to next block
                         blockStartCIF = nextCIF
                     elif currentPDB - nextPDB > 1:
                         # logging.debug('numbering not continues, negative jump - store as section')
-                        startPDB = stored.seq_scheme[asym_id][blockStartCIF]['PDBnum']
+                        startPDB = stored.seq_scheme[asym_id][blockStartCIF][
+                            'PDBnum']
                         swap = checkOrder(startPDB, currentPDB)
                         startPDBins = insert_code(asym_id, blockStartCIF)
                         currentPDB = insert_code(asym_id, currentCIF)
                         if swap == False:
-                            range_dict.append({'PDBstart': startPDBins, 'PDBend': currentPDB, 'chainID': chain})
+                            range_dict.append({
+                                'PDBstart': startPDBins,
+                                'PDBend': currentPDB,
+                                'chainID': chain
+                            })
                         else:
-                            range_dict.append({'PDBstart': currentPDB, 'PDBend': startPDBins, 'chainID': chain})
+                            range_dict.append({
+                                'PDBstart': currentPDB,
+                                'PDBend': startPDBins,
+                                'chainID': chain
+                            })
                         # move start to next block
                         blockStartCIF = nextCIF
             else:
@@ -485,9 +572,17 @@ def check_range_observed(asym_id, start, end, unobs):
         startPDBins = insert_code(asym_id, blockStartCIF)
         nextPDB = insert_code(asym_id, nextCIF)
         if swap == False:
-            range_dict.append({'PDBstart': startPDBins, 'PDBend': nextPDB, 'chainID': chain})
+            range_dict.append({
+                'PDBstart': startPDBins,
+                'PDBend': nextPDB,
+                'chainID': chain
+            })
         else:
-            range_dict.append({'PDBstart': nextPDB, 'PDBend': startPDBins, 'chainID': chain})
+            range_dict.append({
+                'PDBstart': nextPDB,
+                'PDBend': startPDBins,
+                'chainID': chain
+            })
 
             # logging.debug(range_dict)
     else:
@@ -514,8 +609,8 @@ def insert_code(asym_id, CIFnum):
     if stored.seq_scheme[asym_id][CIFnum]['PDBinsCode'] == None:
         PDBnum = stored.seq_scheme[asym_id][CIFnum]['PDBnum']
     else:
-        PDBnum = '%s%s' % (
-            stored.seq_scheme[asym_id][CIFnum]['PDBnum'], stored.seq_scheme[asym_id][CIFnum]['PDBinsCode'])
+        PDBnum = '%s%s' % (stored.seq_scheme[asym_id][CIFnum]['PDBnum'],
+                           stored.seq_scheme[asym_id][CIFnum]['PDBinsCode'])
 
     if re.search('-', str(PDBnum)):
         PDBnum = re.sub('-', '\-', str(PDBnum))
@@ -523,8 +618,8 @@ def insert_code(asym_id, CIFnum):
     return PDBnum
 
 
-
 class Validation:
+
     def launch_validation(self, pdbid):
 
         val_data = pdb.get_validation(pdbid)
@@ -576,21 +671,27 @@ class Validation:
                                 for model in chain['models']:
                                     model_id = int(model['model_id'])
                                     for outlier_type in model['outlier_types']:
-                                        outliers = model['outlier_types'][outlier_type]
+                                        outliers = model['outlier_types'][
+                                            outlier_type]
                                         # logging.debug(outlier_type)
                                         # logging.debug(outliers)
                                         for outlier in outliers:
-                                            PDB_res_num = outlier['author_residue_number']
-                                            PDB_ins_code = outlier['author_insertion_code']
+                                            PDB_res_num = outlier[
+                                                'author_residue_number']
+                                            PDB_ins_code = outlier[
+                                                'author_insertion_code']
                                             alt_code = outlier['alt_code']
                                             if PDB_ins_code not in [None, ' ']:
-                                                PDB_res_num = '%s%s' % (PDB_res_num, PDB_ins_code)
+                                                PDB_res_num = '%s%s' % (
+                                                    PDB_res_num, PDB_ins_code)
 
                                             # logging.debug(PDB_res_num)
-                                            selection = 'chain %s and resi %s' % (chain_id, PDB_res_num)
+                                            selection = 'chain %s and resi %s' % (
+                                                chain_id, PDB_res_num)
                                             if model == 1 or model_id:
                                                 if chain == False or chain_id:
-                                                    self.validation_selection(selection, pdbid)
+                                                    self.validation_selection(
+                                                        selection, pdbid)
 
                     else:
                         logging.debug('no residue validation for this entry')
@@ -614,14 +715,18 @@ class Validation:
                             alt_code = outlier['alt_code']
 
                             if PDB_ins_code not in [None, ' ']:
-                                PDB_res_num = '%s%s' % (PDB_res_num, PDB_ins_code)
+                                PDB_res_num = '%s%s' % (PDB_res_num,
+                                                        PDB_ins_code)
 
-                            selection = 'chain %s and resi %s' % (chain_id, PDB_res_num)
+                            selection = 'chain %s and resi %s' % (chain_id,
+                                                                  PDB_res_num)
                             if model == 1 or model_id:
                                 if chain == False or chain_id:
                                     self.validation_selection(selection, pdbid)
                             else:
-                                logging.debug('is multimodel!!!, outlier not in model 1, not shown.')
+                                logging.debug(
+                                    'is multimodel!!!, outlier not in model 1, not shown.'
+                                )
 
                     else:
                         logging.debug('no %s' % (k))
@@ -648,7 +753,8 @@ class Validation:
                         end = entity['length']
                         length = entity['length']
                         asym_id = a
-                        display_type = poly_display_type(asym_id, 'polypeptide', length)
+                        display_type = poly_display_type(
+                            asym_id, 'polypeptide', length)
                         # logging.debug(asym_id)
                         x = check_range_observed(asym_id, start, end, unobs)
                         if x:
@@ -656,7 +762,8 @@ class Validation:
                                 start = y['PDBstart']
                                 end = y['PDBend']
                                 chain = y['chainID']
-                                selection = 'chain %s and resi %s-%s and %s' % (chain, start, end, pdbid)
+                                selection = 'chain %s and resi %s-%s and %s' % (
+                                    chain, start, end, pdbid)
                                 # logging.debug(selection)
                                 cmd.show(display_type, selection)
 
@@ -729,7 +836,8 @@ def show_entities(pdbid):
                                 res = str(short['PDBnum'])
                             else:
                                 res = str(short['PDBnum']) + short['PDBinsCode']
-                            selection = 'chain %s and resi %s and %s' % (chain, res, pdbid)
+                            selection = 'chain %s and resi %s and %s' % (
+                                chain, res, pdbid)
                             object_selection.append(selection)
                             # logging.debug(selection)
                     else:
@@ -740,7 +848,8 @@ def show_entities(pdbid):
                         asym_id = a
                         ###need to work out if cartoon is the right thing to display
                         length = entity['length']
-                        display_type = poly_display_type(asym_id, mol_type, length)
+                        display_type = poly_display_type(
+                            asym_id, mol_type, length)
                         # logging.debug(asym_id)
                         x = check_range_observed(asym_id, start, end, unobs)
                         # logging.debug(x)
@@ -749,7 +858,8 @@ def show_entities(pdbid):
                                 start = y['PDBstart']
                                 end = y['PDBend']
                                 chain = y['chainID']
-                                selection = 'chain %s and resi %s-%s and %s' % (chain, start, end, pdbid)
+                                selection = 'chain %s and resi %s-%s and %s' % (
+                                    chain, start, end, pdbid)
                                 # logging.debug(selection)
                                 object_selection.append(selection)
 
@@ -763,8 +873,8 @@ def show_entities(pdbid):
                         pymol_selection += '%s' % (o)
 
                 try:
-                    stored.entities[pdbid]['entity'][entity['entity_id']]['selection']['selection_list'].append(
-                        pymol_selection)
+                    stored.entities[pdbid]['entity'][entity['entity_id']][
+                        'selection']['selection_list'].append(pymol_selection)
                     logging.debug('appended %s' % (pymol_selection))
                 except:
                     stored.entities.setdefault(pdbid, {}) \
@@ -814,7 +924,12 @@ def mapping(pdbid):
     if not stored.seq_scheme:
         poly_seq_scheme(pdbid)
     domain_to_make = ['CATH', 'SCOP', 'Pfam', 'Rfam']
-    segment_identifier = {'CATH': 'domain', 'SCOP': 'scop_id', 'Pfam': '', 'Rfam': ''}
+    segment_identifier = {
+        'CATH': 'domain',
+        'SCOP': 'scop_id',
+        'Pfam': '',
+        'Rfam': ''
+    }
     protein_domains = pdb.get_protein_domains(pdbid)
     nucleic_domains = pdb.get_nucleic_domains(pdbid)
     for data in [protein_domains, nucleic_domains]:
@@ -825,10 +940,12 @@ def mapping(pdbid):
                 if domain_type in domain_to_make:
                     for domain in data[pdbid][domain_type]:
                         if data[pdbid][domain_type][domain]['mappings']:
-                            identifier = data[pdbid][domain_type][domain]['identifier']
+                            identifier = data[pdbid][domain_type][domain][
+                                'identifier']
                             # logging.debug(domain_type)
                             # logging.debug(domain)
-                            for mapping in data[pdbid][domain_type][domain]['mappings']:
+                            for mapping in data[pdbid][domain_type][domain][
+                                    'mappings']:
                                 unobs = False
                                 PDBstart = ''
                                 PDBend = ''
@@ -841,7 +958,8 @@ def mapping(pdbid):
                                     # force it to be one if its missing
                                     domain_segment_id = 1
                                 if segment_identifier[domain_type] in mapping:
-                                    domain_name = str(mapping[segment_identifier[domain_type]])
+                                    domain_name = str(mapping[
+                                        segment_identifier[domain_type]])
                                 # logging.debug('%s: %s' %(domain_name, domain_segment_id))
 
                                 # then check it exits
@@ -851,15 +969,27 @@ def mapping(pdbid):
                                 entity_id = mapping['entity_id']
                                 asym_id = mapping['struct_asym_id']
                                 if asym_id in stored.seq_scheme:
-                                    x = check_range_observed(asym_id, start, end, unobs)
+                                    x = check_range_observed(
+                                        asym_id, start, end, unobs)
                                     if x:
                                         for y in x:
                                             start = y['PDBstart']
                                             end = y['PDBend']
                                             try:
-                                                stored.domain_dict[domain_type][domain][domain_name].append(
-                                                    {'asym_id': asym_id, 'chain': chain, 'start': start, 'end': end,
-                                                     'entity_id': entity_id})
+                                                stored.domain_dict[domain_type][
+                                                    domain][domain_name].append(
+                                                        {
+                                                            'asym_id':
+                                                                asym_id,
+                                                            'chain':
+                                                                chain,
+                                                            'start':
+                                                                start,
+                                                            'end':
+                                                                end,
+                                                            'entity_id':
+                                                                entity_id
+                                                        })
                                             except:
                                                 stored.domain_dict.setdefault(domain_type, {}) \
                                                     .setdefault(domain, {}) \
@@ -883,7 +1013,8 @@ def show_domains(pdbid):
                     # logging.debug(instance)
                     object_selection = []
                     pymol_selection = ''
-                    for segment in stored.domain_dict[domain_type][domain][instance]:
+                    for segment in stored.domain_dict[domain_type][domain][
+                            instance]:
                         PDBstart = segment['start']
                         PDBend = segment['end']
                         chain = segment['chain']
@@ -892,9 +1023,14 @@ def show_domains(pdbid):
 
                         asym_list.append(asym_id)
                         entity_list.append(entity_id)
-                        chain_dict.update({asym_id: {'chain': chain, 'entity_id': entity_id}})
+                        chain_dict.update(
+                            {asym_id: {
+                                'chain': chain,
+                                'entity_id': entity_id
+                            }})
 
-                        selection = 'chain %s and resi %s-%s and %s' % (chain, PDBstart, PDBend, pdbid)
+                        selection = 'chain %s and resi %s-%s and %s' % (
+                            chain, PDBstart, PDBend, pdbid)
                         object_selection.append(selection)
                     for o in object_selection:
                         if len(object_selection) > 1:
@@ -906,13 +1042,19 @@ def show_domains(pdbid):
                             pymol_selection += '%s' % (o)
                     # logging.debug(pymol_selection)
                     objectName = '%s_%s_%s' % (domain_type, domain, instance)
-                    obj_dict.update({objectName: {'asym_list': asym_list, 'entity_list': entity_list}})
+                    obj_dict.update({
+                        objectName: {
+                            'asym_list': asym_list,
+                            'entity_list': entity_list
+                        }
+                    })
                     cmd.select('test_select', pymol_selection)
                     cmd.create(objectName, 'test_select')
 
             for chain in chain_dict:
                 logging.debug(chain)
-                c_select = 'chain %s and %s' % (chain_dict[chain]['chain'], pdbid)
+                c_select = 'chain %s and %s' % (chain_dict[chain]['chain'],
+                                                pdbid)
 
                 entity_id = chain_dict[chain]['entity_id']
                 length = None
@@ -955,7 +1097,8 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
     try:
         cmd.set('cif_keepinmemory')
     except:
-        logging.exception('version of pymol does not support keeping all cif items')
+        logging.exception(
+            'version of pymol does not support keeping all cif items')
 
     # check the PDB code actually exists.
     summary = pdb.get_summary(pdbid)
@@ -989,7 +1132,9 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
                         logging.debug('setting connect mode to mode 4')
                         cmd.set('connect_mode', 4)
                     except:
-                        logging.exception('pymol version does not support assemblies or connect mode 4')
+                        logging.exception(
+                            'pymol version does not support assemblies or connect mode 4'
+                        )
                         file_path = ebi_ftp % (mid_pdb, pdbid)
 
             logging.debug('File to load: %s' % file_path)
@@ -1029,8 +1174,7 @@ def GetPdbId(label):
     from pymol.Qt import QtWidgets
 
     pdbid, ok_pressed = QtWidgets.QInputDialog.getText(
-        None, 'PDB Loader Service',
-        label + '\nPlease enter a 4-digit PDB ID:',
+        None, 'PDB Loader Service', label + '\nPlease enter a 4-digit PDB ID:',
         QtWidgets.QLineEdit.Normal, '')
 
     if ok_pressed:
@@ -1043,28 +1187,33 @@ def PDBeLoaderDialog():
     pdbid = GetPdbId(
         'Highlight chemically distinct molecules, domains and assemblies in a'
         ' PDB entry.')
-    if pdbid: PDBe_startup(pdbid, 'all')
+    if pdbid:
+        PDBe_startup(pdbid, 'all')
 
 
 def PDBeMoleculeDialog():
     pdbid = GetPdbId('Highlight chemically distinct molecules in a PDB entry.')
-    if pdbid: PDBe_startup(pdbid, 'molecules')
+    if pdbid:
+        PDBe_startup(pdbid, 'molecules')
 
 
 def PDBeDomainDialog():
     pdbid = GetPdbId(
         'Display Pfam, SCOP, CATH and Rfam domains on a PDB entry.')
-    if pdbid: PDBe_startup(pdbid, 'domains')
+    if pdbid:
+        PDBe_startup(pdbid, 'domains')
 
 
 def PDBeValidationDialog():
     pdbid = GetPdbId('Display geometric outliers on a PDB entry.')
-    if pdbid: PDBe_startup(pdbid, 'validation')
+    if pdbid:
+        PDBe_startup(pdbid, 'validation')
 
 
 def PDBeAssemblyDialog():
     pdbid = GetPdbId('Display assemblies for a PDB entry.')
-    if pdbid: PDBe_startup(pdbid, 'assemblies')
+    if pdbid:
+        PDBe_startup(pdbid, 'assemblies')
 
 
 class PdbIdShortcut(cmd.Shortcut):
@@ -1073,6 +1222,7 @@ class PdbIdShortcut(cmd.Shortcut):
     in the PDB, but we try to guide the user to filling in a valid key and
     verify full-length keys with the PDB, showing the entry title as guidance.
     """
+
     def interpret(self, key, mode=0):
         # The filler is a 'space' but ordered after visible ASCII chars. We use
         # it to convince autocomplete that there is still more than 1 option
@@ -1255,11 +1405,11 @@ def Initialize():
     logger = logging.getLogger()
     numeric_loglevel = getattr(logging, loglevel.upper(), None)
     if numeric_loglevel is None:
-      logger.setLevel(logging.WARNING)
-      logging.error('Preference ' + pref_loglevel + ' is invalid;' +
-                    ' using WARNING instead.')
+        logger.setLevel(logging.WARNING)
+        logging.error('Preference ' + pref_loglevel + ' is invalid;' +
+                      ' using WARNING instead.')
     else:
-      logger.setLevel(numeric_loglevel)
+        logger.setLevel(numeric_loglevel)
 
 
 # Run when used as a plugin.
