@@ -331,7 +331,7 @@ class Color(object):
         cmd.color(color, obj)
 
 
-def poly_display_type(asym, mol_type, length):
+def poly_display_type(asym, molecule_type, length):
     """return either ribbon or cartoon depending on number of polymer chains"""
     ##start with it being cartoon - then change as needed.
     display_type = 'cartoon'
@@ -342,13 +342,13 @@ def poly_display_type(asym, mol_type, length):
         cmd.set('ribbon_trace_atoms', 1)
         display_type = 'ribbon'
     else:
-        if re.search('polypeptide', mol_type):
+        if re.search('polypeptide', molecule_type):
             if length < 20:
                 display_type = 'sticks'
-        if re.search('nucleotide', mol_type):
+        if re.search('nucleotide', molecule_type):
             if length < 3:
                 display_type = 'sticks'
-        if re.search('saccharide', mol_type):
+        if re.search('saccharide', molecule_type):
             display_type = 'sticks'
 
     # logging.debug(
@@ -370,12 +370,12 @@ class worker_functions():
         if stored.molecules == {}:
             stored.molecules = pdb.get_molecules(pdbid)
         if pdbid in stored.molecules:
-            for entity in stored.molecules[pdbid]:
+            for molecule in stored.molecules[pdbid]:
                 # add ca only list
-                if entity['ca_p_only'] != False:
-                    for a in entity['in_struct_asyms']:
+                if molecule['ca_p_only'] != False:
+                    for a in molecule['in_struct_asyms']:
                         stored.ca_p_only.add(a)
-                if entity['molecule_type'] not in ['water', 'bound']:
+                if molecule['molecule_type'] not in ['water', 'bound']:
                     stored.poly_count += 1
 
 
@@ -383,8 +383,8 @@ def poly_seq_scheme(pdbid):
     """build a dictionary like poly_seq_scheme"""
     data = pdb.get_seq_scheme(pdbid)
     if pdbid in data:
-        for entity in data[pdbid]['molecules']:
-            for chain in entity['chains']:
+        for molecule in data[pdbid]['molecules']:
+            for chain in molecule['chains']:
                 chain_id = chain['chain_id']
                 asym_id = chain['struct_asym_id']
                 for residue in chain['residues']:
@@ -661,10 +661,10 @@ class Validation:
             if pdbid in res_data:
                 if 'molecules' in res_data[pdbid]:
                     if res_data[pdbid]['molecules']:
-                        for entity in res_data[pdbid]['molecules']:
-                            # logging.debug(entity)
-                            entity_id = entity['entity_id']
-                            for chain in entity['chains']:
+                        for molecule in res_data[pdbid]['molecules']:
+                            # logging.debug(molecule)
+                            entity_id = molecule['entity_id']
+                            for chain in molecule['chains']:
                                 chain_id = chain['chain_id']
                                 # logging.debug(chain_id)
                                 for model in chain['models']:
@@ -737,20 +737,20 @@ class Validation:
         if stored.molecules == {}:
             stored.molecules = pdb.get_molecules(pdbid)
         if pdbid in stored.molecules:
-            for entity in stored.molecules[pdbid]:
-                # logging.debug(entity)
-                mol_type = entity['molecule_type']
+            for molecule in stored.molecules[pdbid]:
+                # logging.debug(molecule)
+                mol_type = molecule['molecule_type']
                 ca_only_list = []
-                if entity['ca_p_only'] != False:
-                    ca_only_list = entity['ca_p_only']
+                if molecule['ca_p_only'] != False:
+                    ca_only_list = molecule['ca_p_only']
                 if mol_type not in ['Water', 'Bound']:
-                    for a in entity['in_struct_asyms']:
+                    for a in molecule['in_struct_asyms']:
                         if stored.seq_scheme == {}:
                             poly_seq_scheme(pdbid)
                         unobs = False
                         start = 1
-                        end = entity['length']
-                        length = entity['length']
+                        end = molecule['length']
+                        length = molecule['length']
                         asym_id = a
                         display_type = poly_display_type(
                             asym_id, 'polypeptide', length)
@@ -776,7 +776,7 @@ class Validation:
         # logging.debug(stored.residues)
 
 
-def show_entities(pdbid):
+def show_molecules(pdbid):
     logging.debug('Display entities')
     cmd.set('cartoon_transparency', 0.3, pdbid)
     cmd.set('ribbon_transparency', 0.3, pdbid)
@@ -784,40 +784,40 @@ def show_entities(pdbid):
     if stored.molecules == {}:
         stored.molecules = pdb.get_molecules(pdbid)
     if pdbid in stored.molecules:
-        for entity in stored.molecules[pdbid]:
+        for molecule in stored.molecules[pdbid]:
             entity_name = ''
-            if entity['molecule_name']:
-                if len(entity['molecule_name']) > 1:
-                    for instance, mol in enumerate(entity['molecule_name']):
-                        if mol != entity['molecule_name'][-1]:
+            if molecule['molecule_name']:
+                if len(molecule['molecule_name']) > 1:
+                    for instance, mol in enumerate(molecule['molecule_name']):
+                        if mol != molecule['molecule_name'][-1]:
                             mol = mol + '-'
                             entity_name += mol
                         else:
                             entity_name += mol
                     entity_name = entity_name + '_chimera'
                 else:
-                    entity_name = entity['molecule_name'][0]
+                    entity_name = molecule['molecule_name'][0]
             else:
                 logging.debug('No name from the API')
-                entity_name = 'entity_%s' % (entity['entity_id'])
-            # logging.debug('entity %s: %s' %(entity['entity_id'], entity_name))
+                entity_name = 'entity_%s' % (molecule['entity_id'])
+            # logging.debug('molecule %s: %s' %(molecule['entity_id'], entity_name))
 
-            # logging.debug(entity['entity_id'])
+            # logging.debug(molecule['entity_id'])
             ####see if its polymeric
-            mol_type = entity['molecule_type']
-            # entity_name = entity['molecule_name']
+            mol_type = molecule['molecule_type']
+            # entity_name = molecule['molecule_name']
             if entity_name:
                 objectName = re.sub(' ', '_', entity_name)
                 objectName = re.sub(r'\W+', '', objectName)
             else:
-                objectName = 'entity_%s' % (entity['entity_id'])
+                objectName = 'entity_%s' % (molecule['entity_id'])
             # logging.debug(objectName)
             display_type = ''
             object_selection = []
             pymol_selection = ''
             if mol_type != 'Water':
                 # use asym to find residue number and chain ID
-                for a in entity['in_struct_asyms']:
+                for a in molecule['in_struct_asyms']:
                     if stored.seq_scheme == {}:
                         poly_seq_scheme(pdbid)
                     if mol_type == 'Bound':
@@ -843,10 +843,10 @@ def show_entities(pdbid):
                         ###find the first and last residues
                         unobs = False
                         start = 1
-                        end = entity['length']
+                        end = molecule['length']
                         asym_id = a
                         ###need to work out if cartoon is the right thing to display
-                        length = entity['length']
+                        length = molecule['length']
                         display_type = poly_display_type(
                             asym_id, mol_type, length)
                         # logging.debug(asym_id)
@@ -879,8 +879,8 @@ def show_entities(pdbid):
                 # logging.debug(display_type)
                 cmd.show(display_type, objectName)
 
-                # color by entity.
-                Color.set_object_color(int(entity['entity_id']), objectName)
+                # color by molecule.
+                Color.set_object_color(int(molecule['entity_id']), objectName)
 
     cmd.delete('test_select')
     # cmd.show('cartoon', pdbid)
@@ -1046,9 +1046,9 @@ def show_domains(pdbid):
 
                 entity_id = chain_dict[chain]['entity_id']
                 length = None
-                for entity in stored.molecules[pdbid]:
-                    if entity_id == entity['entity_id']:
-                        length = entity['length']
+                for molecule in stored.molecules[pdbid]:
+                    if entity_id == molecule['entity_id']:
+                        length = molecule['length']
                 display_type = poly_display_type(chain, 'polypeptide', length)
                 cmd.show(display_type, c_select)
                 cmd.color('grey', c_select)
@@ -1061,9 +1061,9 @@ def show_domains(pdbid):
                 for i, a in enumerate(obj_dict[obj]['asym_list']):
                     entity_id = obj_dict[obj]['entity_list'][i]
                     length = None
-                    for entity in stored.molecules[pdbid]:
-                        if entity_id == entity['entity_id']:
-                            length = entity['length']
+                    for molecule in stored.molecules[pdbid]:
+                        if entity_id == molecule['entity_id']:
+                            length = molecule['length']
                     display_type = poly_display_type(a, 'polypeptide', length)
                     cmd.show(display_type, obj)
                     Color.set_object_color(num, obj)
@@ -1130,16 +1130,16 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
         worker_functions().count_poly(pdbid)
 
         if method == 'molecules':
-            show_entities(pdbid)
+            show_molecules(pdbid)
         elif method == 'domains':
-            show_entities(pdbid)
+            show_molecules(pdbid)
             show_domains(pdbid)
         elif method == 'validation':
             Validation().launch_validation(pdbid)
         elif method == 'assemblies':
             show_assemblies(pdbid, file_path)
         elif method == 'all':
-            show_entities(pdbid)
+            show_molecules(pdbid)
             show_domains(pdbid)
             show_assemblies(pdbid, file_path)
             Validation().launch_validation(pdbid)
