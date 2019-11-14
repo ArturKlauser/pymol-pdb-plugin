@@ -389,37 +389,23 @@ def poly_seq_scheme(pdbid):
                 chain_id = chain['chain_id']
                 asym_id = chain['struct_asym_id']
                 for residue in chain['residues']:
-                    CIFnum = residue['residue_number']
-                    PDBnum = residue['author_residue_number']
-                    PDBinsCode = residue['author_insertion_code']
-                    residueName = residue['residue_name']
+                    cif_num = residue['residue_number']
+                    pdb_num = residue['author_residue_number']
+                    pdb_ins_code = residue['author_insertion_code']
+                    residue_name = residue['residue_name']
                     if residue['observed_ratio'] != 0:
-                        PDBobs = True
+                        is_observed = True
                     else:
-                        PDBobs = False
+                        is_observed = False
 
-                    try:
-                        stored.seq_scheme[asym_id].update({
-                            CIFnum: {
-                                'PDBnum': PDBnum,
-                                'PDBinsCode': PDBinsCode,
-                                'observed': PDBobs,
-                                'residueName': residueName,
-                                'chainID': chain_id
-                            }
-                        })
-                    except:
-                        stored.seq_scheme.update({asym_id: {}})
-                        stored.seq_scheme[asym_id].update({
-                            CIFnum: {
-                                'PDBnum': PDBnum,
-                                'PDBinsCode': PDBinsCode,
-                                'observed': PDBobs,
-                                'residueName': residueName,
-                                'chainID': chain_id
-                            }
-                        })
-                        # logging.debug(seq_scheme)
+                    stored.seq_scheme.setdefault(asym_id, {})[cif_num] = {
+                        'PDBnum': pdb_num,
+                        'PDBinsCode': pdb_ins_code,
+                        'observed': is_observed,
+                        'residueName': residue_name,
+                        'chainID': chain_id
+                    }
+                    # logging.debug(seq_scheme)
 
 
 def get_ranges(asym_id, start, end):
