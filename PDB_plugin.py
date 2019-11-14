@@ -422,200 +422,178 @@ def poly_seq_scheme(pdbid):
                         # logging.debug(seq_scheme)
 
 
-def check_range_observed(asym_id, start, end, unobs):
-    range_dict = []
-    firstResidue = 1
-    lastResidue = 1
+def get_ranges(asym_id, start, end):
+
+    def order(start, end, start_code, end_code):
+        """Returns (start_code, end_code) ordered such that start < end."""
+        # logging.debug('PRE: start: %s, end %s' % (start, end))
+        if type(start) is str:
+            start = start.split('\\')[-1]
+        if type(end) is str:
+            end = end.split('\\')[-1]
+
+        if int(start) > int(end):
+            result = (end_code, start_code)
+        else:
+            result = (start_code, end_code)
+        # logging.debug('POST: start: %s, end: %s, %s' % (start, end, result))
+        return result
+
+    def insert_code(asym_id, cif_num):
+        if stored.seq_scheme[asym_id][cif_num]['PDBinsCode'] == None:
+            pdb_num = stored.seq_scheme[asym_id][cif_num]['PDBnum']
+        else:
+            pdb_num = '%s%s' % (
+                stored.seq_scheme[asym_id][cif_num]['PDBnum'],
+                stored.seq_scheme[asym_id][cif_num]['PDBinsCode'])
+
+        if re.search('-', str(pdb_num)):
+            pdb_num = re.sub('-', '\-', str(pdb_num))
+
+        return pdb_num
+
+    first_residue = 1
+    last_residue = 1
     for r in stored.seq_scheme[asym_id]:
-        if r <= firstResidue:
-            firstResidue = r
-        if r >= lastResidue:
-            lastResidue = r
+        if r <= first_residue:
+            first_residue = r
+        if r >= last_residue:
+            last_residue = r
 
-    if end > lastResidue:
-        # logging.debug('ERROR: residue %s from SIFTS is greater than the lastSeqRes number %s' %(end, lastSeqRes))
-        end = lastResidue
+    if end > last_residue:
+        # logging.debug('ERROR: residue %s from SIFTS is greater than the '
+        #               'lastSeqRes number %s' % (end, lastSeqRes))
+        end = last_residue
 
-    # logging.debug('first residue: %s, last residue %s' %(firstResidue, lastResidue))
+    # logging.debug('first residue: %s, last residue %s' %
+    #               (first_residue, last_residue))
     # logging.debug(seq_scheme[asym_id][start])
+    is_observed = True
     if start in stored.seq_scheme[asym_id]:
         chain = stored.seq_scheme[asym_id][start]['chainID']
 
-        while stored.seq_scheme[asym_id][start]['observed'] == False:
-            # logging.debug('PDB start is not observed, adding 1 to residue number %s' %(start))
-            if start == lastResidue:
+        while not stored.seq_scheme[asym_id][start]['observed']:
+            # logging.debug('PDB start is not observed, adding 1 to residue '
+            #               'number %s' % start)
+            if start == last_residue:
                 # logging.debug('domain not observed')
-                unobs = True
+                is_observed = False
                 break
             else:
                 start += 1
-                if start == lastResidue:
+                if start == last_residue:
                     # logging.debug('domain not observed')
-                    unobs = True
+                    is_observed = False
                     break
                 elif start == end:
                     # logging.debug('domain not observed')
-                    unobs = True
+                    is_observed = False
                     break
 
     if end in stored.seq_scheme[asym_id]:
-        while stored.seq_scheme[asym_id][end]['observed'] == False:
-            # logging.debug('PDB end is not observed, minusing 1 from residue number %s' %(end))
-            if end == firstResidue:
+        while not stored.seq_scheme[asym_id][end]['observed']:
+            # logging.debug('PDB end is not observed, minusing 1 from residue '
+            #               'number %s' % end)
+            if end == first_residue:
                 # logging.debug('domain not observed')
-                unobs = True
+                is_observed = False
                 break
             else:
                 end -= 1
-                if end == firstResidue:
+                if end == first_residue:
                     # logging.debug('domain not observed')
-                    unobs = True
+                    is_observed = False
                     break
                 elif start == end:
                     # logging.debug('domain not observed')
-                    unobs = True
+                    is_observed = False
                     break
 
-    if unobs == False:
-        # logging.debug('CIF start: %s, CIF end %s' %(start, end))
-        # logging.debug('PDB start: %s, PDB end %s' %(PDBstart, PDBend))
-
-        # need to do something about non continuous ranges which pymol doesn't cope with.
-        """find all sections where the residue number increases by one. If it jumps then store this as a separate
-        residue block while number is less than endbegin with number = start plus 1. see how the numbering differs
-        from startif its 1 then its continuous - move to the next residue
-        if its zero then there must be insert codes - this is ok - move to the next residue
-        if its greater than 1 then store the previous residues as a block.
-        """
-        currentCIF = start
-        blockStartCIF = start
-        nextCIF = start + 1
-        while nextCIF < end:
-            currentPDB = stored.seq_scheme[asym_id][currentCIF]['PDBnum']
-            nextPDB = stored.seq_scheme[asym_id][nextCIF]['PDBnum']
-            if currentPDB not in _EMPTY_CIF:
-                if nextPDB in _EMPTY_CIF:
-                    startPDB = stored.seq_scheme[asym_id][blockStartCIF][
-                        'PDBnum']
-                    swap = checkOrder(startPDB, currentPDB)
-                    startPDBins = insert_code(asym_id, blockStartCIF)
-                    currentPDB = insert_code(asym_id, currentCIF)
-                    if swap == False:
-                        range_dict.append({
-                            'PDBstart': startPDBins,
-                            'PDBend': currentPDB,
-                            'chainID': chain
-                        })
-                    else:
-                        range_dict.append({
-                            'PDBstart': currentPDB,
-                            'PDBend': startPDBins,
-                            'chainID': chain
-                        })
-                    # move start to next block
-                    blockStartCIF = nextCIF
-
-                else:
-                    currentPDB = int(
-                        stored.seq_scheme[asym_id][currentCIF]['PDBnum'])
-                    nextPDB = int(stored.seq_scheme[asym_id][nextCIF]['PDBnum'])
-
-                    if nextPDB - currentPDB > 1:
-                        # logging.debug('numbering not continues, positive jump - store as section')
-                        startPDB = stored.seq_scheme[asym_id][blockStartCIF][
-                            'PDBnum']
-                        swap = checkOrder(startPDB, currentPDB)
-                        startPDBins = insert_code(asym_id, blockStartCIF)
-                        currentPDB = insert_code(asym_id, currentCIF)
-                        if swap == False:
-                            range_dict.append({
-                                'PDBstart': startPDBins,
-                                'PDBend': currentPDB,
-                                'chainID': chain
-                            })
-                        else:
-                            range_dict.append({
-                                'PDBstart': currentPDB,
-                                'PDBend': startPDBins,
-                                'chainID': chain
-                            })
-                            # move start to next block
-                        blockStartCIF = nextCIF
-                    elif currentPDB - nextPDB > 1:
-                        # logging.debug('numbering not continues, negative jump - store as section')
-                        startPDB = stored.seq_scheme[asym_id][blockStartCIF][
-                            'PDBnum']
-                        swap = checkOrder(startPDB, currentPDB)
-                        startPDBins = insert_code(asym_id, blockStartCIF)
-                        currentPDB = insert_code(asym_id, currentCIF)
-                        if swap == False:
-                            range_dict.append({
-                                'PDBstart': startPDBins,
-                                'PDBend': currentPDB,
-                                'chainID': chain
-                            })
-                        else:
-                            range_dict.append({
-                                'PDBstart': currentPDB,
-                                'PDBend': startPDBins,
-                                'chainID': chain
-                            })
-                        # move start to next block
-                        blockStartCIF = nextCIF
-            else:
-                blockStartCIF = nextCIF
-            nextCIF += 1
-            currentCIF += 1
-
-        startPDB = stored.seq_scheme[asym_id][blockStartCIF]['PDBnum']
-        swap = checkOrder(blockStartCIF, nextCIF)
-        startPDBins = insert_code(asym_id, blockStartCIF)
-        nextPDB = insert_code(asym_id, nextCIF)
-        if swap == False:
-            range_dict.append({
-                'PDBstart': startPDBins,
-                'PDBend': nextPDB,
-                'chainID': chain
-            })
-        else:
-            range_dict.append({
-                'PDBstart': nextPDB,
-                'PDBend': startPDBins,
-                'chainID': chain
-            })
-
-            # logging.debug(range_dict)
-    else:
+    ranges = []
+    if not is_observed:
         logging.debug('domain unobserved')
+        return ranges
 
-    return range_dict
+    # logging.debug('CIF start: %s, CIF end %s' % (start, end))
+    # logging.debug('PDB start: %s, PDB end %s' % (PDBstart, PDBend))
 
+    # Need to do something about non continuous ranges which pymol doesn't
+    # cope with.
+    #
+    # Find all sections where the residue number increases by one. If it
+    # jumps then store this as a separate residue block while number is less
+    # than end begin with number = start plus 1. See how the numbering
+    # differs from start if its 1 then its continuous - move to the next
+    # residue if its zero then there must be insert codes - this is ok -
+    # move to the next residue if its greater than 1 then store the previous
+    # residues as a block.
+    block_start_cif = start
+    for current_cif in range(start, end - 1):
+        next_cif = current_cif + 1
+        current_pdb = stored.seq_scheme[asym_id][current_cif]['PDBnum']
+        next_pdb = stored.seq_scheme[asym_id][next_cif]['PDBnum']
+        if current_pdb in _EMPTY_CIF:
+            block_start_cif = next_cif
+            continue
 
-def checkOrder(start, end):
-    swap = False
-    # logging.debug('PRE: start: %s, end %s, swap %s' %(start, end, swap))
-    if type(start) is str:
-        start = start.split('\\')[-1]
-    if type(end) is str:
-        end = end.split('\\')[-1]
+        if next_pdb in _EMPTY_CIF:
+            start_pdb = stored.seq_scheme[asym_id][block_start_cif]['PDBnum']
+            start_code, end_code = order(start_pdb, current_pdb,
+                                         insert_code(asym_id, block_start_cif),
+                                         insert_code(asym_id, current_cif))
+            ranges.append({
+                'PDBstart': start_code,
+                'PDBend': end_code,
+                'chainID': chain
+            })
+            # move start to next block
+            block_start_cif = next_cif
+            continue
 
-    if int(start) > int(end):
-        swap = True
-    # logging.debug('POST: start: %s, end: %s, swap %s' %(start, end, swap))
-    return swap
+        current_pdb = int(stored.seq_scheme[asym_id][current_cif]['PDBnum'])
+        next_pdb = int(stored.seq_scheme[asym_id][next_cif]['PDBnum'])
 
+        if next_pdb - current_pdb > 1:
+            # logging.debug('numbering not continues, positive '
+            #               'jump - store as section')
+            start_pdb = stored.seq_scheme[asym_id][block_start_cif]['PDBnum']
+            start_code, end_code = order(start_pdb, current_pdb,
+                                         insert_code(asym_id, block_start_cif),
+                                         insert_code(asym_id, current_cif))
+            ranges.append({
+                'PDBstart': start_code,
+                'PDBend': end_code,
+                'chainID': chain
+            })
+            # move start to next block
+            block_start_cif = next_cif
+        elif current_pdb - next_pdb > 1:
+            # logging.debug('numbering not continues, negative '
+            #               'jump - store as section')
+            start_pdb = stored.seq_scheme[asym_id][block_start_cif]['PDBnum']
+            start_code, end_code = order(start_pdb, current_pdb,
+                                         insert_code(asym_id, block_start_cif),
+                                         insert_code(asym_id, current_cif))
+            ranges.append({
+                'PDBstart': start_code,
+                'PDBend': end_code,
+                'chainID': chain
+            })
+            # move start to next block
+            block_start_cif = next_cif
 
-def insert_code(asym_id, CIFnum):
-    if stored.seq_scheme[asym_id][CIFnum]['PDBinsCode'] == None:
-        PDBnum = stored.seq_scheme[asym_id][CIFnum]['PDBnum']
-    else:
-        PDBnum = '%s%s' % (stored.seq_scheme[asym_id][CIFnum]['PDBnum'],
-                           stored.seq_scheme[asym_id][CIFnum]['PDBinsCode'])
+    start_pdb = stored.seq_scheme[asym_id][block_start_cif]['PDBnum']
+    start_code, end_code = order(block_start_cif, end,
+                                 insert_code(asym_id, block_start_cif),
+                                 insert_code(asym_id, end))
+    ranges.append({
+        'PDBstart': start_code,
+        'PDBend': end_code,
+        'chainID': chain
+    })
+    # logging.debug(ranges)
 
-    if re.search('-', str(PDBnum)):
-        PDBnum = re.sub('-', '\-', str(PDBnum))
-
-    return PDBnum
+    return ranges
 
 
 class Validation:
@@ -748,7 +726,6 @@ class Validation:
                     for a in molecule['in_struct_asyms']:
                         if stored.seq_scheme == {}:
                             poly_seq_scheme(pdbid)
-                        unobs = False
                         start = 1
                         end = molecule['length']
                         length = molecule['length']
@@ -756,7 +733,7 @@ class Validation:
                         display_type = poly_display_type(
                             asym_id, 'polypeptide', length)
                         # logging.debug(asym_id)
-                        x = check_range_observed(asym_id, start, end, unobs)
+                        x = get_ranges(asym_id, start, end)
                         if x:
                             for y in x:
                                 start = y['PDBstart']
@@ -842,7 +819,6 @@ def show_molecules(pdbid):
                             # logging.debug(selection)
                     else:
                         ###find the first and last residues
-                        unobs = False
                         start = 1
                         end = molecule['length']
                         asym_id = a
@@ -851,7 +827,7 @@ def show_molecules(pdbid):
                         display_type = poly_display_type(
                             asym_id, mol_type, length)
                         # logging.debug(asym_id)
-                        x = check_range_observed(asym_id, start, end, unobs)
+                        x = get_ranges(asym_id, start, end)
                         # logging.debug(x)
                         if x:
                             for y in x:
@@ -935,7 +911,6 @@ def map_domains(pdbid):
                             # logging.debug(domain)
                             for mapping in data[pdbid][domain_type][domain][
                                     'mappings']:
-                                unobs = False
                                 PDBstart = ''
                                 PDBend = ''
                                 domain_segment_id = ''
@@ -958,8 +933,7 @@ def map_domains(pdbid):
                                 entity_id = mapping['entity_id']
                                 asym_id = mapping['struct_asym_id']
                                 if asym_id in stored.seq_scheme:
-                                    x = check_range_observed(
-                                        asym_id, start, end, unobs)
+                                    x = get_ranges(asym_id, start, end)
                                     if x:
                                         for y in x:
                                             start = y['PDBstart']
