@@ -59,10 +59,11 @@ import time
 import pymol
 from pymol import cmd
 from pymol import stored
-from chempy.cif import *
+from chempy.cif import *  # noqa: F401,F403
 
 # ftp site
-_EBI_FTP = 'ftp://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/mmCIF/%s/%s.cif.gz'
+_EBI_FTP = ('ftp://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/'
+            'mmCIF/%s/%s.cif.gz')
 # clean mmcif
 _UPDATED_FTP = 'https://www.ebi.ac.uk/pdbe/static/entry/%s_updated.cif.gz'
 _EMPTY_CIF = frozenset(['', '.', '?', None])
@@ -120,7 +121,7 @@ class PdbFetcher(object):
             raise Exception(
                 __name__.split('.')[-1] +
                 ": PDB can't be accessed due to missing python libraries:\n" +
-                '\n'.join(['    ' + str(e) for e in import_errors]) +
+                '\n'.join(['    ' + str(error) for error in import_errors]) +
                 '\n==> Install one of them!')
 
     def get_data(self, url, description):
@@ -333,7 +334,7 @@ class Color(object):
 
 def poly_display_type(asym, molecule_type, length):
     """return either ribbon or cartoon depending on number of polymer chains"""
-    ##start with it being cartoon - then change as needed.
+    # start with it being cartoon - then change as needed.
     display_type = 'cartoon'
     if stored.poly_count > 50:
         display_type = 'ribbon'
@@ -373,7 +374,7 @@ class WorkerFunctions(object):
             stored.molecules = pdb.get_molecules(pdbid)
         for molecule in stored.molecules.get(pdbid, []):
             # add ca only list
-            if molecule['ca_p_only'] != False:
+            if molecule['ca_p_only']:
                 for a in molecule['in_struct_asyms']:
                     stored.ca_p_only.add(a)
             if molecule['molecule_type'] not in ['water', 'bound']:
@@ -408,7 +409,7 @@ def poly_seq_scheme(pdbid):
                     # logging.debug(seq_scheme)
 
 
-def get_ranges(asym_id, start, end):
+def get_ranges(asym_id, start, end):  # noqa: C901 too complex
 
     def order(start, end, start_code, end_code):
         """Returns (start_code, end_code) ordered such that start < end."""
@@ -426,7 +427,7 @@ def get_ranges(asym_id, start, end):
         return result
 
     def insert_code(asym_id, cif_num):
-        if stored.seq_scheme[asym_id][cif_num]['PDBinsCode'] == None:
+        if not stored.seq_scheme[asym_id][cif_num]['PDBinsCode']:
             pdb_num = stored.seq_scheme[asym_id][cif_num]['PDBnum']
         else:
             pdb_num = '%s%s' % (
@@ -434,7 +435,7 @@ def get_ranges(asym_id, start, end):
                 stored.seq_scheme[asym_id][cif_num]['PDBinsCode'])
 
         if re.search('-', str(pdb_num)):
-            pdb_num = re.sub('-', '\-', str(pdb_num))
+            pdb_num = re.sub('-', '\\-', str(pdb_num))
 
         return pdb_num
 
@@ -599,7 +600,7 @@ class Validation(object):
         else:
             logging.debug('No validation for this entry')
 
-            ### this takes too long for really large entries.
+            # This takes too long for really large entries.
             # Validation.per_chain_per_residue_validation(
             #   pdbid, res_data, rama_data)
 
@@ -623,17 +624,16 @@ class Validation(object):
         Color.set_validation_color(color_num, selection)
 
     @classmethod
-    def geometric_validation(cls, pdbid, res_data, chain=False, model=1):
+    def geometric_validation(cls, pdbid, res_data):
         """check for geometric validation outliers in res_data """
         try:
             molecules = res_data[pdbid]['molecules']
-        except:
+        except Exception:
             molecules = []
             logging.debug('no residue validation for this entry')
 
         for molecule in molecules:
             # logging.debug(molecule)
-            entity_id = molecule['entity_id']
             for chain in molecule['chains']:
                 chain_id = chain['chain_id']
                 # logging.debug(chain_id)
@@ -646,7 +646,6 @@ class Validation(object):
                         for outlier in outliers:
                             PDB_res_num = outlier['author_residue_number']
                             PDB_ins_code = outlier['author_insertion_code']
-                            alt_code = outlier['alt_code']
                             if PDB_ins_code not in [None, ' ']:
                                 PDB_res_num = '%s%s' % (PDB_res_num,
                                                         PDB_ins_code)
@@ -654,16 +653,16 @@ class Validation(object):
                             # logging.debug(PDB_res_num)
                             selection = 'chain %s and resi %s' % (chain_id,
                                                                   PDB_res_num)
-                            if model == 1 or model_id:
-                                if not chain or chain_id:
-                                    cls.validation_selection(selection, pdbid)
+                            if (model == 1 or model_id) and (not chain or
+                                                             chain_id):
+                                cls.validation_selection(selection, pdbid)
 
     @classmethod
     def ramachandran_validation(cls, pdbid, rama_data, chain=False, model=1):
         """display ramachandran outliers"""
         try:
             rama = rama_data[pdbid]
-        except:
+        except Exception:
             rama = []
 
         for k in rama:
@@ -672,12 +671,10 @@ class Validation(object):
                 logging.debug('ramachandran %s for this entry' % k)
                 for outlier in rama_data[pdbid][k]:
                     # logging.debug(outlier)
-                    entity_id = outlier['entity_id']
                     model_id = int(outlier['model_id'])
                     chain_id = outlier['chain_id']
                     PDB_res_num = outlier['author_residue_number']
                     PDB_ins_code = outlier['author_insertion_code']
-                    alt_code = outlier['alt_code']
 
                     if PDB_ins_code not in [None, ' ']:
                         PDB_res_num = '%s%s' % (PDB_res_num, PDB_ins_code)
@@ -704,9 +701,6 @@ class Validation(object):
         for molecule in stored.molecules.get(pdbid, []):
             # logging.debug(molecule)
             molecule_type = molecule['molecule_type']
-            ca_only_list = []
-            if molecule['ca_p_only'] != False:
-                ca_only_list = molecule['ca_p_only']
             if molecule_type not in ['Water', 'Bound']:
                 for a in molecule['in_struct_asyms']:
                     if not stored.seq_scheme:
@@ -738,7 +732,7 @@ class Validation(object):
         # logging.debug(stored.residues)
 
 
-def show_molecules(pdbid):
+def show_molecules(pdbid):  # noqa: C901 too complex
     logging.debug('Display entities')
     cmd.set('cartoon_transparency', 0.3, pdbid)
     cmd.set('ribbon_transparency', 0.3, pdbid)
@@ -755,7 +749,7 @@ def show_molecules(pdbid):
         # logging.debug('molecule %s: %s' %(molecule['entity_id'], entity_name))
 
         # logging.debug(molecule['entity_id'])
-        ####see if its polymeric
+        # see if its polymeric
         molecule_type = molecule['molecule_type']
         # entity_name = molecule['molecule_name']
         if entity_name:
@@ -773,8 +767,8 @@ def show_molecules(pdbid):
                 if not stored.seq_scheme:
                     poly_seq_scheme(pdbid)
                 if molecule_type == 'Bound':
-                    ## bound molecules have no CIFresidue number and this is
-                    ## defaulted to 1 in the API
+                    # bound molecules have no CIFresidue number and this is
+                    # defaulted to 1 in the API
                     # logging.debug(entity_name)
                     # logging.debug(stored.seq_scheme[a])
                     for res in stored.seq_scheme[a]:
@@ -784,7 +778,7 @@ def show_molecules(pdbid):
                         res = ''
                         display_type = 'spheres'
                         # logging.debug(short)
-                        if short['PDBinsCode'] == None:
+                        if not short['PDBinsCode']:
                             res = str(short['PDBnum'])
                         else:
                             res = str(short['PDBnum']) + short['PDBinsCode']
@@ -793,12 +787,12 @@ def show_molecules(pdbid):
                         object_selection.append(selection)
                         # logging.debug(selection)
                 else:
-                    ###find the first and last residues
+                    # find the first and last residues
                     start = 1
                     end = molecule['length']
                     asym_id = a
-                    ### need to work out if cartoon is the right thing to
-                    ### display
+                    # need to work out if cartoon is the right thing to
+                    # display
                     length = molecule['length']
                     display_type = poly_display_type(asym_id, molecule_type,
                                                      length)
@@ -855,11 +849,11 @@ def show_assemblies(pdbid, mm_cif_file):
                 cmd.set('assembly', assembly_id)
                 cmd.load(mm_cif_file, assembly_name, format='cif')
                 logging.debug('finished Assembly: %s' % (assembly_id))
-    except:
+    except Exception:
         logging.debug('pymol version does not support assemblies')
 
 
-def map_domains(pdbid):
+def map_domains(pdbid):  # noqa: C901 too complex
     """make domain objects"""
     if not stored.seq_scheme:
         poly_seq_scheme(pdbid)
@@ -897,10 +891,8 @@ def map_domains(pdbid):
                 # logging.debug(domain_type)
                 # logging.debug(domain)
                 for mapping in data[pdbid][domain_type][domain]['mappings']:
-                    PDBstart = ''
-                    PDBend = ''
                     # check segment id
-                    domain_segment_id = mapping.get('segment_id', 1)
+                    # domain_segment_id = mapping.get('segment_id', 1)
                     domain_name = str(
                         mapping.get(segment_identifier[domain_type], ''))
                     # logging.debug('%s: %s' % (domain_name, domain_segment_id))
@@ -919,9 +911,8 @@ def map_domains(pdbid):
                             store_domain(asym_id, chain, start, end, entity_id)
 
 
-def show_domains(pdbid):
+def show_domains(pdbid):  # noqa: C901 too complex
     map_domains(pdbid)
-
     if not stored.domains:
         return
 
@@ -1000,7 +991,8 @@ def show_domains(pdbid):
         cmd.delete('test_select')
 
 
-def PDBe_startup(pdbid, method, mm_cif_file=None, file_path=None):
+def PDBe_startup(  # noqa: 901 too complex
+    pdbid, method, mm_cif_file=None, file_path=None):
     if pdbid:
         pdbid = pdbid.lower()
     if mm_cif_file:
@@ -1008,11 +1000,11 @@ def PDBe_startup(pdbid, method, mm_cif_file=None, file_path=None):
         if re.search('_', filename):
             pdbid = re.split('_', filename)[0].lower()
         else:
-            pdbid = re.split('\.', filename)[0].lower()
+            pdbid = re.split('[.]', filename)[0].lower()
 
     try:
         cmd.set('cif_keepinmemory')
-    except:
+    except Exception:
         logging.exception(
             'version of pymol does not support keeping all cif items')
 
@@ -1046,10 +1038,10 @@ def PDBe_startup(pdbid, method, mm_cif_file=None, file_path=None):
                         file_path = _UPDATED_FTP % pdbid
                         logging.debug('setting connect mode to mode 4')
                         cmd.set('connect_mode', 4)
-                    except:
+                    except Exception:
                         logging.exception(
-                            'pymol version does not support assemblies or connect mode 4'
-                        )
+                            'pymol version does not support assemblies or '
+                            'connect mode 4')
                         file_path = _EBI_FTP % (mid_pdb, pdbid)
 
             logging.debug('File to load: %s' % file_path)
@@ -1170,7 +1162,7 @@ class PdbIdAutocomplete(cmd.Shortcut):
             # indicate that the key is invalid.
             try:
                 title = summary[key][0]['title']
-            except:
+            except Exception:
                 return None
             # We've got a valid key. Show the title of that PDB entry to the
             # user and make the key the only possible autocomplete match.

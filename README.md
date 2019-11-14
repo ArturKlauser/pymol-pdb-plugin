@@ -43,4 +43,5 @@ feel free to send a pull request.
 Please conform to the
 [Google Python style guide](http://google.github.io/styleguide/pyguide.html).
 The code in this repository is auto-formatted with
-(yapf)[https://github.com/google/yapf/] --style google.
+[yapf](https://github.com/google/yapf/) --style google and linted with
+[flake8](http://flake8.pycqa.org/).
