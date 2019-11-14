@@ -744,112 +744,103 @@ def show_molecules(pdbid):
     logging.debug('Display entities')
     cmd.set('cartoon_transparency', 0.3, pdbid)
     cmd.set('ribbon_transparency', 0.3, pdbid)
-    num = 1
-    if stored.molecules == {}:
+    if not stored.molecules:
         stored.molecules = pdb.get_molecules(pdbid)
-    if pdbid in stored.molecules:
-        for molecule in stored.molecules[pdbid]:
-            entity_name = ''
-            if molecule['molecule_name']:
-                if len(molecule['molecule_name']) > 1:
-                    for instance, mol in enumerate(molecule['molecule_name']):
-                        if mol != molecule['molecule_name'][-1]:
-                            mol = mol + '-'
-                            entity_name += mol
+    for molecule in stored.molecules.get(pdbid, []):
+        if molecule['molecule_name']:
+            entity_name = '-'.join(molecule['molecule_name'])
+            if len(molecule['molecule_name']) > 1:
+                entity_name += '_chimera'
+        else:
+            logging.debug('No name from the API')
+            entity_name = 'entity_%s' % (molecule['entity_id'])
+        # logging.debug('molecule %s: %s' %(molecule['entity_id'], entity_name))
+
+        # logging.debug(molecule['entity_id'])
+        ####see if its polymeric
+        molecule_type = molecule['molecule_type']
+        # entity_name = molecule['molecule_name']
+        if entity_name:
+            object_name = re.sub(' ', '_', entity_name)
+            object_name = re.sub(r'\W+', '', object_name)
+        else:
+            object_name = 'entity_%s' % (molecule['entity_id'])
+        # logging.debug(object_name)
+        display_type = ''
+        object_selection = []
+        pymol_selection = ''
+        if molecule_type != 'Water':
+            # use asym to find residue number and chain ID
+            for a in molecule['in_struct_asyms']:
+                if not stored.seq_scheme:
+                    poly_seq_scheme(pdbid)
+                if molecule_type == 'Bound':
+                    ## bound molecules have no CIFresidue number and this is
+                    ## defaulted to 1 in the API
+                    # logging.debug(entity_name)
+                    # logging.debug(stored.seq_scheme[a])
+                    for res in stored.seq_scheme[a]:
+                        # logging.debug(stored.seq_scheme[a][res])
+                        short = stored.seq_scheme[a][res]
+                        chain = short['chainID']
+                        res = ''
+                        display_type = 'spheres'
+                        # logging.debug(short)
+                        if short['PDBinsCode'] == None:
+                            res = str(short['PDBnum'])
                         else:
-                            entity_name += mol
-                    entity_name = entity_name + '_chimera'
+                            res = str(short['PDBnum']) + short['PDBinsCode']
+                        selection = 'chain %s and resi %s and %s' % (chain, res,
+                                                                     pdbid)
+                        object_selection.append(selection)
+                        # logging.debug(selection)
                 else:
-                    entity_name = molecule['molecule_name'][0]
-            else:
-                logging.debug('No name from the API')
-                entity_name = 'entity_%s' % (molecule['entity_id'])
-            # logging.debug('molecule %s: %s' %(molecule['entity_id'], entity_name))
+                    ###find the first and last residues
+                    start = 1
+                    end = molecule['length']
+                    asym_id = a
+                    ### need to work out if cartoon is the right thing to
+                    ### display
+                    length = molecule['length']
+                    display_type = poly_display_type(asym_id, molecule_type,
+                                                     length)
+                    # logging.debug(asym_id)
+                    ranges = get_ranges(asym_id, start, end)
+                    # logging.debug(ranges)
+                    for r in ranges:
+                        start = r['PDBstart']
+                        end = r['PDBend']
+                        chain = r['chainID']
+                        selection = 'chain %s and resi %s-%s and %s' % (
+                            chain, start, end, pdbid)
+                        # logging.debug(selection)
+                        object_selection.append(selection)
 
-            # logging.debug(molecule['entity_id'])
-            ####see if its polymeric
-            mol_type = molecule['molecule_type']
-            # entity_name = molecule['molecule_name']
-            if entity_name:
-                objectName = re.sub(' ', '_', entity_name)
-                objectName = re.sub(r'\W+', '', objectName)
-            else:
-                objectName = 'entity_%s' % (molecule['entity_id'])
-            # logging.debug(objectName)
-            display_type = ''
-            object_selection = []
-            pymol_selection = ''
-            if mol_type != 'Water':
-                # use asym to find residue number and chain ID
-                for a in molecule['in_struct_asyms']:
-                    if stored.seq_scheme == {}:
-                        poly_seq_scheme(pdbid)
-                    if mol_type == 'Bound':
-                        ##bound molecules have no CIFresidue number and this is defaulted to 1 in the API
-                        # logging.debug(entity_name)
-                        # logging.debug(stored.seq_scheme[a])
-                        for res in stored.seq_scheme[a]:
-                            # logging.debug(stored.seq_scheme[a][res])
-                            short = stored.seq_scheme[a][res]
-                            chain = short['chainID']
-                            res = ''
-                            display_type = 'spheres'
-                            # logging.debug(short)
-                            if short['PDBinsCode'] == None:
-                                res = str(short['PDBnum'])
-                            else:
-                                res = str(short['PDBnum']) + short['PDBinsCode']
-                            selection = 'chain %s and resi %s and %s' % (
-                                chain, res, pdbid)
-                            object_selection.append(selection)
-                            # logging.debug(selection)
+            for o in object_selection:
+                if len(object_selection) > 1:
+                    if o == object_selection[-1]:
+                        pymol_selection += '(%s)' % (o)
                     else:
-                        ###find the first and last residues
-                        start = 1
-                        end = molecule['length']
-                        asym_id = a
-                        ###need to work out if cartoon is the right thing to display
-                        length = molecule['length']
-                        display_type = poly_display_type(
-                            asym_id, mol_type, length)
-                        # logging.debug(asym_id)
-                        x = get_ranges(asym_id, start, end)
-                        # logging.debug(x)
-                        if x:
-                            for y in x:
-                                start = y['PDBstart']
-                                end = y['PDBend']
-                                chain = y['chainID']
-                                selection = 'chain %s and resi %s-%s and %s' % (
-                                    chain, start, end, pdbid)
-                                # logging.debug(selection)
-                                object_selection.append(selection)
+                        pymol_selection += '(%s) or ' % (o)
+                else:
+                    pymol_selection += '%s' % (o)
 
-                for o in object_selection:
-                    if len(object_selection) > 1:
-                        if o == object_selection[-1]:
-                            pymol_selection += '(%s)' % (o)
-                        else:
-                            pymol_selection += '(%s) or ' % (o)
-                    else:
-                        pymol_selection += '%s' % (o)
+            logging.debug(pymol_selection)
+            if len(object_name) > 250:
+                object_name = object_name[:249]
+            cmd.select('test_select', pymol_selection)
+            cmd.create(object_name, 'test_select')
+            # logging.debug(display_type)
+            cmd.show(display_type, object_name)
 
-                # logging.debug(pymol_selection)
-                if len(objectName) > 250:
-                    objectName = objectName[:249]
-                cmd.select('test_select', pymol_selection)
-                cmd.create(objectName, 'test_select')
-                # logging.debug(display_type)
-                cmd.show(display_type, objectName)
-
-                # color by molecule.
-                Color.set_object_color(int(molecule['entity_id']), objectName)
+            # color by molecule.
+            Color.set_object_color(int(molecule['entity_id']), object_name)
 
     cmd.delete('test_select')
     # cmd.show('cartoon', pdbid)
 
 
-def show_assemblies(pdbid, mmCIF_file):
+def show_assemblies(pdbid, mm_cif_file):
     """iterate through the assemblies and output images"""
     logging.info('Generating assemblies')
     # cmd.hide('everything')
@@ -859,13 +850,13 @@ def show_assemblies(pdbid, mmCIF_file):
         assemblies = cmd.get_assembly_ids(pdbid)  # list or None
         logging.debug(assemblies)
         if assemblies:
-            for a_id in assemblies:
-                logging.debug('Assembly: %s' % (a_id))
-                assembly_name = pdbid + '_assem_' + a_id
+            for assembly_id in assemblies:
+                logging.debug('Assembly: %s' % (assembly_id))
+                assembly_name = pdbid + '_assem_' + assembly_id
                 logging.debug(assembly_name)
-                cmd.set('assembly', a_id)
-                cmd.load(mmCIF_file, assembly_name, format='cif')
-                logging.debug('finished Assembly: %s' % (a_id))
+                cmd.set('assembly', assembly_id)
+                cmd.load(mm_cif_file, assembly_name, format='cif')
+                logging.debug('finished Assembly: %s' % (assembly_id))
     except:
         logging.debug('pymol version does not support assemblies')
 
