@@ -865,77 +865,60 @@ def map_domains(pdbid):
     """make domain objects"""
     if not stored.seq_scheme:
         poly_seq_scheme(pdbid)
-    domain_to_make = ['CATH', 'SCOP', 'Pfam', 'Rfam']
     segment_identifier = {
         'CATH': 'domain',
         'SCOP': 'scop_id',
         'Pfam': '',
         'Rfam': ''
     }
+    domain_to_make = frozenset(segment_identifier.keys())
+
+    def store_domain(asym_id, chain, start, end, entity_id):
+        stored.domains.setdefault(domain_type,
+                                  {}).setdefault(domain, {}).setdefault(
+                                      domain_name, []).append({
+                                          'asym_id': asym_id,
+                                          'chain': chain,
+                                          'start': start,
+                                          'end': end,
+                                          'entity_id': entity_id
+                                      })
+
     protein_domains = pdb.get_protein_domains(pdbid)
     nucleic_domains = pdb.get_nucleic_domains(pdbid)
     for data in [protein_domains, nucleic_domains]:
-        if data == {}:
+        if not data:
             logging.debug('no domain information for this entry')
-        else:
-            for domain_type in data[pdbid]:
-                if domain_type in domain_to_make:
-                    for domain in data[pdbid][domain_type]:
-                        if data[pdbid][domain_type][domain]['mappings']:
-                            identifier = data[pdbid][domain_type][domain][
-                                'identifier']
-                            # logging.debug(domain_type)
-                            # logging.debug(domain)
-                            for mapping in data[pdbid][domain_type][domain][
-                                    'mappings']:
-                                PDBstart = ''
-                                PDBend = ''
-                                domain_segment_id = ''
-                                domain_name = ''
-                                # check segment id
-                                if 'segment_id' in mapping:
-                                    domain_segment_id = mapping['segment_id']
-                                else:
-                                    # force it to be one if its missing
-                                    domain_segment_id = 1
-                                if segment_identifier[domain_type] in mapping:
-                                    domain_name = str(mapping[
-                                        segment_identifier[domain_type]])
-                                # logging.debug('%s: %s' %(domain_name, domain_segment_id))
+            continue
+        for domain_type in data[pdbid]:
+            if domain_type not in domain_to_make:
+                continue
+            for domain in data[pdbid][domain_type]:
+                if not data[pdbid][domain_type][domain]['mappings']:
+                    continue
+                # logging.debug(domain_type)
+                # logging.debug(domain)
+                for mapping in data[pdbid][domain_type][domain]['mappings']:
+                    PDBstart = ''
+                    PDBend = ''
+                    # check segment id
+                    domain_segment_id = mapping.get('segment_id', 1)
+                    domain_name = str(
+                        mapping.get(segment_identifier[domain_type], ''))
+                    # logging.debug('%s: %s' % (domain_name, domain_segment_id))
 
-                                # then check it exits
-                                start = mapping['start']['residue_number']
-                                end = mapping['end']['residue_number']
-                                chain = mapping['chain_id']
-                                entity_id = mapping['entity_id']
-                                asym_id = mapping['struct_asym_id']
-                                if asym_id in stored.seq_scheme:
-                                    x = get_ranges(asym_id, start, end)
-                                    if x:
-                                        for y in x:
-                                            start = y['PDBstart']
-                                            end = y['PDBend']
-                                            try:
-                                                stored.domains[domain_type][
-                                                    domain][domain_name].append(
-                                                        {
-                                                            'asym_id':
-                                                                asym_id,
-                                                            'chain':
-                                                                chain,
-                                                            'start':
-                                                                start,
-                                                            'end':
-                                                                end,
-                                                            'entity_id':
-                                                                entity_id
-                                                        })
-                                            except:
-                                                stored.domains.setdefault(domain_type, {}) \
-                                                    .setdefault(domain, {}) \
-                                                    .update({domain_name: [
-                                                    {'asym_id': asym_id, 'chain': chain, 'start': start, 'end': end,
-                                                     'entity_id': entity_id}]})
+                    # then check it exits
+                    start = mapping['start']['residue_number']
+                    end = mapping['end']['residue_number']
+                    chain = mapping['chain_id']
+                    entity_id = mapping['entity_id']
+                    asym_id = mapping['struct_asym_id']
+                    if asym_id in stored.seq_scheme:
+                        ranges = get_ranges(asym_id, start, end)
+                        for r in ranges:
+                            start = r['PDBstart']
+                            end = r['PDBend']
+                            store_domain(asym_id, chain, start, end, entity_id)
 
 
 def show_domains(pdbid):
