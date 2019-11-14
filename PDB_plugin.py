@@ -57,6 +57,7 @@ import sys
 import time
 
 import pymol
+import pymol.plugins
 from pymol import cmd
 from pymol import stored
 from chempy.cif import *  # noqa: F401,F403
@@ -1346,20 +1347,24 @@ def __init_plugin__(app=None):
 
 def usage():
     usage = """
-        Usage
-            pymol PDB_plugin.py mmCIF_file_name
-        """
+Usage
+    pymol PDB_plugin.py [pdbid | mmCIF_file=<file>]
+
+        pdbid ... PDB entry ID; CIF data will be downloaded
+        file .... CIF file for a PDB entry.
+                  The file name should start with PDB ID.
+"""
     print(usage)
     # pymol.cmd.quit()
 
 
 # Run when used from the command line.
-def main():
+def main(argv=sys.argv):
     Initialize()
     mm_cif_file = None
     pdbid = None
-    logging.debug(sys.argv)
-    for arg in sys.argv:
+    logging.debug(argv)
+    for arg in argv:
         pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
         mm_cif_file_re = re.compile(r'mmCIF_file=(.*)')
 
@@ -1376,6 +1381,7 @@ def main():
         PDBe_startup(pdbid, 'all', mm_cif_file=mm_cif_file)
     else:
         logging.error('Please provide a pdbid or mmCIF_file=FILE after -- ')
+        usage()
 
 
 if __name__ == '__main__':

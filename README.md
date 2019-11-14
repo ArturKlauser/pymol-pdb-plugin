@@ -1,3 +1,10 @@
+<p align="center">
+  <a href="https://github.com/ArturKlauser/pymol-pdb-plugin/actions">
+    <img alt="GitHub Actions status"
+         src="https://github.com/ArturKlauser/pymol-pdb-plugin/workflows/PyMOL%20PDB%20Plugin%20CI%20Tests/badge.svg?branch=master&event=push">
+  </a>
+</p>
+
 # PDB plugin for PyMOL
 
 This repository is based on [PDBe's](https://pdbe.org/) PDB plugin for
