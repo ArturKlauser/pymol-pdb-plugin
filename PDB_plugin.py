@@ -582,10 +582,11 @@ def get_ranges(asym_id, start, end):
     return ranges
 
 
-class Validation:
+class Validation(object):
+    """Validation methods."""
 
-    def launch_validation(self, pdbid):
-
+    @classmethod
+    def launch_validation(cls, pdbid):
         val_data = pdb.get_validation(pdbid)
 
         if val_data:
@@ -594,16 +595,18 @@ class Validation:
             res_data = pdb.get_residue_validation(pdbid)
             rama_data = pdb.get_rama_validation(pdbid)
 
-            self.per_residue_validation(pdbid, res_data, rama_data)
+            cls.per_residue_validation(pdbid, res_data, rama_data)
         else:
             logging.debug('No validation for this entry')
 
-            ###this takes too long for really large entries.
-            # Validation().per_chain_per_residue_validation(pdbid, res_data, rama_data)
+            ### this takes too long for really large entries.
+            # Validation.per_chain_per_residue_validation(
+            #   pdbid, res_data, rama_data)
 
     """validation of all polymeric entries"""
 
-    def validation_selection(self, selection, display_id):
+    @staticmethod
+    def validation_selection(selection, display_id):
         # logging.debug(selection)
 
         # uses a list so 0 means that there is one outlier for this residue.
@@ -619,123 +622,118 @@ class Validation:
             color_num = 2
         Color.set_validation_color(color_num, selection)
 
-    def geometric_validation(self, pdbid, res_data, chain=False, model=1):
+    @classmethod
+    def geometric_validation(cls, pdbid, res_data, chain=False, model=1):
         """check for geometric validation outliers in res_data """
+        try:
+            molecules = res_data[pdbid]['molecules']
+        except:
+            molecules = []
+            logging.debug('no residue validation for this entry')
 
-        if res_data:
-            if pdbid in res_data:
-                if 'molecules' in res_data[pdbid]:
-                    if res_data[pdbid]['molecules']:
-                        for molecule in res_data[pdbid]['molecules']:
-                            # logging.debug(molecule)
-                            entity_id = molecule['entity_id']
-                            for chain in molecule['chains']:
-                                chain_id = chain['chain_id']
-                                # logging.debug(chain_id)
-                                for model in chain['models']:
-                                    model_id = int(model['model_id'])
-                                    for outlier_type in model['outlier_types']:
-                                        outliers = model['outlier_types'][
-                                            outlier_type]
-                                        # logging.debug(outlier_type)
-                                        # logging.debug(outliers)
-                                        for outlier in outliers:
-                                            PDB_res_num = outlier[
-                                                'author_residue_number']
-                                            PDB_ins_code = outlier[
-                                                'author_insertion_code']
-                                            alt_code = outlier['alt_code']
-                                            if PDB_ins_code not in [None, ' ']:
-                                                PDB_res_num = '%s%s' % (
-                                                    PDB_res_num, PDB_ins_code)
-
-                                            # logging.debug(PDB_res_num)
-                                            selection = 'chain %s and resi %s' % (
-                                                chain_id, PDB_res_num)
-                                            if model == 1 or model_id:
-                                                if chain == False or chain_id:
-                                                    self.validation_selection(
-                                                        selection, pdbid)
-
-                    else:
-                        logging.debug('no residue validation for this entry')
-
-    def ramachandran_validation(self, pdbid, rama_data, chain=False, model=1):
-        """display ramachandran outliers"""
-
-        if rama_data:
-            if pdbid in rama_data:
-                for k in rama_data[pdbid]:
-                    v = rama_data[pdbid][k]
-                    if v:
-                        logging.debug('ramachandran %s for this entry' % k)
-                        for outlier in rama_data[pdbid][k]:
-                            # logging.debug(outlier)
-                            entity_id = outlier['entity_id']
-                            model_id = int(outlier['model_id'])
-                            chain_id = outlier['chain_id']
+        for molecule in molecules:
+            # logging.debug(molecule)
+            entity_id = molecule['entity_id']
+            for chain in molecule['chains']:
+                chain_id = chain['chain_id']
+                # logging.debug(chain_id)
+                for model in chain['models']:
+                    model_id = int(model['model_id'])
+                    for outlier_type in model['outlier_types']:
+                        outliers = model['outlier_types'][outlier_type]
+                        # logging.debug(outlier_type)
+                        # logging.debug(outliers)
+                        for outlier in outliers:
                             PDB_res_num = outlier['author_residue_number']
                             PDB_ins_code = outlier['author_insertion_code']
                             alt_code = outlier['alt_code']
-
                             if PDB_ins_code not in [None, ' ']:
                                 PDB_res_num = '%s%s' % (PDB_res_num,
                                                         PDB_ins_code)
 
+                            # logging.debug(PDB_res_num)
                             selection = 'chain %s and resi %s' % (chain_id,
                                                                   PDB_res_num)
                             if model == 1 or model_id:
-                                if chain == False or chain_id:
-                                    self.validation_selection(selection, pdbid)
-                            else:
-                                logging.debug(
-                                    'is multimodel!!!, outlier not in model 1, not shown.'
-                                )
+                                if not chain or chain_id:
+                                    cls.validation_selection(selection, pdbid)
 
+    @classmethod
+    def ramachandran_validation(cls, pdbid, rama_data, chain=False, model=1):
+        """display ramachandran outliers"""
+        try:
+            rama = rama_data[pdbid]
+        except:
+            rama = []
+
+        for k in rama:
+            v = rama_data[pdbid][k]
+            if v:
+                logging.debug('ramachandran %s for this entry' % k)
+                for outlier in rama_data[pdbid][k]:
+                    # logging.debug(outlier)
+                    entity_id = outlier['entity_id']
+                    model_id = int(outlier['model_id'])
+                    chain_id = outlier['chain_id']
+                    PDB_res_num = outlier['author_residue_number']
+                    PDB_ins_code = outlier['author_insertion_code']
+                    alt_code = outlier['alt_code']
+
+                    if PDB_ins_code not in [None, ' ']:
+                        PDB_res_num = '%s%s' % (PDB_res_num, PDB_ins_code)
+
+                    selection = 'chain %s and resi %s' % (chain_id, PDB_res_num)
+                    if model == 1 or model_id:
+                        if not chain or chain_id:
+                            cls.validation_selection(selection, pdbid)
                     else:
-                        logging.debug('no %s' % (k))
+                        logging.debug(
+                            'is multimodel!!!, outlier not in model 1,'
+                            ' not shown.')
 
-    def per_residue_validation(self, pdbid, res_data, rama_data):
+            else:
+                logging.debug('no %s' % (k))
+
+    @classmethod
+    def per_residue_validation(cls, pdbid, res_data, rama_data):
         """validation of all outliers, colored by number of outliers"""
 
         # display only polymers
-        if stored.molecules == {}:
+        if not stored.molecules:
             stored.molecules = pdb.get_molecules(pdbid)
-        if pdbid in stored.molecules:
-            for molecule in stored.molecules[pdbid]:
-                # logging.debug(molecule)
-                mol_type = molecule['molecule_type']
-                ca_only_list = []
-                if molecule['ca_p_only'] != False:
-                    ca_only_list = molecule['ca_p_only']
-                if mol_type not in ['Water', 'Bound']:
-                    for a in molecule['in_struct_asyms']:
-                        if stored.seq_scheme == {}:
-                            poly_seq_scheme(pdbid)
-                        start = 1
-                        end = molecule['length']
-                        length = molecule['length']
-                        asym_id = a
-                        display_type = poly_display_type(
-                            asym_id, 'polypeptide', length)
-                        # logging.debug(asym_id)
-                        x = get_ranges(asym_id, start, end)
-                        if x:
-                            for y in x:
-                                start = y['PDBstart']
-                                end = y['PDBend']
-                                chain = y['chainID']
-                                selection = 'chain %s and resi %s-%s and %s' % (
-                                    chain, start, end, pdbid)
-                                # logging.debug(selection)
-                                cmd.show(display_type, selection)
+        for molecule in stored.molecules.get(pdbid, []):
+            # logging.debug(molecule)
+            molecule_type = molecule['molecule_type']
+            ca_only_list = []
+            if molecule['ca_p_only'] != False:
+                ca_only_list = molecule['ca_p_only']
+            if molecule_type not in ['Water', 'Bound']:
+                for a in molecule['in_struct_asyms']:
+                    if not stored.seq_scheme:
+                        poly_seq_scheme(pdbid)
+                    start = 1
+                    end = molecule['length']
+                    length = molecule['length']
+                    asym_id = a
+                    display_type = poly_display_type(asym_id, 'polypeptide',
+                                                     length)
+                    # logging.debug(asym_id)
+                    ranges = get_ranges(asym_id, start, end)
+                    for r in ranges:
+                        start = r['PDBstart']
+                        end = r['PDBend']
+                        chain = r['chainID']
+                        selection = 'chain %s and resi %s-%s and %s' % (
+                            chain, start, end, pdbid)
+                        # logging.debug(selection)
+                        cmd.show(display_type, selection)
 
         Color.set_validation_background_color(pdbid)
         # display(pdbid, image_type)
         cmd.enable(pdbid)
 
-        self.geometric_validation(pdbid, res_data)
-        self.ramachandran_validation(pdbid, rama_data)
+        cls.geometric_validation(pdbid, res_data)
+        cls.ramachandran_validation(pdbid, rama_data)
 
         # logging.debug(stored.residues)
 
@@ -1002,11 +1000,11 @@ def show_domains(pdbid):
         cmd.delete('test_select')
 
 
-def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
+def PDBe_startup(pdbid, method, mm_cif_file=None, file_path=None):
     if pdbid:
         pdbid = pdbid.lower()
-    if mmCIF_file:
-        filename = os.path.basename(mmCIF_file)
+    if mm_cif_file:
+        filename = os.path.basename(mm_cif_file)
         if re.search('_', filename):
             pdbid = re.split('_', filename)[0].lower()
         else:
@@ -1033,8 +1031,8 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
 
         obj_list = cmd.get_object_list('all')
         if pdbid not in obj_list:
-            if mmCIF_file:
-                file_path = mmCIF_file
+            if mm_cif_file:
+                file_path = mm_cif_file
             else:
                 # if local file exists then use it
                 if os.path.exists('%s.cif' % (pdbid)):
@@ -1065,23 +1063,23 @@ def PDBe_startup(pdbid, method, mmCIF_file=None, file_path=None):
             show_molecules(pdbid)
             show_domains(pdbid)
         elif method == 'validation':
-            Validation().launch_validation(pdbid)
+            Validation.launch_validation(pdbid)
         elif method == 'assemblies':
             show_assemblies(pdbid, file_path)
         elif method == 'all':
             show_molecules(pdbid)
             show_domains(pdbid)
             show_assemblies(pdbid, file_path)
-            Validation().launch_validation(pdbid)
+            Validation.launch_validation(pdbid)
         else:
             logging.warning('provide a method')
         cmd.zoom(pdbid, complete=1)
 
-    elif mmCIF_file:
+    elif mm_cif_file:
         logging.warning('no PDB ID, show assemblies from mmCIF file')
-        cmd.load(mmCIF_file, pdbid, format='cif')
+        cmd.load(mm_cif_file, pdbid, format='cif')
         # WorkerFunctions.count_poly(pdbid)
-        show_assemblies(pdbid, mmCIF_file)
+        show_assemblies(pdbid, mm_cif_file)
 
     else:
         logging.error('please provide a 4 letter PDB code')
