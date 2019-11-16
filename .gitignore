@@ -3,3 +3,6 @@ __pycache__
 *.pyc
 # vim swap files
 *.swp
+# pytest coverage reports
+.coverage
+test_coverage/*

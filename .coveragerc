@@ -1,0 +1,13 @@
+[run]
+omit =
+    # omit pytest files
+    tests/*
+    # omit pymol package put here in CI workflow
+    pymol/*
+
+[html]
+directory = test_coverage/html
+title = PyMOL PDB Plugin Coverage Report
+
+[annotate]
+directory = test_coverage/annotation

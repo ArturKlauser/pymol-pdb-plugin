@@ -88,7 +88,17 @@ jobs:
       run: |
         # Install pytest into pymol's Python environment.
         pymol/bin/pip install --upgrade pip
-        pymol/bin/pip install pytest
+        pymol/bin/pip install pytest pytest-cov
         # To get the correct PYTHONPATH module search path to PDB_plugin.py,
         # start pytest via python -m instead of directly.
-        pymol/bin/python -m pytest
+        pymol/bin/python -m pytest \
+          --cov=. \
+          --cov-branch \
+          --cov-report html:test_coverage/html \
+          --cov-report annotate:test_coverage/annotation \
+          --cov-report term
+    - name: Upload code coverage results
+      uses: actions/upload-artifact@v1
+      with:
+        name: coverage-${{steps.pymol_name.outputs.short_name}}
+        path: test_coverage
