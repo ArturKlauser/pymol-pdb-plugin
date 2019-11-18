@@ -83,3 +83,36 @@ def test_exported_api():
     pymol.cmd.reinitialize()
     plugin.PDB_Analysis_Assemblies('5j96')
     assert plugin.count_chains() == 3
+
+
+def test_object_atom_count():
+    # For one data set, do a more in-depth comparison of generated objects and
+    # their atom counts.
+    plugin.PDB_Analysis_Domains('3mzw')
+    assert plugin.count_chains() == 2
+
+    expected_objects = {
+        # name, atom_count
+        '3mzw': 4950,
+        'Receptor_tyrosineprotein_kinase_erbB2': 4404,
+        'Immunoglobulin_Gbinding_protein_A': 430,
+        'NACETYLDGLUCOSAMINE': 56,
+        'Pfam_PF02216_': 399,
+        'Pfam_PF01030_': 1860,
+        'Pfam_PF00757_': 1192,
+        'Pfam_PF14843_': 693,
+        'CATH_3.80.20.20_3mzwA01': 1244,
+        'CATH_3.80.20.20_3mzwA03': 1316,
+        'CATH_1.20.5.420_3mzwB00': 430,
+        'CATH_2.10.220.10_3mzwA02': 817,
+        'CATH_2.10.220.10_3mzwA04': 663,
+    }
+
+    # Check object names.
+    object_names = pymol.cmd.get_object_list()
+    assert sorted(expected_objects.keys()) == sorted(object_names)
+
+    # Check atom counts.
+    for object_name in object_names:
+        atom_count = pymol.cmd.count_atoms(object_name)
+        assert expected_objects[object_name] == atom_count
