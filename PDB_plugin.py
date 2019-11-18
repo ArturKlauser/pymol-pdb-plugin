@@ -60,7 +60,6 @@ import pymol
 import pymol.plugins
 from pymol import cmd
 from pymol import stored
-from chempy.cif import *  # noqa: F401,F403
 
 # ftp site
 _EBI_FTP = ('ftp://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/'
@@ -320,8 +319,9 @@ class Color(object):
 
     @classmethod
     def set_validation_color(cls, color_num, obj):
-        """Colors object from predetermined set, reusing as necessary."""
-        color = cls._validation_colors[color_num % len(cls._validation_colors)]
+        """Colors object from predetermined set, clamping to max."""
+        color = cls._validation_colors[min(color_num,
+                                           len(cls._validation_colors) - 1)]
         cmd.color(color, obj)
 
     @classmethod
@@ -408,6 +408,15 @@ def poly_seq_scheme(pdbid):
                         'chainID': chain_id
                     }
                     # logging.debug(seq_scheme)
+
+
+class Range(object):
+    """Range object encapsulates a chain and resi start/end range."""
+
+    def __init__(self, start, end, chain):
+        self.start = start  # PDBstart
+        self.end = end  # PDBend
+        self.chain = chain  # chainID
 
 
 def get_ranges(asym_id, start, end):  # noqa: C901 too complex
@@ -529,17 +538,13 @@ def get_ranges(asym_id, start, end):  # noqa: C901 too complex
             start_code, end_code = order(start_pdb, current_pdb,
                                          insert_code(asym_id, block_start_cif),
                                          insert_code(asym_id, current_cif))
-            ranges.append({
-                'PDBstart': start_code,
-                'PDBend': end_code,
-                'chainID': chain
-            })
+            ranges.append(Range(start_code, end_code, chain))
             # move start to next block
             block_start_cif = next_cif
             continue
 
-        current_pdb = int(stored.seq_scheme[asym_id][current_cif]['PDBnum'])
-        next_pdb = int(stored.seq_scheme[asym_id][next_cif]['PDBnum'])
+        current_pdb = int(current_pdb)
+        next_pdb = int(next_pdb)
 
         if next_pdb - current_pdb > 1:
             # logging.debug('numbering not continues, positive '
@@ -548,11 +553,7 @@ def get_ranges(asym_id, start, end):  # noqa: C901 too complex
             start_code, end_code = order(start_pdb, current_pdb,
                                          insert_code(asym_id, block_start_cif),
                                          insert_code(asym_id, current_cif))
-            ranges.append({
-                'PDBstart': start_code,
-                'PDBend': end_code,
-                'chainID': chain
-            })
+            ranges.append(Range(start_code, end_code, chain))
             # move start to next block
             block_start_cif = next_cif
         elif current_pdb - next_pdb > 1:
@@ -562,23 +563,14 @@ def get_ranges(asym_id, start, end):  # noqa: C901 too complex
             start_code, end_code = order(start_pdb, current_pdb,
                                          insert_code(asym_id, block_start_cif),
                                          insert_code(asym_id, current_cif))
-            ranges.append({
-                'PDBstart': start_code,
-                'PDBend': end_code,
-                'chainID': chain
-            })
+            ranges.append(Range(start_code, end_code, chain))
             # move start to next block
             block_start_cif = next_cif
 
-    start_pdb = stored.seq_scheme[asym_id][block_start_cif]['PDBnum']
     start_code, end_code = order(block_start_cif, end,
                                  insert_code(asym_id, block_start_cif),
                                  insert_code(asym_id, end))
-    ranges.append({
-        'PDBstart': start_code,
-        'PDBend': end_code,
-        'chainID': chain
-    })
+    ranges.append(Range(start_code, end_code, chain))
     # logging.debug(ranges)
 
     return ranges
@@ -612,16 +604,11 @@ class Validation(object):
         # logging.debug(selection)
 
         # uses a list so 0 means that there is one outlier for this residue.
-
         if selection in stored.residues:
             color_num = stored.residues[selection] + 1
-            stored.residues[selection] = color_num
         else:
-            stored.residues.update({selection: 0})
             color_num = 0
-
-        if color_num > 2:
-            color_num = 2
+        stored.residues[selection] = color_num
         Color.set_validation_color(color_num, selection)
 
     @classmethod
@@ -630,8 +617,8 @@ class Validation(object):
         try:
             molecules = res_data[pdbid]['molecules']
         except Exception:
-            molecules = []
             logging.debug('no residue validation for this entry')
+            return
 
         for molecule in molecules:
             # logging.debug(molecule)
@@ -661,36 +648,34 @@ class Validation(object):
     @classmethod
     def ramachandran_validation(cls, pdbid, rama_data, chain=False, model=1):
         """display ramachandran outliers"""
-        try:
-            rama = rama_data[pdbid]
-        except Exception:
-            rama = []
 
-        for k in rama:
-            v = rama_data[pdbid][k]
-            if v:
-                logging.debug('ramachandran %s for this entry' % k)
-                for outlier in rama_data[pdbid][k]:
-                    # logging.debug(outlier)
-                    model_id = int(outlier['model_id'])
-                    chain_id = outlier['chain_id']
-                    PDB_res_num = outlier['author_residue_number']
-                    PDB_ins_code = outlier['author_insertion_code']
+        if pdbid not in rama_data:
+            return
 
-                    if PDB_ins_code not in [None, ' ']:
-                        PDB_res_num = '%s%s' % (PDB_res_num, PDB_ins_code)
+        for key in rama_data[pdbid]:
+            outliers = rama_data[pdbid][key]
+            if not outliers:
+                logging.debug('no %s' % (key))
+                continue
 
-                    selection = 'chain %s and resi %s' % (chain_id, PDB_res_num)
-                    if model == 1 or model_id:
-                        if not chain or chain_id:
-                            cls.validation_selection(selection, pdbid)
-                    else:
-                        logging.debug(
-                            'is multimodel!!!, outlier not in model 1,'
-                            ' not shown.')
+            logging.debug('ramachandran %s for this entry' % key)
+            for outlier in outliers:
+                # logging.debug(outlier)
+                model_id = int(outlier['model_id'])
+                chain_id = outlier['chain_id']
+                PDB_res_num = outlier['author_residue_number']
+                PDB_ins_code = outlier['author_insertion_code']
 
-            else:
-                logging.debug('no %s' % (k))
+                if PDB_ins_code not in [None, ' ']:
+                    PDB_res_num = '%s%s' % (PDB_res_num, PDB_ins_code)
+
+                selection = 'chain %s and resi %s' % (chain_id, PDB_res_num)
+                if model == 1 or model_id:
+                    if not chain or chain_id:
+                        cls.validation_selection(selection, pdbid)
+                else:
+                    logging.debug('is multimodel!!!, outlier not in model 1,'
+                                  ' not shown.')
 
     @classmethod
     def per_residue_validation(cls, pdbid, res_data, rama_data):
@@ -715,11 +700,8 @@ class Validation(object):
                     # logging.debug(asym_id)
                     ranges = get_ranges(asym_id, start, end)
                     for r in ranges:
-                        start = r['PDBstart']
-                        end = r['PDBend']
-                        chain = r['chainID']
                         selection = 'chain %s and resi %s-%s and %s' % (
-                            chain, start, end, pdbid)
+                            r.chain, r.start, r.end, pdbid)
                         # logging.debug(selection)
                         cmd.show(display_type, selection)
 
@@ -801,11 +783,8 @@ def show_molecules(pdbid):  # noqa: C901 too complex
                     ranges = get_ranges(asym_id, start, end)
                     # logging.debug(ranges)
                     for r in ranges:
-                        start = r['PDBstart']
-                        end = r['PDBend']
-                        chain = r['chainID']
                         selection = 'chain %s and resi %s-%s and %s' % (
-                            chain, start, end, pdbid)
+                            r.chain, r.start, r.end, pdbid)
                         # logging.debug(selection)
                         object_selection.append(selection)
 
@@ -907,15 +886,28 @@ def map_domains(pdbid):  # noqa: C901 too complex
                     if asym_id in stored.seq_scheme:
                         ranges = get_ranges(asym_id, start, end)
                         for r in ranges:
-                            start = r['PDBstart']
-                            end = r['PDBend']
-                            store_domain(asym_id, chain, start, end, entity_id)
+                            store_domain(asym_id, chain, r.start, r.end,
+                                         entity_id)
 
 
 def show_domains(pdbid):  # noqa: C901 too complex
     map_domains(pdbid)
     if not stored.domains:
         return
+
+    class Object(object):
+        """Object encapsulates information about a PDB object."""
+
+        def __init__(self, asym_list, entity_list):
+            self.asym_list = asym_list
+            self.entity_list = entity_list
+
+    class Chain(object):
+        """Chain encapsulates information about a PDB chain."""
+
+        def __init__(self, chain, entity_id):
+            self.chain = chain
+            self.entity_id = entity_id
 
     objects = {}
     chains = {}
@@ -938,7 +930,7 @@ def show_domains(pdbid):  # noqa: C901 too complex
 
                     asym_list.append(asym_id)
                     entity_list.append(entity_id)
-                    chains[asym_id] = {'chain': chain, 'entity_id': entity_id}
+                    chains[asym_id] = Chain(chain, entity_id)
 
                     selection = 'chain %s and resi %s-%s and %s' % (
                         chain, pdb_start, pdb_end, pdbid)
@@ -953,38 +945,34 @@ def show_domains(pdbid):  # noqa: C901 too complex
                         pymol_selection += '%s' % (o)
                 # logging.debug(pymol_selection)
                 object_name = '%s_%s_%s' % (domain_type, domain, instance)
-                objects[object_name] = {
-                    'asym_list': asym_list,
-                    'entity_list': entity_list
-                }
+                objects[object_name] = Object(asym_list, entity_list)
                 cmd.select('test_select', pymol_selection)
                 cmd.create(object_name, 'test_select')
 
-        for chain in chains:
-            logging.debug(chain)
-            c_select = 'chain %s and %s' % (chains[chain]['chain'], pdbid)
+        for asym_id, chain in chains.items():
+            logging.debug(asym_id)
+            c_select = 'chain %s and %s' % (chain.chain, pdbid)
 
-            entity_id = chains[chain]['entity_id']
             length = None
             for molecule in stored.molecules[pdbid]:
-                if entity_id == molecule['entity_id']:
+                if chain.entity_id == molecule['entity_id']:
                     length = molecule['length']
             display_type = poly_display_type(chain, 'polypeptide', length)
             cmd.show(display_type, c_select)
             cmd.color('grey', c_select)
         num = 1
         # logging.debug(objects)
-        for object_name in objects:
+        for object_name, obj in objects.items():
             # logging.debug(object_name)
             cmd.enable(object_name)
             # domain can span multiple asym_id's, could be different type
-            for i, a in enumerate(objects[object_name]['asym_list']):
-                entity_id = objects[object_name]['entity_list'][i]
+            for i, asym in enumerate(obj.asym_list):
+                entity_id = obj.entity_list[i]
                 length = None
                 for molecule in stored.molecules[pdbid]:
                     if entity_id == molecule['entity_id']:
                         length = molecule['length']
-                display_type = poly_display_type(a, 'polypeptide', length)
+                display_type = poly_display_type(asym, 'polypeptide', length)
                 cmd.show(display_type, object_name)
                 Color.set_object_color(num, object_name)
                 num += 1
