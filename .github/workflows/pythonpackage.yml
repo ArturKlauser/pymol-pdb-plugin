@@ -96,7 +96,8 @@ jobs:
           --cov-branch \
           --cov-report html:test_coverage/html \
           --cov-report annotate:test_coverage/annotation \
-          --cov-report term
+          --cov-report term \
+          -v
     - name: Upload code coverage results
       uses: actions/upload-artifact@v1
       with:
