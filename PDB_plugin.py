@@ -1299,7 +1299,13 @@ SEE ALSO
 
     get_chains
     """
-    n = len(cmd.get_chains(selection, state))
+    chains = cmd.get_chains(selection, state)
+    # PyMOL 2.0 returns -1 instead of [] if no chains are found.
+    if isinstance(chains, list):
+        n = len(chains)
+    else:
+        logging.warning("get_chains didn't return a list: %s" % chains)
+        n = 0
     print('count_chains: %s chains' % n)
     return n
 
