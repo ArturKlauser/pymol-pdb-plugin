@@ -19,6 +19,7 @@ def InitializePymol():
     pref_loglevel = 'PDB_PLUGIN_LOGLEVEL'
     orig_loglevel = pymol.plugins.pref_get(pref_loglevel, None)
     pymol.plugins.pref_set(pref_loglevel, 'DEBUG')
+    pymol.cmd.reinitialize()
 
     yield  # each test runs here
 
@@ -57,6 +58,28 @@ def test_run_main(argv):
     if not isinstance(argv, list):
         argv = [argv]
     plugin.main(argv)
-    plugin.count_chains()
-
     assert True
+
+
+def test_exported_api():
+    # Try calling each registered API function to make sure calling them doesn't
+    # break. We pass the pdbid to each function that is given as an example in
+    # it's help message. This has the added benefit of verifying that the
+    # help message example still runs. We do a cursory check on the result of
+    # count_chains, but otherwise correct functionality is not seriously checked
+    # here.
+
+    plugin.PDB_Analysis_Molecules('3l2p')
+    assert plugin.count_chains() == 4
+
+    pymol.cmd.reinitialize()
+    plugin.PDB_Analysis_Domains('3b43')
+    assert plugin.count_chains() == 1
+
+    pymol.cmd.reinitialize()
+    plugin.PDB_Analysis_Validation('2gc2')
+    assert plugin.count_chains() == 2
+
+    pymol.cmd.reinitialize()
+    plugin.PDB_Analysis_Assemblies('5j96')
+    assert plugin.count_chains() == 3
