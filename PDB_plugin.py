@@ -1316,11 +1316,13 @@ def Initialize():
 
     # set up logging of 'root' logger
     logger = logging.getLogger()
-    numeric_loglevel = getattr(logging, loglevel.upper(), None)
+    numeric_loglevel = None
+    if isinstance(loglevel, str):
+        numeric_loglevel = getattr(logging, loglevel.upper(), None)
     if numeric_loglevel is None:
         logger.setLevel(logging.WARNING)
-        logging.error('Preference ' + pref_loglevel + ' is invalid;' +
-                      ' using WARNING instead.')
+        logging.error('Invalid preference %s = "%s"; using WARNING instead.' %
+                      (pref_loglevel, loglevel))
     else:
         logger.setLevel(numeric_loglevel)
 
