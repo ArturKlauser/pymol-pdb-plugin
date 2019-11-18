@@ -7,6 +7,26 @@ import pytest
 import sys
 
 
+@pytest.fixture(autouse=True)
+def InitializePymol():
+    # --- setup ---
+    # Finish launching PyMOL without GUI.
+    if sys.version_info[0] == 2:
+        # Under pytest this apparently works only for python2. But it appears
+        # that PyMOL under python3 is happy enough without this call.
+        pymol.finish_launching(['pymol', '-cqk'])
+    # Temporarily turn on maximal log level to also test all logging statements.
+    pref_loglevel = 'PDB_PLUGIN_LOGLEVEL'
+    orig_loglevel = pymol.plugins.pref_get(pref_loglevel, None)
+    pymol.plugins.pref_set(pref_loglevel, 'DEBUG')
+
+    yield  # each test runs here
+
+    # --- teardown ---
+    if orig_loglevel is not None:
+        pymol.plugins.pref_set(pref_loglevel, orig_loglevel)
+
+
 def test_initialize_plugin():
     # Initialize the plugin, but don't perform any actions. The initialization
     # can't actually 'addmenuitemqt' since pymol.qt hasn't been initialized, but
@@ -24,26 +44,16 @@ def test_initialize_plugin():
         '',
         'invalid_pdb_id',
         '3mxw',  # valid PDB ID
-        # This exits by raising an exception - disable for now.
-        # 'mmCIF_file=tests/data/invalid_file_name',
+        pytest.param('mmCIF_file=tests/data/invalid_file_name',
+                     marks=pytest.mark.xfail(raises=pymol.CmdException,
+                                             reason='fails to open file')),
         'mmCIF_file=tests/data/3mxw.cif',  # valid file name
         ['3mxw', 'mmCIF_file=tests/data/3mxw.cif'],  # both
     ])
 def test_run_main(argv):
-    # Finish launching PyMOL without GUI.
-    if sys.version_info[0] == 2:
-        # Under pytest this apparently works only for python2. But it appears
-        # that PyMOL under python3 is happy enough without this call.
-        pymol.finish_launching(['pymol', '-cq'])
-
     # Load and initialize the module and attempt main().
     # We just want to make sure nothing is crashing at this point.
-
-    # Turn on maximal log level in order to also test all logging statements.
-    pref_loglevel = 'PDB_PLUGIN_LOGLEVEL'
-    pymol.plugins.pref_set(pref_loglevel, 'DEBUG')
-
-    # We allow argv singletons for convenience; now wrap them.
+    # Allow argv singletons for convenience; now wrap them.
     if not isinstance(argv, list):
         argv = [argv]
     plugin.main(argv)
