@@ -144,7 +144,7 @@ class PdbFetcher(object):
         elif response.status_code == 404:
             data = {}
         else:
-            logging.debug(response.status_code, response.reason)
+            logging.debug('%d %s' % (response.status_code, response.reason))
             data = {}
 
         return data
@@ -249,7 +249,7 @@ class PdbApi(object):
 
     def _get_url(self, api_url, pdbid):
         url = '/'.join((self._server_root, api_url, pdbid))
-        logging.debug('url:', url)
+        logging.debug('url: %s' % url)
         return url
 
 
