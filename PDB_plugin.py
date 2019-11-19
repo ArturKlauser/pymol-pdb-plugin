@@ -790,8 +790,7 @@ def show_molecules(pdbid):  # noqa: C901 too complex
             pymol_selection = ' or '.join(
                 ['(%s)' % x for x in object_selections])
             logging.debug(pymol_selection)
-            if len(object_name) > 250:
-                object_name = object_name[:249]
+            object_name = object_name[:250]
             cmd.select('test_select', pymol_selection)
             cmd.create(object_name, 'test_select')
             # logging.debug(display_type)
