@@ -116,3 +116,81 @@ def test_object_atom_count():
     for object_name in object_names:
         atom_count = pymol.cmd.count_atoms(object_name)
         assert expected_objects[object_name] == atom_count
+
+
+def test_pdb_autocomplete(capsys):
+    """Tests the PDB ID autocomplete class."""
+
+    # --- Get helpful explanation for valid partial key.
+    autocompleter = plugin.PdbIdAutocomplete(get_summary=lambda key: None)
+    for i in range(4):
+        completion = autocompleter.interpret('1' * i)
+        assert completion is not None
+        # Completion should be a list > 1 elements to indicate that there are
+        # still various options.
+        assert isinstance(completion, list)
+        assert len(completion) > 1
+
+    # --- Get None for invalid partial key.
+    autocompleter = plugin.PdbIdAutocomplete(
+        get_summary=lambda key: {key: [{
+            'title': 'Title for ' + key
+        }]})
+    for i in range(1, 4):  # 0-length is covered above
+        completion = autocompleter.interpret('a' * i)
+        assert completion is None
+
+    # --- Get None for bad key.
+    autocompleter = plugin.PdbIdAutocomplete(get_summary=lambda key: None)
+    # check cache miss and hit
+    for test in ['cache miss', 'cache hit']:
+        completion = autocompleter.interpret('bad_key')
+        assert completion is None
+
+    # --- Get != None for good key. Also check that returned key is lower()ed.
+    autocompleter = plugin.PdbIdAutocomplete(
+        get_summary=lambda key: {key: [{
+            'title': 'Title for ' + key
+        }]})
+    key = 'Good_Key'
+    assert key != key.lower()  # check for testcase internal bug
+    # check cache miss and hit
+    for test in ['cache miss', 'cache hit']:
+        completion = autocompleter.interpret(key)
+        assert completion == key.lower()
+        captured = capsys.readouterr()
+        assert 'Title for %s' % key.lower() in captured.out
+
+    # --- Check cache purge path.
+    autocompleter = plugin.PdbIdAutocomplete(
+        get_summary=lambda key: {key: [{
+            'title': 'Title for ' + key
+        }]})
+    # fill up cache with new keys
+    for i in range(plugin.PdbIdAutocomplete.MAX_CACHE_SIZE):
+        key = 'key%d' % i
+        completion = autocompleter.interpret(key)
+        assert completion == key
+        captured = capsys.readouterr()
+        assert 'Title for %s' % key in captured.out
+    # exceed cache size; will execute cache purge code path
+    key = 'purge_key'
+    completion = autocompleter.interpret(key)
+    assert completion == key
+    captured = capsys.readouterr()
+    assert 'Title for %s' % key in captured.out
+
+    # --- Get None when invalid summary format is returned.
+    autocompleter = plugin.PdbIdAutocomplete(
+        get_summary=lambda key: {key: 'Title for ' + key})
+    key = 'good_key'
+    completion = autocompleter.interpret(key)
+    assert completion is None
+
+    # --- Check built-in access of summary data via PDB lookup.
+    autocompleter = plugin.PdbIdAutocomplete()
+    key = '3mzw'
+    completion = autocompleter.interpret(key)
+    assert completion == key
+    captured = capsys.readouterr()
+    assert 'HER2' in captured.out

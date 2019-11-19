@@ -1129,6 +1129,39 @@ class PdbIdAutocomplete(cmd.Shortcut):
     verify full-length keys with the PDB, showing the entry title as guidance.
     """
 
+    MAX_CACHE_SIZE = 100
+
+    def __init__(self, get_summary=None):
+        """Constructor.
+        Args:
+            get_summary: Function that takes the pdbid as its only argument
+                and returns a PDB summary or None if the pdbid is not valid.
+        """
+
+        # for dependency injection
+        self._get_summary = (get_summary if get_summary else
+                             lambda key: pdb.get_summary(key))
+        self._title_cache = {}
+
+    def _get_title_from_pdb_with_caching(self, key):
+        # Try to get it from the cache.
+        if key in self._title_cache:
+            return self._title_cache[key]
+
+        summary = self._get_summary(key)
+        # If the key doesn't return a valid description return None to
+        # indicate that the key is invalid.
+        try:
+            title = summary[key][0]['title']
+        except Exception:
+            title = None
+        # Purge the cache if it gets too large.
+        if len(self._title_cache) >= self.MAX_CACHE_SIZE:
+            self._title_cache = {}
+        # Put it into the cache, even for negative results.
+        self._title_cache[key] = title
+        return title
+
     def interpret(self, key, mode=0):
         # The filler is a 'space' but ordered after visible ASCII chars. We use
         # it to convince autocomplete that there is still more than 1 option
@@ -1146,12 +1179,10 @@ class PdbIdAutocomplete(cmd.Shortcut):
             # Returning a list indicates that there are still >1 options.
             return [key + '[alphanumeric]' * (4 - len(key)), filler]
         else:
-            summary = pdb.get_summary(key)
-            # If the key doesn't return a valid description return None to
-            # indicate that the key is invalid.
-            try:
-                title = summary[key][0]['title']
-            except Exception:
+            title = self._get_title_from_pdb_with_caching(key)
+            # If we don't have a valid title return None to indicate that the
+            # key is invalid.
+            if title is None:
                 return None
             # We've got a valid key. Show the title of that PDB entry to the
             # user and make the key the only possible autocomplete match.
@@ -1159,7 +1190,13 @@ class PdbIdAutocomplete(cmd.Shortcut):
             return key
 
 
-@cmd.extendaa([lambda: PdbIdAutocomplete(), 'PDB Entry Id', ''])
+PDB_ID_AUTOCOMPLETE = [
+    lambda: PdbIdAutocomplete(get_summary=lambda key: pdb.get_summary(key)),
+    'PDB Entry Id', ''
+]
+
+
+@cmd.extendaa(PDB_ID_AUTOCOMPLETE)
 def PDB_Analysis_Molecules(pdbid):
     """
 DESCRIPTION
@@ -1185,7 +1222,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'molecules')
 
 
-@cmd.extendaa([lambda: PdbIdAutocomplete(), 'PDB Entry Id', ''])
+@cmd.extendaa(PDB_ID_AUTOCOMPLETE)
 def PDB_Analysis_Domains(pdbid):
     """
 DESCRIPTION
@@ -1211,7 +1248,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'domains')
 
 
-@cmd.extendaa([lambda: PdbIdAutocomplete(), 'PDB Entry Id', ''])
+@cmd.extendaa(PDB_ID_AUTOCOMPLETE)
 def PDB_Analysis_Validation(pdbid):
     """
     '''
@@ -1239,7 +1276,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'validation')
 
 
-@cmd.extendaa([lambda: PdbIdAutocomplete(), 'PDB Entry Id', ''])
+@cmd.extendaa(PDB_ID_AUTOCOMPLETE)
 def PDB_Analysis_Assemblies(pdbid):
     """
 DESCRIPTION
