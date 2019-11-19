@@ -655,7 +655,7 @@ class Validation(object):
         for key in rama_data[pdbid]:
             outliers = rama_data[pdbid][key]
             if not outliers:
-                logging.debug('no %s' % (key))
+                logging.debug('no %s' % key)
                 continue
 
             logging.debug('ramachandran %s for this entry' % key)
@@ -728,7 +728,7 @@ def show_molecules(pdbid):  # noqa: C901 too complex
                 entity_name += '_chimera'
         else:
             logging.debug('No name from the API')
-            entity_name = 'entity_%s' % (molecule['entity_id'])
+            entity_name = 'entity_%s' % molecule['entity_id']
         # logging.debug('molecule %s: %s' %(molecule['entity_id'], entity_name))
 
         # logging.debug(molecule['entity_id'])
@@ -739,7 +739,7 @@ def show_molecules(pdbid):  # noqa: C901 too complex
             object_name = re.sub(' ', '_', entity_name)
             object_name = re.sub(r'\W+', '', object_name)
         else:
-            object_name = 'entity_%s' % (molecule['entity_id'])
+            object_name = 'entity_%s' % molecule['entity_id']
         # logging.debug(object_name)
         display_type = ''
         object_selection = []
@@ -823,12 +823,12 @@ def show_assemblies(pdbid, mm_cif_file):
         logging.debug(assemblies)
         if assemblies:
             for assembly_id in assemblies:
-                logging.debug('Assembly: %s' % (assembly_id))
+                logging.debug('Assembly: %s' % assembly_id)
                 assembly_name = pdbid + '_assem_' + assembly_id
                 logging.debug(assembly_name)
                 cmd.set('assembly', assembly_id)
                 cmd.load(mm_cif_file, assembly_name, format='cif')
-                logging.debug('finished Assembly: %s' % (assembly_id))
+                logging.debug('finished Assembly: %s' % assembly_id)
     except Exception:
         logging.debug('pymol version does not support assemblies')
 
@@ -1007,7 +1007,7 @@ def PDBe_startup(  # noqa: 901 too complex
         stored.molecules = {}
         stored.residues = {}
 
-        logging.debug('pdbid: %s' % (pdbid))
+        logging.debug('pdbid: %s' % pdbid)
         mid_pdb = pdbid[1:3]
 
         obj_list = cmd.get_object_list('all')
@@ -1016,11 +1016,11 @@ def PDBe_startup(  # noqa: 901 too complex
                 file_path = mm_cif_file
             else:
                 # if local file exists then use it
-                if os.path.exists('%s.cif' % (pdbid)):
+                if os.path.exists('%s.cif' % pdbid):
                     logging.debug('CIF found in current directory')
-                    file_path = '%s.cif' % (pdbid)
+                    file_path = '%s.cif' % pdbid
                 else:
-                    logging.debug('fetching %s' % (pdbid))
+                    logging.debug('fetching %s' % pdbid)
                     try:
                         # connect mode 4 works only with version 1.7 of pymol
                         cmd.set('assembly', '')
