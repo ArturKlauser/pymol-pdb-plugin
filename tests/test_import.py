@@ -61,7 +61,7 @@ def test_run_main(argv):
     assert True
 
 
-def test_exported_api():
+def test_commandline_api():
     # Try calling each registered API function to make sure calling them doesn't
     # break. We pass the pdbid to each function that is given as an example in
     # it's help message. This has the added benefit of verifying that the
@@ -83,6 +83,67 @@ def test_exported_api():
     pymol.cmd.reinitialize()
     plugin.PDB_Analysis_Assemblies('5j96')
     assert plugin.count_chains() == 3
+
+
+def test_gui_api(monkeypatch):
+    # Try calling each GUI API function registered to a menu item to make sure
+    # calling them doesn't break. We do a cursory check on the result of
+    # count_chains, but otherwise correct functionality is not seriously checked
+    # here.
+
+    gui = plugin.PdbeGui()
+
+    # The GUI normally puts up a dialog to ask for the pdbid. We override that
+    # here and provide the dialog result programmatically instead.
+    def patch_pdbid_input(pdbid, ok_pressed=True):
+        if sys.version_info[0] == 3:
+            monkeypatch.setattr(gui._qt.QtWidgets.QInputDialog, 'getText',
+                                lambda *arg: (pdbid, ok_pressed))
+        else:
+            # Above doesn't work under python2, complaining about:
+            #     TypeError: unbound method <lambda>() must be called with
+            #                QInputDialog instance as first argument (got
+            #                NoneType instance instead)
+            # So we're patching at a higher level instead.
+            monkeypatch.setattr(gui, '_get_pdbid', lambda *arg: pdbid
+                                if ok_pressed else None)
+
+    patch_pdbid_input('3l2p')
+    gui.analyze_molecules()
+    assert plugin.count_chains() == 4
+
+    pymol.cmd.reinitialize()
+    patch_pdbid_input('3b43')
+    gui.analyze_domains()
+    assert plugin.count_chains() == 1
+
+    pymol.cmd.reinitialize()
+    patch_pdbid_input('2gc2')
+    gui.analyze_validation()
+    assert plugin.count_chains() == 2
+
+    pymol.cmd.reinitialize()
+    patch_pdbid_input('5j96')
+    gui.analyze_assemblies()
+    assert plugin.count_chains() == 3
+
+    pymol.cmd.reinitialize()
+    patch_pdbid_input('3mzw')
+    gui.analyze_all()
+    assert plugin.count_chains() == 2
+
+    # Test code doesn't crash when user cancels pdbid input, inputs nothing, or
+    # inputs an invalid pdbid.
+    pymol.cmd.reinitialize()
+    for pdbid, ok_pressed in [('', False), ('', True), ('bogus', False),
+                              ('bogus', True)]:
+        print('user input', pdbid, ok_pressed)
+        patch_pdbid_input(pdbid, ok_pressed)
+        gui.analyze_molecules()
+        gui.analyze_domains()
+        gui.analyze_validation()
+        gui.analyze_assemblies()
+        gui.analyze_all()
 
 
 def test_object_atom_count():
