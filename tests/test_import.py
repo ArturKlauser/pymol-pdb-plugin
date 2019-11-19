@@ -12,6 +12,8 @@ import sys
 
 # ----- Test Fixtures -----
 
+PREF_LOGLEVEL = 'PDB_PLUGIN_LOGLEVEL'
+
 
 @pytest.fixture(autouse=True)
 def initialize_pymol():
@@ -23,9 +25,8 @@ def initialize_pymol():
         # that PyMOL under python3 is happy enough without this call.
         pymol.finish_launching(['pymol', '-cqk'])
     # Temporarily turn on maximal log level to also test all logging statements.
-    pref_loglevel = 'PDB_PLUGIN_LOGLEVEL'
-    orig_loglevel = pymol.plugins.pref_get(pref_loglevel, None)
-    pymol.plugins.pref_set(pref_loglevel, 'DEBUG')
+    orig_loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
+    pymol.plugins.pref_set(PREF_LOGLEVEL, 'DEBUG')
     # Also set log level directly in logging library for unit tests.
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
@@ -35,7 +36,7 @@ def initialize_pymol():
 
     # --- teardown ---
     if orig_loglevel is not None:
-        pymol.plugins.pref_set(pref_loglevel, orig_loglevel)
+        pymol.plugins.pref_set(PREF_LOGLEVEL, orig_loglevel)
 
 
 url_data_cache = {}
@@ -258,6 +259,33 @@ def test_pdb_autocomplete(capsys):
     assert completion == key
     captured = capsys.readouterr()
     assert 'HER2' in captured.out
+
+
+def test_initialize():
+    """Tests initialization fuction."""
+    logger = logging.getLogger()
+
+    # When unset (first time use of pluging), set preference to WARNING.
+    pymol.plugins.pref_set(PREF_LOGLEVEL, None)
+    plugin.Initialize()
+    loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
+    assert loglevel == "WARNING"
+    assert logger.getEffectiveLevel() == logging.WARNING
+
+    # When set to something valid, keep preference as is.
+    pymol.plugins.pref_set(PREF_LOGLEVEL, 'INFO')
+    plugin.Initialize()
+    loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
+    assert loglevel == 'INFO'
+    assert logger.getEffectiveLevel() == logging.INFO
+
+    # When set to something invalid, keep preference as is but set actual
+    # loglevel to WARNING.
+    pymol.plugins.pref_set(PREF_LOGLEVEL, 'BOgus')
+    plugin.Initialize()
+    loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
+    assert loglevel == 'BOgus'
+    assert logger.getEffectiveLevel() == logging.WARNING
 
 
 # ----- Integration Tests -----
