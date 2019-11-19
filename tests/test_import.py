@@ -92,6 +92,22 @@ def test_pdb_fetcher_with_requests(requests_mock):
         assert data == {}
 
 
+class ImportModuleMock(object):
+    """Exclude specified modules from loading in importlib.import_module."""
+
+    def __init__(self, exclude):
+        """For excluding all modules specify exclude='*'"""
+        self._exclude = exclude
+        self._orig_import_module = getattr(importlib, 'import_module')
+
+    # PDB fetcher uses 'requests' library by default. We'll prevent that here
+    # such that it falls back to urllib.
+    def import_module(self, name):
+        if self._exclude == '*' or name in self._exclude:
+            raise ImportError('test prevents usage of %s library' % name)
+        return self._orig_import_module(name)
+
+
 def test_pdb_fetcher_with_urllib(monkeypatch):
     """Tests the PDB json data fetcher class using urllib library.
 
@@ -101,14 +117,8 @@ def test_pdb_fetcher_with_urllib(monkeypatch):
 
     # PDB fetcher uses 'requests' library by default. We'll prevent that here
     # such that it falls back to urllib.
-    orig_import_module = getattr(importlib, 'import_module')
-
-    def mock_import_module(name):
-        if name == 'requests':
-            raise ImportError('test prevents usage of %s library' % name)
-        return orig_import_module(name)
-
-    monkeypatch.setattr(importlib, 'import_module', mock_import_module)
+    mock = ImportModuleMock('requests')
+    monkeypatch.setattr(importlib, 'import_module', mock.import_module)
     # We're ready to get a fetcher using urllib.
     fetcher = plugin.PdbFetcher()
 
@@ -161,10 +171,8 @@ def test_pdb_fetcher_missing_libraries(monkeypatch):
     """Tests the PDB json data fetcher with missing libraries."""
 
     # Prevent all libraries from getting loaded.
-    def mock_import_module(name):
-        raise ImportError('test prevents usage of %s library' % name)
-
-    monkeypatch.setattr(importlib, 'import_module', mock_import_module)
+    mock = ImportModuleMock('*')
+    monkeypatch.setattr(importlib, 'import_module', mock.import_module)
     # We're ready to get a fetcher using urllib.
     try:
         plugin.PdbFetcher()
@@ -378,6 +386,21 @@ def test_gui_api(monkeypatch):
         gui.analyze_validation()
         gui.analyze_assemblies()
         gui.analyze_all()
+
+
+def test_gui_missing_libraries(monkeypatch):
+    """Tests the GUI with missing libraries."""
+
+    # Prevent all libraries from getting loaded.
+    mock = ImportModuleMock('*')
+    monkeypatch.setattr(importlib, 'import_module', mock.import_module)
+    # We're ready to get a GUI using urllib.
+    try:
+        plugin.PdbeGui()
+    except Exception as e:
+        assert 'missing python libraries' in str(e).split('\n')[0]
+    else:
+        raise Exception('No missing library Exception from PdbFetcher')
 
 
 def test_object_atom_count():
