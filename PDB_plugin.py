@@ -78,7 +78,7 @@ stored.ca_p_only = set()
 
 
 class PdbFetcher(object):
-    """Downloads PDB data from URLs.
+    """Downloads PDB json data from URLs.
 
     This class tries to use one of several libraries to get the data, depending
     on which are installed on the system.
@@ -124,11 +124,11 @@ class PdbFetcher(object):
                 '\n'.join(['    ' + str(error) for error in import_errors]) +
                 '\n==> Install one of them!')
 
-    def get_data(self, url, description):
+    def get_data(self, url, description, **kw):
         """Returns PDB data from the given URL."""
         logging.debug(description)
         url = self._quote(url)
-        return self._fetcher(url, description)
+        return self._fetcher(url, description, **kw)
 
     @staticmethod
     def _quote(url):
@@ -149,8 +149,15 @@ class PdbFetcher(object):
 
         return data
 
-    def _get_data_with_urllib(self, url, description):
-        """Uses urllib module to fetch and return data from the PDB URL."""
+    def _get_data_with_urllib(self,
+                              url,
+                              description,
+                              sleep_min=1,
+                              sleep_max=20):
+        """Uses urllib module to fetch and return data from the PDB URL.
+
+        Argument sleep_(min,max)=0 is mostly interesting for testing.
+        """
         urllib2_request = self._modules['urllib.request']
         urllib2_error = self._modules['urllib.error']
         data = {}
@@ -171,19 +178,19 @@ class PdbFetcher(object):
                     break
                 else:
                     # logging.debug(entry_url)
-                    time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
+                    time.sleep(random.randint(sleep_min, sleep_max))
                     logging.debug(e)
             except urllib2_error.URLError as e:
                 logging.debug('%s URL API error - %s, try %d' %
                               (date, e, tries))
                 # logging.debug(entry_url)
-                time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
+                time.sleep(random.randint(sleep_min, sleep_max))
                 logging.debug(e)
             except socket.timeout as e:
                 logging.debug('%s Timeout API error - %s, try %d' %
                               (date, e, tries))
                 # logging.debug(entry_url)
-                time.sleep(random.randint(1, 20))  # sleep 1-20 seconds
+                time.sleep(random.randint(sleep_min, sleep_max))
                 logging.debug(e)
             else:
                 logging.debug(

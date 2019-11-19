@@ -88,7 +88,11 @@ jobs:
       run: |
         # Install pytest into pymol's Python environment.
         pymol/bin/pip install --upgrade pip
-        pymol/bin/pip install pytest pytest-cov
+        pymol/bin/pip install \
+          pytest \
+          pytest-cov \
+          requests \
+          requests-mock
         # To get the correct PYTHONPATH module search path to PDB_plugin.py,
         # start pytest via python -m instead of directly.
         pymol/bin/python -m pytest \

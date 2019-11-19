@@ -3,7 +3,11 @@
 import PDB_plugin as plugin
 import pymol
 
+import importlib
+import json
+import logging
 import pytest
+import socket
 import sys
 
 # ----- Test Fixtures -----
@@ -22,6 +26,9 @@ def initialize_pymol():
     pref_loglevel = 'PDB_PLUGIN_LOGLEVEL'
     orig_loglevel = pymol.plugins.pref_get(pref_loglevel, None)
     pymol.plugins.pref_set(pref_loglevel, 'DEBUG')
+    # Also set log level directly in logging library for unit tests.
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
     pymol.cmd.reinitialize()
 
     yield  # each test runs here
@@ -60,6 +67,111 @@ def cache_url_data_for_plugin(monkeypatch):
 
 
 # ----- Unit Tests -----
+
+
+def test_pdb_fetcher_with_requests(requests_mock):
+    """Tests the PDB json data fetcher class using requests library."""
+
+    fetcher = plugin.PdbFetcher()
+
+    # Test a response with status code 200 (ie. OK)
+    good_response = {'this': ['is', 1, {'good': 'response', 'oh': 'yeah'}]}
+    requests_mock.get('http://testpdb/good', json=good_response)
+    data = fetcher.get_data('http://testpdb/good', 'good data')
+    assert data == good_response
+
+    # Test a response with status code indicating error (e.g. 404 Not Found)
+    for status_code in (403, 404, 500):
+        requests_mock.get('http://testpdb/bad',
+                          status_code=status_code,
+                          json='not found')
+        fetcher = plugin.PdbFetcher()
+        data = fetcher.get_data('http://testpdb/bad', 'no data')
+        # We want to see an empty dictionary, nothing else.
+        assert isinstance(data, dict)
+        assert data == {}
+
+
+def test_pdb_fetcher_with_urllib(monkeypatch):
+    """Tests the PDB json data fetcher class using urllib library.
+
+    In the absence of the requests library the code falls  back to urllib2 on
+    python2 and urllib.* on python3.
+    """
+
+    # PDB fetcher uses 'requests' library by default. We'll prevent that here
+    # such that it falls back to urllib.
+    orig_import_module = getattr(importlib, 'import_module')
+
+    def mock_import_module(name):
+        if name == 'requests':
+            raise ImportError('test prevents usage of %s library' % name)
+        return orig_import_module(name)
+
+    monkeypatch.setattr(importlib, 'import_module', mock_import_module)
+    # We're ready to get a fetcher using urllib.
+    fetcher = plugin.PdbFetcher()
+
+    class HTTPResponseMock(object):
+        """Returns the stored data json encoded with a read() call."""
+
+        def __init__(self, data):
+            self._data = data
+
+        def read(self):
+            return json.JSONEncoder().encode(self._data)
+
+    urllib_request = fetcher._modules['urllib.request']
+    urllib_error = fetcher._modules['urllib.error']
+
+    # Test a response with status code 200 (ie. OK)
+    good_response = {'this': ['is', 2, {'good': 'response', 'oh': 'yeah'}]}
+    # Replace urlopen with mock.
+    monkeypatch.setattr(urllib_request, 'urlopen',
+                        lambda *arg: HTTPResponseMock(good_response))
+    data = fetcher.get_data('http://testpdb/good',
+                            'good data',
+                            sleep_min=0,
+                            sleep_max=0)
+    assert data == good_response
+
+    def _raise(ex):
+        raise ex
+
+    # Test a response with various errors (e.g. status code 404 Not Found).
+    for error in (
+            urllib_error.HTTPError(None, 403, None, None, None),
+            urllib_error.HTTPError(None, 404, None, None, None),
+            urllib_error.HTTPError(None, 500, None, None, None),
+            urllib_error.URLError(None),
+            socket.timeout(),
+    ):
+        monkeypatch.setattr(urllib_request, 'urlopen',
+                            lambda *arg: _raise(error))
+        data = fetcher.get_data('http://testpdb/bad',
+                                'no data',
+                                sleep_min=0,
+                                sleep_max=0)
+        # We want to see an empty dictionary, nothing else.
+        assert isinstance(data, dict)
+        assert data == {}
+
+
+def test_pdb_fetcher_missing_libraries(monkeypatch):
+    """Tests the PDB json data fetcher with missing libraries."""
+
+    # Prevent all libraries from getting loaded.
+    def mock_import_module(name):
+        raise ImportError('test prevents usage of %s library' % name)
+
+    monkeypatch.setattr(importlib, 'import_module', mock_import_module)
+    # We're ready to get a fetcher using urllib.
+    try:
+        plugin.PdbFetcher()
+    except Exception as e:
+        assert 'missing python libraries' in str(e).split('\n')[0]
+    else:
+        raise Exception('No missing library Exception from PdbFetcher')
 
 
 def test_pdb_autocomplete(capsys):
