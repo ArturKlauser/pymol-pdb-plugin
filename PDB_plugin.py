@@ -742,8 +742,7 @@ def show_molecules(pdbid):  # noqa: C901 too complex
             object_name = 'entity_%s' % molecule['entity_id']
         # logging.debug(object_name)
         display_type = ''
-        object_selection = []
-        pymol_selection = ''
+        object_selections = []
         if molecule_type != 'Water':
             # use asym to find residue number and chain ID
             for a in molecule['in_struct_asyms']:
@@ -767,7 +766,7 @@ def show_molecules(pdbid):  # noqa: C901 too complex
                             res = str(short['PDBnum']) + short['PDBinsCode']
                         selection = 'chain %s and resi %s and %s' % (chain, res,
                                                                      pdbid)
-                        object_selection.append(selection)
+                        object_selections.append(selection)
                         # logging.debug(selection)
                 else:
                     # find the first and last residues
@@ -786,17 +785,10 @@ def show_molecules(pdbid):  # noqa: C901 too complex
                         selection = 'chain %s and resi %s-%s and %s' % (
                             r.chain, r.start, r.end, pdbid)
                         # logging.debug(selection)
-                        object_selection.append(selection)
+                        object_selections.append(selection)
 
-            for o in object_selection:
-                if len(object_selection) > 1:
-                    if o == object_selection[-1]:
-                        pymol_selection += '(%s)' % (o)
-                    else:
-                        pymol_selection += '(%s) or ' % (o)
-                else:
-                    pymol_selection += '%s' % (o)
-
+            pymol_selection = ' or '.join(
+                ['(%s)' % x for x in object_selections])
             logging.debug(pymol_selection)
             if len(object_name) > 250:
                 object_name = object_name[:249]
@@ -919,8 +911,7 @@ def show_domains(pdbid):  # noqa: C901 too complex
                 asym_list = []
                 entity_list = []
                 # logging.debug(instance)
-                object_selection = []
-                pymol_selection = ''
+                object_selections = []
                 for segment in stored.domains[domain_type][domain][instance]:
                     pdb_start = segment['start']
                     pdb_end = segment['end']
@@ -934,16 +925,10 @@ def show_domains(pdbid):  # noqa: C901 too complex
 
                     selection = 'chain %s and resi %s-%s and %s' % (
                         chain, pdb_start, pdb_end, pdbid)
-                    object_selection.append(selection)
-                for o in object_selection:
-                    if len(object_selection) > 1:
-                        if o == object_selection[-1]:
-                            pymol_selection += '(%s)' % (o)
-                        else:
-                            pymol_selection += '(%s) or ' % (o)
-                    else:
-                        pymol_selection += '%s' % (o)
-                # logging.debug(pymol_selection)
+                    object_selections.append(selection)
+                pymol_selection = ' or '.join(
+                    ['(%s)' % x for x in object_selections])
+                logging.debug(pymol_selection)
                 object_name = '%s_%s_%s' % (domain_type, domain, instance)
                 objects[object_name] = Object(asym_list, entity_list)
                 cmd.select('test_select', pymol_selection)
