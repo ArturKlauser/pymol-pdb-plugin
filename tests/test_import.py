@@ -267,14 +267,14 @@ def test_initialize():
 
     # When unset (first time use of pluging), set preference to WARNING.
     pymol.plugins.pref_set(PREF_LOGLEVEL, None)
-    plugin.Initialize()
+    plugin.initialize()
     loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
     assert loglevel == "WARNING"
     assert logger.getEffectiveLevel() == logging.WARNING
 
     # When set to something valid, keep preference as is.
     pymol.plugins.pref_set(PREF_LOGLEVEL, 'INFO')
-    plugin.Initialize()
+    plugin.initialize()
     loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
     assert loglevel == 'INFO'
     assert logger.getEffectiveLevel() == logging.INFO
@@ -282,7 +282,7 @@ def test_initialize():
     # When set to something invalid, keep preference as is but set actual
     # loglevel to WARNING.
     pymol.plugins.pref_set(PREF_LOGLEVEL, 'BOgus')
-    plugin.Initialize()
+    plugin.initialize()
     loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
     assert loglevel == 'BOgus'
     assert logger.getEffectiveLevel() == logging.WARNING

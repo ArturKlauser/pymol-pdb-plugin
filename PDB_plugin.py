@@ -1317,7 +1317,7 @@ SEE ALSO
     return n
 
 
-def Initialize():
+def initialize():
     # get preferences
     pref_loglevel = 'PDB_PLUGIN_LOGLEVEL'
     loglevel = pymol.plugins.pref_get(pref_loglevel, None)
@@ -1342,7 +1342,7 @@ def Initialize():
 
 # Run when used as a plugin.
 def __init_plugin__(app=None):
-    Initialize()
+    initialize()
     gui = PdbeGui()
     try:
         # Simply add the menu entry and callback
@@ -1375,7 +1375,7 @@ Usage
 
 # Run when used from the command line.
 def main(argv=sys.argv):
-    Initialize()
+    initialize()
     mm_cif_file = None
     pdbid = None
     logging.debug(argv)
