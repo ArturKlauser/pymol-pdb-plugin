@@ -4,8 +4,8 @@ name: PyMOL PDB Plugin CI Tests
 on: [push, pull_request]
 
 jobs:
-  ci-test:
-    name: CI Tests
+  test-runs:
+    name: Test Runs
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 3
@@ -103,9 +103,52 @@ jobs:
           --cov-report term \
           --durations=10 \
           -v
-
+        mv .coverage test_coverage  # for combining later
     - name: Upload code coverage results
       uses: actions/upload-artifact@v1
       with:
         name: coverage-${{steps.pymol_name.outputs.short_name}}
+        path: test_coverage
+
+  combine-coverage:
+    name: Combine Coverage
+    needs: test-runs
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1  # no history, just HEAD
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        # python -m pip install --upgrade pip
+        pip install coverage
+
+    # Having to unroll the cross product of the test-run job matrix here in
+    # order to import their coverage files is cumbersome, but there does not
+    # seem to be any sort of glob syntax for artifact download.
+    - name: Download coverage-pymol-2.3.4_121-py37
+      uses: actions/download-artifact@v1
+      with:
+        name: coverage-pymol-2.3.4_121-py37
+    - name: Download coverage-pymol-2.3.4_121-py27
+      uses: actions/download-artifact@v1
+      with:
+        name: coverage-pymol-2.3.4_121-py27
+    - name: Download coverage-pymol-2.0.7_1
+      uses: actions/download-artifact@v1
+      with:
+        name: coverage-pymol-2.0.7_1
+    - name: Combine coverage across test matrix
+      run: |
+        coverage combine coverage-*/.coverage
+        coverage html -d test_coverage/html
+        coverage annotate -d test_coverage/annotation
+        coverage report
+        mv .coverage test_coverage  # for combining later
+    - name: Upload combined code coverage results
+      uses: actions/upload-artifact@v1
+      with:
+        name: coverage-combined
         path: test_coverage
