@@ -78,6 +78,18 @@ stored.residues = {}
 stored.ca_p_only = set()
 
 
+def extendaa(*arg, **kw):
+    """Wrapper across cmd.extendaa that also adds new command to pymol.cmd."""
+
+    def wrapper(func):
+        _self = kw.get('_self', cmd)
+        name = func.__name__
+        setattr(_self, name, func)
+        return _self.extendaa(*arg, **kw)(func)
+
+    return wrapper
+
+
 class PdbFetcher(object):
     """Downloads PDB json data from URLs.
 
@@ -1170,7 +1182,7 @@ PDB_ID_AUTOCOMPLETE = [
 ]
 
 
-@cmd.extendaa(PDB_ID_AUTOCOMPLETE)
+@extendaa(PDB_ID_AUTOCOMPLETE)
 def PDB_Analysis_Molecules(pdbid):
     """
 DESCRIPTION
@@ -1196,7 +1208,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'molecules')
 
 
-@cmd.extendaa(PDB_ID_AUTOCOMPLETE)
+@extendaa(PDB_ID_AUTOCOMPLETE)
 def PDB_Analysis_Domains(pdbid):
     """
 DESCRIPTION
@@ -1222,7 +1234,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'domains')
 
 
-@cmd.extendaa(PDB_ID_AUTOCOMPLETE)
+@extendaa(PDB_ID_AUTOCOMPLETE)
 def PDB_Analysis_Validation(pdbid):
     """
     '''
@@ -1250,7 +1262,7 @@ EXAMPLES
     PDBe_startup(pdbid, 'validation')
 
 
-@cmd.extendaa(PDB_ID_AUTOCOMPLETE)
+@extendaa(PDB_ID_AUTOCOMPLETE)
 def PDB_Analysis_Assemblies(pdbid):
     """
 DESCRIPTION
@@ -1272,8 +1284,8 @@ EXAMPLES
     PDBe_startup(pdbid, 'assemblies')
 
 
-@cmd.extendaa(cmd.auto_arg[0]['count_atoms'])
-def count_chains(selection='(all)', state=0):
+@extendaa(cmd.auto_arg[0]['count_atoms'])
+def count_chains(selection='(all)', state=0, quiet=False):
     """
 DESCRIPTION
 
@@ -1300,7 +1312,8 @@ SEE ALSO
     """
     chains = cmd.get_chains(selection, state)
     n = len(chains)
-    print('count_chains: %s chains' % n)
+    if not quiet:
+        print('count_chains: %s chains' % n)
     return n
 
 
