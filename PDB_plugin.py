@@ -45,6 +45,7 @@ NOTES
 
 from __future__ import print_function
 
+from collections import namedtuple
 import datetime
 import importlib  # needs at least python 2.7
 import json  # parsing the input
@@ -417,13 +418,7 @@ def poly_seq_scheme(pdbid):
                     # logging.debug(seq_scheme)
 
 
-class Range(object):
-    """Range object encapsulates a chain and resi start/end range."""
-
-    def __init__(self, start, end, chain):
-        self.start = start  # PDBstart
-        self.end = end  # PDBend
-        self.chain = chain  # chainID
+Range = namedtuple('Range', 'start end chain')
 
 
 def get_ranges(asym_id, start, end):  # noqa: C901 too complex
@@ -893,21 +888,9 @@ def show_domains(pdbid):  # noqa: C901 too complex
     if not stored.domains:
         return
 
-    class Object(object):
-        """Object encapsulates information about a PDB object."""
-
-        def __init__(self, asym_list, entity_list):
-            self.asym_list = asym_list
-            self.entity_list = entity_list
-
-    class Chain(object):
-        """Chain encapsulates information about a PDB chain."""
-
-        def __init__(self, chain, entity_id):
-            self.chain = chain
-            self.entity_id = entity_id
-
+    Object = namedtuple('Object', 'asym_list entity_list')
     objects = {}
+    Chain = namedtuple('Chain', 'chain entity_id')
     chains = {}
     # logging.debug(stored.domains)
     for domain_type in stored.domains:
