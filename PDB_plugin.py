@@ -69,13 +69,21 @@ _EBI_FTP = ('ftp://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/'
 _UPDATED_FTP = 'https://www.ebi.ac.uk/pdbe/static/entry/%s_updated.cif.gz'
 _EMPTY_CIF = frozenset(['', '.', '?', None])
 
-# dictionaries
-stored.domains = {}
-stored.seq_scheme = {}
-stored.molecules = {}
-stored.poly_count = 0
-stored.residues = {}
-stored.ca_p_only = set()
+
+def clear_analysis_data():
+    # Note that pymol.stored is just a convenient global variable where this
+    # data is attached to. It is not necessary to have it there for interaction
+    # with pymol.
+
+    # --- inputs from PDB API
+    stored.molecules = {}  # get_molecules()
+    stored.seq_scheme = {}  # get_seq_scheme() but reformatted poly_seq_scheme()
+
+    # --- results of analysis
+    stored.domains = {}  # map_domains()
+    stored.residues = {}  # validation_selection()
+    stored.poly_count = 0  # count_poly()
+    stored.ca_p_only = set()  # count_poly()
 
 
 def extendaa(*arg, **kw):
@@ -825,15 +833,15 @@ def show_assemblies(pdbid, mm_cif_file):
 
     try:
         assemblies = cmd.get_assembly_ids(pdbid)  # list or None
+        assemblies = assemblies if assemblies else []
         logging.debug(assemblies)
-        if assemblies:
-            for assembly_id in assemblies:
-                logging.debug('Assembly: %s' % assembly_id)
-                assembly_name = pdbid + '_assem_' + assembly_id
-                logging.debug(assembly_name)
-                cmd.set('assembly', assembly_id)
-                cmd.load(mm_cif_file, assembly_name, format='cif')
-                logging.debug('finished Assembly: %s' % assembly_id)
+        for assembly_id in assemblies:
+            logging.debug('Assembly: %s' % assembly_id)
+            assembly_name = pdbid + '_assem_' + assembly_id
+            logging.debug(assembly_name)
+            cmd.set('assembly', assembly_id)
+            cmd.load(mm_cif_file, assembly_name, format='cif')
+            logging.debug('finished Assembly: %s' % assembly_id)
     except Exception:
         logging.debug('pymol version does not support assemblies')
 
@@ -987,11 +995,8 @@ def PDBe_startup(  # noqa: 901 too complex
     summary = pdb.get_summary(pdbid)
 
     if summary:
-        # clear the dictionaries
-        stored.domains = {}
-        stored.seq_scheme = {}
-        stored.molecules = {}
-        stored.residues = {}
+        # start over fresh
+        clear_analysis_data()
 
         logging.debug('pdbid: %s' % pdbid)
         mid_pdb = pdbid[1:3]
@@ -1072,11 +1077,7 @@ class PdbeGui(object):
             None, 'PDB Loader Service',
             label + '\nPlease enter a 4-digit PDB ID:',
             self._qt.QtWidgets.QLineEdit.Normal, '')
-
-        if ok_pressed:
-            return pdbid
-        else:
-            return None
+        return pdbid if ok_pressed else None
 
     def analyze_all(self):
         pdbid = self._get_pdbid(
