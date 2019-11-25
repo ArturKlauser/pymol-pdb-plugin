@@ -80,7 +80,6 @@ def clear_analysis_data():
     stored.seq_scheme = {}  # get_seq_scheme() but reformatted poly_seq_scheme()
 
     # --- results of analysis
-    stored.domains = {}  # map_domains()
     stored.residues = {}  # validation_selection()
     stored.poly_count = 0  # count_poly()
     stored.ca_p_only_segments = set()  # count_poly()
@@ -361,8 +360,8 @@ class Color(object):
         cmd.color(color, obj)
 
 
-def poly_display_type(segment_id, molecule_type, length):
-    """return either ribbon or cartoon depending on number of polymer chains"""
+def get_polymer_display_type(segment_id, molecule_type, length):
+    """Returns dispay type depending on complexity."""
     # start with it being cartoon - then change as needed.
     display_type = 'cartoon'
     if stored.poly_count > 50:
@@ -438,10 +437,11 @@ def poly_seq_scheme(pdbid):
                     # logging.debug(seq_scheme)
 
 
-Range = namedtuple('Range', 'start end chain')
+Range = namedtuple('Range', 'chain_id start_residue end_residue')
 
 
-def get_ranges(segment_id, start, end):  # noqa: C901 too complex
+def get_ranges(  # noqa: C901 too complex
+    segment_id, start_residue, end_residue):
 
     def order(start, end, start_code, end_code):
         """Returns (start_code, end_code) ordered such that start < end."""
@@ -479,51 +479,51 @@ def get_ranges(segment_id, start, end):  # noqa: C901 too complex
         if r >= last_residue:
             last_residue = r
 
-    if end > last_residue:
+    if end_residue > last_residue:
         # logging.debug('ERROR: residue %s from SIFTS is greater than the '
-        #               'lastSeqRes number %s' % (end, lastSeqRes))
-        end = last_residue
+        #               'lastSeqRes number %s' % (end_residue, lastSeqRes))
+        end_residue = last_residue
 
     # logging.debug('first residue: %s, last residue %s' %
     #               (first_residue, last_residue))
-    # logging.debug(seq_scheme[segment_id][start])
+    # logging.debug(seq_scheme[segment_id][start_residue])
     is_observed = True
-    if start in stored.seq_scheme[segment_id]:
-        chain = stored.seq_scheme[segment_id][start]['chainID']
+    if start_residue in stored.seq_scheme[segment_id]:
+        chain_id = stored.seq_scheme[segment_id][start_residue]['chainID']
 
-        while not stored.seq_scheme[segment_id][start]['observed']:
-            # logging.debug('PDB start is not observed, adding 1 to residue '
-            #               'number %s' % start)
-            if start == last_residue:
+        while not stored.seq_scheme[segment_id][start_residue]['observed']:
+            # logging.debug('PDB start_residue is not observed, adding 1 to '
+            #               'residue number %s' % start_residue)
+            if start_residue == last_residue:
                 # logging.debug('domain not observed')
                 is_observed = False
                 break
             else:
-                start += 1
-                if start == last_residue:
+                start_residue += 1
+                if start_residue == last_residue:
                     # logging.debug('domain not observed')
                     is_observed = False
                     break
-                elif start == end:
+                elif start_residue == end_residue:
                     # logging.debug('domain not observed')
                     is_observed = False
                     break
 
-    if end in stored.seq_scheme[segment_id]:
-        while not stored.seq_scheme[segment_id][end]['observed']:
+    if end_residue in stored.seq_scheme[segment_id]:
+        while not stored.seq_scheme[segment_id][end_residue]['observed']:
             # logging.debug('PDB end is not observed, minusing 1 from residue '
-            #               'number %s' % end)
-            if end == first_residue:
+            #               'number %s' % end_residue)
+            if end_residue == first_residue:
                 # logging.debug('domain not observed')
                 is_observed = False
                 break
             else:
-                end -= 1
-                if end == first_residue:
+                end_residue -= 1
+                if end_residue == first_residue:
                     # logging.debug('domain not observed')
                     is_observed = False
                     break
-                elif start == end:
+                elif start_residue == end_residue:
                     # logging.debug('domain not observed')
                     is_observed = False
                     break
@@ -533,7 +533,7 @@ def get_ranges(segment_id, start, end):  # noqa: C901 too complex
         logging.debug('domain unobserved')
         return ranges
 
-    # logging.debug('CIF start: %s, CIF end %s' % (start, end))
+    # logging.debug('CIF start: %s, CIF end %s' % (start_residue, end_residue))
     # logging.debug('PDB start: %s, PDB end %s' % (PDBstart, PDBend))
 
     # Need to do something about non continuous ranges which pymol doesn't
@@ -541,13 +541,13 @@ def get_ranges(segment_id, start, end):  # noqa: C901 too complex
     #
     # Find all sections where the residue number increases by one. If it
     # jumps then store this as a separate residue block while number is less
-    # than end begin with number = start plus 1. See how the numbering
-    # differs from start if its 1 then its continuous - move to the next
+    # than end begin with number = start_residue plus 1. See how the numbering
+    # differs from start_residue if its 1 then its continuous - move to the next
     # residue if its zero then there must be insert codes - this is ok -
     # move to the next residue if its greater than 1 then store the previous
     # residues as a block.
-    block_start_cif = start
-    for current_cif in range(start, end - 1):
+    block_start_cif = start_residue
+    for current_cif in range(start_residue, end_residue - 1):
         next_cif = current_cif + 1
         current_pdb = stored.seq_scheme[segment_id][current_cif]['PDBnum']
         next_pdb = stored.seq_scheme[segment_id][next_cif]['PDBnum']
@@ -561,7 +561,7 @@ def get_ranges(segment_id, start, end):  # noqa: C901 too complex
                 start_pdb, current_pdb, insert_code(segment_id,
                                                     block_start_cif),
                 insert_code(segment_id, current_cif))
-            ranges.append(Range(start_code, end_code, chain))
+            ranges.append(Range(chain_id, start_code, end_code))
             # move start to next block
             block_start_cif = next_cif
             continue
@@ -577,7 +577,7 @@ def get_ranges(segment_id, start, end):  # noqa: C901 too complex
                 start_pdb, current_pdb, insert_code(segment_id,
                                                     block_start_cif),
                 insert_code(segment_id, current_cif))
-            ranges.append(Range(start_code, end_code, chain))
+            ranges.append(Range(chain_id, start_code, end_code))
             # move start to next block
             block_start_cif = next_cif
         elif current_pdb - next_pdb > 1:
@@ -588,14 +588,14 @@ def get_ranges(segment_id, start, end):  # noqa: C901 too complex
                 start_pdb, current_pdb, insert_code(segment_id,
                                                     block_start_cif),
                 insert_code(segment_id, current_cif))
-            ranges.append(Range(start_code, end_code, chain))
+            ranges.append(Range(chain_id, start_code, end_code))
             # move start to next block
             block_start_cif = next_cif
 
-    start_code, end_code = order(block_start_cif, end,
+    start_code, end_code = order(block_start_cif, end_residue,
                                  insert_code(segment_id, block_start_cif),
-                                 insert_code(segment_id, end))
-    ranges.append(Range(start_code, end_code, chain))
+                                 insert_code(segment_id, end_residue))
+    ranges.append(Range(chain_id, start_code, end_code))
     # logging.debug(ranges)
 
     return ranges
@@ -716,16 +716,16 @@ class Validation(object):
                 for segment_id in molecule['in_struct_asyms']:
                     if not stored.seq_scheme:
                         poly_seq_scheme(pdbid)
-                    start = 1
-                    end = molecule['length']
+                    start_residue = 1
+                    end_residue = molecule['length']
                     length = molecule['length']
-                    display_type = poly_display_type(segment_id, 'polypeptide',
-                                                     length)
+                    display_type = get_polymer_display_type(
+                        segment_id, 'polypeptide', length)
                     # logging.debug(segment_id)
-                    ranges = get_ranges(segment_id, start, end)
+                    ranges = get_ranges(segment_id, start_residue, end_residue)
                     for r in ranges:
                         selection = 'chain %s and resi %s-%s and %s' % (
-                            r.chain, r.start, r.end, pdbid)
+                            r.chain_id, r.start_residue, r.end_residue, pdbid)
                         # logging.debug(selection)
                         cmd.show(display_type, selection)
 
@@ -794,19 +794,19 @@ def show_molecules(pdbid):  # noqa: C901 too complex
                         # logging.debug(selection)
                 else:
                     # find the first and last residues
-                    start = 1
-                    end = molecule['length']
+                    start_residue = 1
+                    end_residue = molecule['length']
                     # need to work out if cartoon is the right thing to
                     # display
                     length = molecule['length']
-                    display_type = poly_display_type(segment_id, molecule_type,
-                                                     length)
+                    display_type = get_polymer_display_type(
+                        segment_id, molecule_type, length)
                     # logging.debug(segment_id)
-                    ranges = get_ranges(segment_id, start, end)
+                    ranges = get_ranges(segment_id, start_residue, end_residue)
                     # logging.debug(ranges)
                     for r in ranges:
                         selection = 'chain %s and resi %s-%s and %s' % (
-                            r.chain, r.start, r.end, pdbid)
+                            r.chain_id, r.start_residue, r.end_residue, pdbid)
                         # logging.debug(selection)
                         object_selections.append(selection)
 
@@ -847,133 +847,133 @@ def show_assemblies(pdbid, mm_cif_file):
         logging.debug('pymol version does not support assemblies')
 
 
-def map_domains(pdbid):  # noqa: C901 too complex
-    """make domain objects"""
-    if not stored.seq_scheme:
-        poly_seq_scheme(pdbid)
-    segment_identifier = {
+class Domains(object):
+    """Analyze and visualize domains."""
+    _SEGMENT_ID_NAME = {
+        # domain_type -> segment_id key string
         'CATH': 'domain',
         'SCOP': 'scop_id',
         'Pfam': '',
         'Rfam': ''
     }
-    domain_to_make = frozenset(segment_identifier.keys())
+    Segment = namedtuple('Segment', 'entity_id chain_id segment_id start end')
 
-    def store_domain(segment_id, chain, start, end, entity_id):
-        stored.domains.setdefault(domain_type,
-                                  {}).setdefault(domain, {}).setdefault(
-                                      domain_name, []).append({
-                                          'segment_id': segment_id,
-                                          'chain': chain,
-                                          'start': start,
-                                          'end': end,
-                                          'entity_id': entity_id
-                                      })
+    def _map_all(self, pdbid):
+        """Make all domains."""
+        # mapped_domains = dict(<domain_type>: <typed_domain>)
+        # <typed_domain> = dict(<domain_id>: <named_domain>)
+        # <named_domain> = dict(<domain_name>: list(Segment)
+        mapped_domains = {}
 
-    protein_domains = pdb.get_protein_domains(pdbid)
-    nucleic_domains = pdb.get_nucleic_domains(pdbid)
-    for data in [protein_domains, nucleic_domains]:
-        if not data:
+        if not stored.seq_scheme:
+            poly_seq_scheme(pdbid)
+        self._map_domains(pdbid, pdb.get_protein_domains(pdbid), mapped_domains)
+        self._map_domains(pdbid, pdb.get_nucleic_domains(pdbid), mapped_domains)
+        return mapped_domains
+
+    def _map_domains(self, pdbid, domains, mapped_domains):
+        if not domains:
             logging.debug('no domain information for this entry')
-            continue
-        for domain_type in data[pdbid]:
-            if domain_type not in domain_to_make:
+            return
+        for domain_type in domains[pdbid]:
+            try:
+                segment_id_name = self._SEGMENT_ID_NAME[domain_type]
+            except Exception:
                 continue
-            for domain in data[pdbid][domain_type]:
-                if not data[pdbid][domain_type][domain]['mappings']:
-                    continue
+            for domain_id, domain in domains[pdbid][domain_type].items():
                 # logging.debug(domain_type)
-                # logging.debug(domain)
-                for mapping in data[pdbid][domain_type][domain]['mappings']:
-                    # check segment id
-                    # domain_segment_id = mapping.get('segment_id', 1)
-                    domain_name = str(
-                        mapping.get(segment_identifier[domain_type], ''))
-                    # logging.debug('%s: %s' % (domain_name, domain_segment_id))
-
-                    # then check it exits
-                    start = mapping['start']['residue_number']
-                    end = mapping['end']['residue_number']
-                    chain = mapping['chain_id']
+                # logging.debug(domain_id)
+                for mapping in domain.get('mappings', []):
+                    domain_name = str(mapping.get(segment_id_name, ''))
+                    start_residue = mapping['start']['residue_number']
+                    end_residue = mapping['end']['residue_number']
+                    chain_id = mapping['chain_id']
                     entity_id = mapping['entity_id']
                     segment_id = mapping['struct_asym_id']
-                    if segment_id in stored.seq_scheme:
-                        ranges = get_ranges(segment_id, start, end)
-                        for r in ranges:
-                            store_domain(segment_id, chain, r.start, r.end,
-                                         entity_id)
+                    if segment_id not in stored.seq_scheme:
+                        continue
+                    ranges = get_ranges(segment_id, start_residue, end_residue)
+                    for r in ranges:
+                        mapped_domains.setdefault(domain_type, {}).setdefault(
+                            domain_id, {}).setdefault(domain_name, []).append(
+                                self.Segment(entity_id, chain_id, segment_id,
+                                             r.start_residue, r.end_residue))
 
+    def show(self, pdbid):
+        mapped_domains = self._map_all(pdbid)
+        if not mapped_domains:
+            return
 
-def show_domains(pdbid):  # noqa: C901 too complex
-    map_domains(pdbid)
-    if not stored.domains:
-        return
+        # Precompute molecule lengths indexed by entity_id.
+        molecule_length = {}  # entity_id -> length
+        for molecule in stored.molecules[pdbid]:
+            entity_id = molecule['entity_id']
+            molecule_length[entity_id] = molecule.get('length', None)
 
-    Object = namedtuple('Object', 'segment_ids entity_ids')
-    objects = {}
-    Chain = namedtuple('Chain', 'chain entity_id')
-    chains = {}
-    # logging.debug(stored.domains)
-    for domain_type in stored.domains:
-        for domain in stored.domains[domain_type]:
-            # logging.debug(domain)
-            for instance in stored.domains[domain_type][domain]:
-                segment_ids = []
-                entity_ids = []
-                # logging.debug(instance)
-                object_selections = []
-                for segment in stored.domains[domain_type][domain][instance]:
-                    pdb_start = segment['start']
-                    pdb_end = segment['end']
-                    chain = segment['chain']
-                    segment_id = segment['segment_id']
-                    entity_id = segment['entity_id']
+        Object = namedtuple('Object', 'name entity_ids segment_ids')
+        Chain = namedtuple('Chain', 'entity_id chain_id segment_id')
+        # logging.debug(mapped_domains)
+        for domain_type, typed_domain in mapped_domains.items():
+            objects = []  # list of Object
+            chains = []  # list of Chain
+            for domain_id, named_domain in typed_domain.items():
+                # logging.debug(domain_id)
+                for domain_name, segments in named_domain.items():
+                    # logging.debug(domain_name)
+                    segment_ids = []
+                    entity_ids = []
+                    object_selections = []
+                    for segment in segments:
+                        segment_ids.append(segment.segment_id)
+                        entity_ids.append(segment.entity_id)
+                        chains.append(
+                            Chain(segment.entity_id, segment.chain_id,
+                                  segment.segment_id))
 
-                    segment_ids.append(segment_id)
-                    entity_ids.append(entity_id)
-                    chains[segment_id] = Chain(chain, entity_id)
+                        selection = 'chain %s and resi %s-%s and %s' % (
+                            segment.chain_id, segment.start, segment.end, pdbid)
+                        object_selections.append(selection)
 
-                    selection = 'chain %s and resi %s-%s and %s' % (
-                        chain, pdb_start, pdb_end, pdbid)
-                    object_selections.append(selection)
-                pymol_selection = ' or '.join(
-                    ['(%s)' % x for x in object_selections])
-                logging.debug(pymol_selection)
-                object_name = '%s_%s_%s' % (domain_type, domain, instance)
-                objects[object_name] = Object(segment_ids, entity_ids)
-                cmd.select('test_select', pymol_selection)
-                cmd.create(object_name, 'test_select')
+                    # Create an object containing all segments.
+                    pymol_selection = ' or '.join(
+                        ['(%s)' % x for x in object_selections])
+                    logging.debug(pymol_selection)
+                    object_name = '%s_%s_%s' % (domain_type, domain_id,
+                                                domain_name)
+                    objects.append(Object(object_name, entity_ids, segment_ids))
+                    cmd.select('test_select', pymol_selection)
+                    cmd.create(object_name, 'test_select')
 
-        for segment_id, chain in chains.items():
-            logging.debug(segment_id)
-            c_select = 'chain %s and %s' % (chain.chain, pdbid)
+            # Show all original chains in grey as default background.
+            for chain in chains:
+                logging.debug(chain.segment_id)
+                c_select = 'chain %s and %s' % (chain.chain_id, pdbid)
+                entity_id = chain.entity_id
+                length = molecule_length[entity_id]
+                display_type = get_polymer_display_type(chain.segment_id,
+                                                        'polypeptide', length)
+                cmd.show(display_type, c_select)
+                cmd.color('grey', c_select)
 
-            length = None
-            for molecule in stored.molecules[pdbid]:
-                if chain.entity_id == molecule['entity_id']:
-                    length = molecule['length']
-            display_type = poly_display_type(chain, 'polypeptide', length)
-            cmd.show(display_type, c_select)
-            cmd.color('grey', c_select)
-        num = 1
-        # logging.debug(objects)
-        for object_name, obj in objects.items():
-            # logging.debug(object_name)
-            cmd.enable(object_name)
-            # domain can span multiple segment_id's, could be different type
-            for i, segment_id in enumerate(obj.segment_ids):
-                entity_id = obj.entity_ids[i]
-                length = None
-                for molecule in stored.molecules[pdbid]:
-                    if entity_id == molecule['entity_id']:
-                        length = molecule['length']
-                display_type = poly_display_type(segment_id, 'polypeptide',
-                                                 length)
-                cmd.show(display_type, object_name)
-                Color.set_object_color(num, object_name)
-                num += 1
+            # Show each mapped object in a different color.
+            num = 1
+            for obj in objects:
+                # logging.debug(obj.name)
+                cmd.enable(obj.name)
+                # A domain can span multiple segment_ids which could be
+                # of different display type.
+                # TODO(r2r): Seems broken. It's just overriding the object's
+                # display type and color multiple times - last one wins.
+                for i, segment_id in enumerate(obj.segment_ids):
+                    entity_id = obj.entity_ids[i]
+                    length = molecule_length[entity_id]
+                    display_type = get_polymer_display_type(
+                        segment_id, 'polypeptide', length)
+                    cmd.show(display_type, obj.name)
+                    Color.set_object_color(num, obj.name)
+                    num += 1
 
-        cmd.delete('test_select')
+            cmd.delete('test_select')
 
 
 def PDBe_startup(  # noqa: 901 too complex
@@ -1035,14 +1035,14 @@ def PDBe_startup(  # noqa: 901 too complex
             show_molecules(pdbid)
         elif method == 'domains':
             show_molecules(pdbid)
-            show_domains(pdbid)
+            Domains().show(pdbid)
         elif method == 'validation':
             Validation.launch_validation(pdbid)
         elif method == 'assemblies':
             show_assemblies(pdbid, file_path)
         elif method == 'all':
             show_molecules(pdbid)
-            show_domains(pdbid)
+            Domains().show(pdbid)
             show_assemblies(pdbid, file_path)
             Validation.launch_validation(pdbid)
         else:
