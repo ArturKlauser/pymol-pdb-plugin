@@ -43,6 +43,18 @@ NOTES
     For detailed descriptions see help on individual commands.
 """
 
+# Documentation resources:
+#   mmCIF: (macromolecular Crystallographic Information Framework)
+#          http://mmcif.wwpdb.org/
+# Naming Cheat Sheet:
+#   entity: synonymous with molecule or molecular entity
+#     within molecule:
+#       in_chains: corresponds to PyMOL chain name
+#       in_struct_asyms: corresponds to PyMOL segment name
+#       top level molecule name/key: corresponds to PyMOL object name
+#   asym_id: unique identifier within the crystallographic asymmetric unit
+#   poly: polymer abbreviation
+
 from __future__ import print_function
 
 from collections import namedtuple
@@ -238,6 +250,27 @@ class PdbApi(object):
         return self._fetcher.get_data(url, 'summary')
 
     def get_molecules(self, pdbid):
+        """Returns a dictionary of molecule data.
+
+        The contents is a conglomerate of data found in the mmCIF entity group
+        http://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Groups/entity_group.html
+        (Better reference would be good)
+
+        Format:
+          <molecules> = dict(<PDB_ID>: list(<entity>))
+            <entity> = dict(<property>: <value>)
+            some properties:
+              entity_id: unique numeric ID (key)
+              molecule_name: list(name of this molecule)
+              in_chains: list(<chain_name>)
+              in_struct_asyms: list(<segment_name>)
+              number_of_copies: number of duplicate entities
+              molecule_type: enum(polypeptide|Bound|Water|...)
+                for polypeptide type:
+                  sequence: sequence string
+                  length: sequence length
+              ca_p_only: true/false; only P and/or CA atom positions available
+        """
         url = self._get_url('pdb/entry/molecules', pdbid)
         return self._fetcher.get_data(url, 'molecules')
 
@@ -405,7 +438,7 @@ class WorkerFunctions(object):
             if molecule['ca_p_only']:
                 for segment_id in molecule['in_struct_asyms']:
                     stored.ca_p_only_segments.add(segment_id)
-            if molecule['molecule_type'] not in ['water', 'bound']:
+            if molecule['molecule_type'] not in ['Water', 'Bound']:
                 stored.poly_count += 1
 
 
@@ -712,22 +745,21 @@ class Validation(object):
         for molecule in stored.molecules.get(pdbid, []):
             # logging.debug(molecule)
             molecule_type = molecule['molecule_type']
-            if molecule_type not in ['Water', 'Bound']:
-                for segment_id in molecule['in_struct_asyms']:
-                    if not stored.seq_scheme:
-                        poly_seq_scheme(pdbid)
-                    start_residue = 1
-                    end_residue = molecule['length']
-                    length = molecule['length']
-                    display_type = get_polymer_display_type(
-                        segment_id, 'polypeptide', length)
-                    # logging.debug(segment_id)
-                    ranges = get_ranges(segment_id, start_residue, end_residue)
-                    for r in ranges:
-                        selection = 'chain %s and resi %s-%s and %s' % (
-                            r.chain_id, r.start_residue, r.end_residue, pdbid)
-                        # logging.debug(selection)
-                        cmd.show(display_type, selection)
+            if molecule_type in ['Water', 'Bound']:
+                continue
+            for segment_id in molecule['in_struct_asyms']:
+                if not stored.seq_scheme:
+                    poly_seq_scheme(pdbid)
+                length = molecule['length']
+                display_type = get_polymer_display_type(segment_id,
+                                                        'polypeptide', length)
+                # logging.debug(segment_id)
+                ranges = get_ranges(segment_id, 1, length)
+                for r in ranges:
+                    selection = 'chain %s and resi %s-%s and %s' % (
+                        r.chain_id, r.start_residue, r.end_residue, pdbid)
+                    # logging.debug(selection)
+                    cmd.show(display_type, selection)
 
         Color.set_validation_background_color(pdbid)
         # display(pdbid, image_type)
@@ -739,91 +771,92 @@ class Validation(object):
         # logging.debug(stored.residues)
 
 
-def show_molecules(pdbid):  # noqa: C901 too complex
-    logging.debug('Display entities')
-    cmd.set('cartoon_transparency', 0.3, pdbid)
-    cmd.set('ribbon_transparency', 0.3, pdbid)
-    if not stored.molecules:
-        stored.molecules = pdb.get_molecules(pdbid)
-    for molecule in stored.molecules.get(pdbid, []):
-        if molecule['molecule_name']:
-            entity_name = '-'.join(molecule['molecule_name'])
-            if len(molecule['molecule_name']) > 1:
-                entity_name += '_chimera'
-        else:
-            logging.debug('No name from the API')
-            entity_name = 'entity_%s' % molecule['entity_id']
-        # logging.debug('molecule %s: %s' %(molecule['entity_id'], entity_name))
+class Molecules(object):
+    """Analyze and visualize molecules."""
 
-        # logging.debug(molecule['entity_id'])
-        # see if its polymeric
+    def __init__(self, pdbid):
+        self._pdbid = pdbid
+        # Analysis depends on some globally available data; load it.
+        if not stored.molecules:
+            stored.molecules = pdb.get_molecules(pdbid)
+        if not stored.seq_scheme:
+            poly_seq_scheme(pdbid)
+
+    def _process_molecule(self, molecule):
+        """Returns the display type and selection criteria for the molecule."""
+        display_type = ''
+        selections = []
         molecule_type = molecule['molecule_type']
-        # entity_name = molecule['molecule_name']
-        if entity_name:
+        for segment_id in molecule['in_struct_asyms']:
+            if molecule_type == 'Bound':
+                # Use segment_id to find residue number and chain ID.
+                # logging.debug(entity_name)
+                # logging.debug(stored.seq_scheme[segment_id])
+                display_type = 'spheres'
+                for short in stored.seq_scheme[segment_id].values():
+                    chain = short['chainID']
+                    # logging.debug(short)
+                    if not short['PDBinsCode']:
+                        residue = str(short['PDBnum'])
+                    else:
+                        residue = str(short['PDBnum']) + short['PDBinsCode']
+                    selection = 'chain %s and resi %s and %s' % (chain, residue,
+                                                                 self._pdbid)
+                    selections.append(selection)
+                    # logging.debug(selection)
+            else:
+                # Need to work out if cartoon is the right thing to display.
+                length = molecule['length']
+                display_type = get_polymer_display_type(segment_id,
+                                                        molecule_type, length)
+                # logging.debug(segment_id)
+                ranges = get_ranges(segment_id, 1, length)
+                # logging.debug(ranges)
+                for r in ranges:
+                    selection = 'chain %s and resi %s-%s and %s' % (
+                        r.chain_id, r.start_residue, r.end_residue, self._pdbid)
+                    # logging.debug(selection)
+                    selections.append(selection)
+
+        return display_type, selections
+
+    def show(self):
+        logging.debug('Display molecules')
+        cmd.set('cartoon_transparency', 0.3, self._pdbid)
+        cmd.set('ribbon_transparency', 0.3, self._pdbid)
+        for molecule in stored.molecules.get(self._pdbid, []):
+            if molecule['molecule_type'] == 'Water':
+                continue  # Don't show water.
+
+            molecule_name = molecule['molecule_name']
+            if molecule_name:
+                entity_name = '-'.join(molecule_name)
+                if len(molecule_name) > 1:
+                    entity_name += '_chimera'
+            else:
+                logging.debug('No name from the API')
+                entity_name = 'entity_%s' % molecule['entity_id']
+            # logging.debug('molecule %s: %s' %
+            #               (molecule['entity_id'], entity_name))
+
             object_name = re.sub(' ', '_', entity_name)
             object_name = re.sub(r'\W+', '', object_name)
-        else:
-            object_name = 'entity_%s' % molecule['entity_id']
-        # logging.debug(object_name)
-        display_type = ''
-        object_selections = []
-        if molecule_type != 'Water':
-            # use segment_id to find residue number and chain ID
-            for segment_id in molecule['in_struct_asyms']:
-                if not stored.seq_scheme:
-                    poly_seq_scheme(pdbid)
-                if molecule_type == 'Bound':
-                    # bound molecules have no CIFresidue number and this is
-                    # defaulted to 1 in the API
-                    # logging.debug(entity_name)
-                    # logging.debug(stored.seq_scheme[segment_id])
-                    for res in stored.seq_scheme[segment_id]:
-                        # logging.debug(stored.seq_scheme[segment_id][res])
-                        short = stored.seq_scheme[segment_id][res]
-                        chain = short['chainID']
-                        res = ''
-                        display_type = 'spheres'
-                        # logging.debug(short)
-                        if not short['PDBinsCode']:
-                            res = str(short['PDBnum'])
-                        else:
-                            res = str(short['PDBnum']) + short['PDBinsCode']
-                        selection = 'chain %s and resi %s and %s' % (chain, res,
-                                                                     pdbid)
-                        object_selections.append(selection)
-                        # logging.debug(selection)
-                else:
-                    # find the first and last residues
-                    start_residue = 1
-                    end_residue = molecule['length']
-                    # need to work out if cartoon is the right thing to
-                    # display
-                    length = molecule['length']
-                    display_type = get_polymer_display_type(
-                        segment_id, molecule_type, length)
-                    # logging.debug(segment_id)
-                    ranges = get_ranges(segment_id, start_residue, end_residue)
-                    # logging.debug(ranges)
-                    for r in ranges:
-                        selection = 'chain %s and resi %s-%s and %s' % (
-                            r.chain_id, r.start_residue, r.end_residue, pdbid)
-                        # logging.debug(selection)
-                        object_selections.append(selection)
-
-            pymol_selection = ' or '.join(
-                ['(%s)' % x for x in object_selections])
-            logging.debug(pymol_selection)
             object_name = object_name[:250]
-            cmd.select('test_select', pymol_selection)
-            cmd.create(object_name, 'test_select')
+            # logging.debug(object_name)
+
+            display_type, selections = self._process_molecule(molecule)
+
+            pymol_selection = ' or '.join(['(%s)' % x for x in selections])
+            logging.debug(pymol_selection)
+            cmd.select('temp_select', pymol_selection)
+            cmd.create(object_name, 'temp_select')
             # logging.debug(display_type)
             cmd.show(display_type, object_name)
 
-            # color by molecule.
+            # Color by molecule.
             Color.set_object_color(int(molecule['entity_id']), object_name)
 
-    cmd.delete('test_select')
-    # cmd.show('cartoon', pdbid)
+        cmd.delete('temp_select')
 
 
 def show_assemblies(pdbid, mm_cif_file):
@@ -941,8 +974,8 @@ class Domains(object):
                     object_name = '%s_%s_%s' % (domain_type, domain_id,
                                                 domain_name)
                     objects.append(Object(object_name, entity_ids, segment_ids))
-                    cmd.select('test_select', pymol_selection)
-                    cmd.create(object_name, 'test_select')
+                    cmd.select('temp_select', pymol_selection)
+                    cmd.create(object_name, 'temp_select')
 
             # Show all original chains in grey as default background.
             for chain in chains:
@@ -973,7 +1006,7 @@ class Domains(object):
                     Color.set_object_color(num, obj.name)
                     num += 1
 
-            cmd.delete('test_select')
+            cmd.delete('temp_select')
 
 
 def PDBe_startup(  # noqa: 901 too complex
@@ -1032,16 +1065,16 @@ def PDBe_startup(  # noqa: 901 too complex
         WorkerFunctions.count_poly(pdbid)
 
         if method == 'molecules':
-            show_molecules(pdbid)
+            Molecules(pdbid).show()
         elif method == 'domains':
-            show_molecules(pdbid)
+            Molecules(pdbid).show()
             Domains().show(pdbid)
         elif method == 'validation':
             Validation.launch_validation(pdbid)
         elif method == 'assemblies':
             show_assemblies(pdbid, file_path)
         elif method == 'all':
-            show_molecules(pdbid)
+            Molecules(pdbid).show()
             Domains().show(pdbid)
             show_assemblies(pdbid, file_path)
             Validation.launch_validation(pdbid)
