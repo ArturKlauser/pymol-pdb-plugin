@@ -92,8 +92,8 @@ def clear_analysis_data():
 
     # --- results of analysis
     stored.residues = {}  # validation_selection()
-    stored.polymer_count = 0  # count_polymers()
-    stored.ca_p_only_segments = set()  # count_polymers()
+    stored.polymer_count = 0  # Molecules()._process_molecules()
+    stored.ca_p_only_segments = set()  # Molecules()._process_molecules()
 
 
 def extendaa(*arg, **kw):
@@ -268,7 +268,7 @@ class PdbApi(object):
                 for polypeptide type:
                   sequence: sequence string
                   length: sequence length
-              ca_p_only: true/false; only P and/or CA atom positions available
+              ca_p_only: true/false; only CA and/or P atom positions available
         """
         url = self._get_url('pdb/entry/molecules', pdbid)
         return self._fetcher.get_data(url, 'molecules')
@@ -333,10 +333,10 @@ class PdbApi(object):
 pdb = PdbApi()
 
 
-class Color(object):
-    """Manage use of colors."""
+class Presentation(object):
+    """Manage PyMOL presentation properties."""
 
-    _object_colors = [
+    _OBJECT_COLORS = [
         'red',
         'green',
         'blue',
@@ -392,19 +392,19 @@ class Color(object):
         'deeppurple',
         'brown',
     ]
-    _validation_colors = ['yellow', 'orange', 'red']
+    _VALIDATION_COLORS = ['yellow', 'orange', 'red']
 
     @classmethod
     def set_object_color(cls, color_num, obj):
         """Colors object from predetermined set, reusing as necessary."""
-        color = cls._object_colors[color_num % len(cls._object_colors)]
+        color = cls._OBJECT_COLORS[color_num % len(cls._OBJECT_COLORS)]
         cmd.color(color, obj)
 
     @classmethod
     def set_validation_color(cls, color_num, obj):
         """Colors object from predetermined set, clamping to max."""
-        color = cls._validation_colors[min(color_num,
-                                           len(cls._validation_colors) - 1)]
+        color = cls._VALIDATION_COLORS[min(color_num,
+                                           len(cls._VALIDATION_COLORS) - 1)]
         cmd.color(color, obj)
 
     @classmethod
@@ -414,6 +414,13 @@ class Color(object):
         # Define this as a new color name.
         cmd.set_color(color, [0.4, 1.0, 0.4])
         cmd.color(color, obj)
+
+    @staticmethod
+    def set_transparency(selection, transparency):
+        cmd.set('cartoon_transparency', transparency, selection)
+        cmd.set('ribbon_transparency', transparency, selection)
+        cmd.set('stick_transparency', transparency, selection)
+        cmd.set('sphere_transparency', transparency, selection)
 
 
 def get_polymer_display_type(segment_id, molecule_type, length):
@@ -437,29 +444,6 @@ def get_polymer_display_type(segment_id, molecule_type, length):
     #     'segment_id: %s, molecule_type: %s, length: %s, display_type: %s' %
     #     (segment_id, molecule_type, length, display_type))
     return display_type
-
-
-class WorkerFunctions(object):
-
-    @staticmethod
-    def set_transparency(selection, transparency):
-        cmd.set('cartoon_transparency', transparency, selection)
-        cmd.set('ribbon_transparency', transparency, selection)
-        cmd.set('stick_transparency', transparency, selection)
-        cmd.set('sphere_transparency', transparency, selection)
-
-    @staticmethod
-    def count_polymers(pdbid):
-        # global molecules
-        if not stored.molecules:
-            stored.molecules = pdb.get_molecules(pdbid)
-        for molecule in stored.molecules.get(pdbid, []):
-            # add ca only list
-            if molecule['ca_p_only']:
-                for segment_id in molecule['in_struct_asyms']:
-                    stored.ca_p_only_segments.add(segment_id)
-            if molecule['molecule_type'] not in ['Water', 'Bound']:
-                stored.polymer_count += 1
 
 
 class Sequences(object):
@@ -702,7 +686,7 @@ class Validation(object):
         else:
             color_num = 0
         stored.residues[selection] = color_num
-        Color.set_validation_color(color_num, selection)
+        Presentation.set_validation_color(color_num, selection)
 
     @classmethod
     def geometric_validation(cls, pdbid, residue_data):
@@ -791,7 +775,7 @@ class Validation(object):
                     selection = sequences.get_range_selection(rng)
                     cmd.show(display_type, selection)
 
-        Color.set_validation_background_color(pdbid)
+        Presentation.set_validation_background_color(pdbid)
         # display(pdbid, image_type)
         cmd.enable(pdbid)
 
@@ -809,7 +793,23 @@ class Molecules(object):
         # Analysis depends on some globally available data; load it.
         if not stored.molecules:
             stored.molecules = pdb.get_molecules(pdbid)
+        self._process_molecules()
         self._sequences = Sequences(pdbid)
+
+    def _process_molecules(self):
+        """Generate derivative data from raw molecules.
+
+        * Creates ca_p_only_segments set which contains all segment_ids that
+          only have CA and/or P atom positions available in location data.
+        * Creates a global count of polymers in the data.
+        """
+        for molecule in stored.molecules.get(self._pdbid, []):
+            # add ca only list
+            if molecule['ca_p_only']:
+                for segment_id in molecule['in_struct_asyms']:
+                    stored.ca_p_only_segments.add(segment_id)
+            if molecule['molecule_type'] not in ['Water', 'Bound']:
+                stored.polymer_count += 1
 
     def _process_molecule(self, molecule):
         """Returns the display type and selection criteria for the molecule."""
@@ -870,7 +870,8 @@ class Molecules(object):
             cmd.show(display_type, object_name)
 
             # Color by molecule.
-            Color.set_object_color(int(molecule['entity_id']), object_name)
+            Presentation.set_object_color(int(molecule['entity_id']),
+                                          object_name)
 
         cmd.delete('temp_select')
 
@@ -879,7 +880,7 @@ def show_assemblies(pdbid, mm_cif_file):
     """iterate through the assemblies and output images"""
     logging.info('Generating assemblies')
     # cmd.hide('everything')
-    WorkerFunctions.set_transparency('all', 0.0)
+    Presentation.set_transparency('all', 0.0)
 
     try:
         assemblies = cmd.get_assembly_ids(pdbid)  # list or None
@@ -1027,7 +1028,7 @@ class Domains(object):
                     display_type = get_polymer_display_type(
                         segment_id, 'polypeptide', length)
                     cmd.show(display_type, obj.name)
-                    Color.set_object_color(num, obj.name)
+                    Presentation.set_object_color(num, obj.name)
                     num += 1
 
             cmd.delete('temp_select')
@@ -1086,19 +1087,19 @@ def PDBe_startup(  # noqa: 901 too complex
             logging.debug('File to load: %s' % file_path)
             cmd.load(file_path, pdbid, format='cif')
         cmd.hide('everything', pdbid)
-        WorkerFunctions.count_polymers(pdbid)
+        molecules = Molecules(pdbid)
 
         if method == 'molecules':
-            Molecules(pdbid).show()
+            molecules.show()
         elif method == 'domains':
-            Molecules(pdbid).show()
+            molecules.show()
             Domains(pdbid).show()
         elif method == 'validation':
             Validation.launch_validation(pdbid)
         elif method == 'assemblies':
             show_assemblies(pdbid, file_path)
         elif method == 'all':
-            Molecules(pdbid).show()
+            molecules.show()
             Domains(pdbid).show()
             show_assemblies(pdbid, file_path)
             Validation.launch_validation(pdbid)
@@ -1109,7 +1110,6 @@ def PDBe_startup(  # noqa: 901 too complex
     elif mm_cif_file:
         logging.warning('no PDB ID, show assemblies from mmCIF file')
         cmd.load(mm_cif_file, pdbid, format='cif')
-        # WorkerFunctions.count_polymers(pdbid)
         show_assemblies(pdbid, mm_cif_file)
 
     else:
