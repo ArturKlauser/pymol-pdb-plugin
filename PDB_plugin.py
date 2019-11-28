@@ -165,7 +165,7 @@ class PdbFetcher(object):
     @staticmethod
     def _quote(url):
         """Returns URL with space escaped."""
-        return re.sub(' ', '%20', url)
+        return url.replace(' ', '%20')
 
     def _get_data_with_requests(self, url, description):
         """Uses requests module to fetch and return data from the PDB URL."""
@@ -403,15 +403,12 @@ def get_polymer_display_type(segment_id, molecule_type, length):
         logging.debug('set ribbon trace on')
         cmd.set('ribbon_trace_atoms', 1)
         display_type = 'ribbon'
-    else:
-        if re.search('polypeptide', molecule_type):
-            if length < 20:
-                display_type = 'sticks'
-        if re.search('nucleotide', molecule_type):
-            if length < 3:
-                display_type = 'sticks'
-        if re.search('saccharide', molecule_type):
-            display_type = 'sticks'
+    elif 'polypeptide' in molecule_type and length < 20:
+        display_type = 'sticks'
+    elif 'nucleotide' in molecule_type and length < 3:
+        display_type = 'sticks'
+    elif 'saccharide' in molecule_type:
+        display_type = 'sticks'
 
     # logging.debug(
     #     'segment_id: %s, molecule_type: %s, length: %s, display_type: %s' %
@@ -493,14 +490,14 @@ def get_ranges(  # noqa: C901 too complex
 
     def insert_code(segment_id, cif_num):
         if not stored.seq_scheme[segment_id][cif_num]['PDBinsCode']:
-            pdb_num = stored.seq_scheme[segment_id][cif_num]['PDBnum']
+            pdb_num = str(stored.seq_scheme[segment_id][cif_num]['PDBnum'])
         else:
             pdb_num = '%s%s' % (
                 stored.seq_scheme[segment_id][cif_num]['PDBnum'],
                 stored.seq_scheme[segment_id][cif_num]['PDBinsCode'])
 
-        if re.search('-', str(pdb_num)):
-            pdb_num = re.sub('-', '\\-', str(pdb_num))
+        # TODO(r2r): not clear why this substitution would be necessary.
+        pdb_num = pdb_num.replace('-', '\\-')
 
         return pdb_num
 
@@ -839,7 +836,7 @@ class Molecules(object):
             # logging.debug('molecule %s: %s' %
             #               (molecule['entity_id'], entity_name))
 
-            object_name = re.sub(' ', '_', entity_name)
+            object_name = entity_name.replace(' ', '_')
             object_name = re.sub(r'\W+', '', object_name)
             object_name = object_name[:250]
             # logging.debug(object_name)
@@ -1015,10 +1012,10 @@ def PDBe_startup(  # noqa: 901 too complex
         pdbid = pdbid.lower()
     if mm_cif_file:
         filename = os.path.basename(mm_cif_file)
-        if re.search('_', filename):
-            pdbid = re.split('_', filename)[0].lower()
+        if '_' in filename:
+            pdbid = filename.split('_')[0].lower()
         else:
-            pdbid = re.split('[.]', filename)[0].lower()
+            pdbid = filename.split('.')[0].lower()
 
     try:
         cmd.set('cif_keepinmemory')
@@ -1160,6 +1157,7 @@ class PdbIdAutocomplete(cmd.Shortcut):
                 and returns a PDB summary or None if the pdbid is not valid.
         """
 
+        self._pdb_id_re = re.compile(r'\d[a-zA-Z0-9]{0,3}$')
         # for dependency injection
         self._get_summary = (get_summary if get_summary else
                              lambda key: pdb.get_summary(key))
@@ -1195,8 +1193,7 @@ class PdbIdAutocomplete(cmd.Shortcut):
             # Returning a list indicates that there are still >1 options.
             return ['[0-9]' + '[alphanumeric]' * 3, filler]
         elif len(key) < 4:
-            pdb_id_pattern = re.compile(r'\d[a-zA-Z0-9]{0,3}$')
-            if re.match(pdb_id_pattern, key) is None:
+            if re.match(self._pdb_id_re, key) is None:
                 return None  # key doesn't match PDB ID format
             # Returning a list indicates that there are still >1 options.
             return [key + '[alphanumeric]' * (4 - len(key)), filler]
@@ -1415,10 +1412,10 @@ def main(argv=sys.argv):
     mm_cif_file = None
     pdbid = None
     logging.debug(argv)
-    for arg in argv:
-        pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
-        mm_cif_file_re = re.compile(r'mmCIF_file=(.*)')
+    pdb_id_re = re.compile(r'\d[A-z0-9]{3}')
+    mm_cif_file_re = re.compile(r'mmCIF_file=(.*)')
 
+    for arg in argv:
         match = pdb_id_re.match(arg)
         if match:
             pdbid = match.group(0)
