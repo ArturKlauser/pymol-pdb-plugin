@@ -53,7 +53,6 @@ NOTES
 #       in_struct_asyms: corresponds to PyMOL segment name
 #       top level molecule name/key: corresponds to PyMOL object name
 #   asym_id: unique identifier within the crystallographic asymmetric unit
-#   poly: polymer abbreviation
 
 from __future__ import print_function
 
@@ -79,7 +78,7 @@ _EBI_FTP = ('ftp://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/'
             'mmCIF/%s/%s.cif.gz')
 # clean mmcif
 _UPDATED_FTP = 'https://www.ebi.ac.uk/pdbe/static/entry/%s_updated.cif.gz'
-_EMPTY_CIF = frozenset(['', '.', '?', None])
+_EMPTY_PDB_NUM = frozenset(['', '.', '?', None])
 
 
 def clear_analysis_data():
@@ -89,12 +88,12 @@ def clear_analysis_data():
 
     # --- inputs from PDB API
     stored.molecules = {}  # get_molecules()
-    stored.seq_scheme = {}  # get_seq_scheme() but reformatted poly_seq_scheme()
+    Sequences.clear()
 
     # --- results of analysis
     stored.residues = {}  # validation_selection()
-    stored.poly_count = 0  # count_poly()
-    stored.ca_p_only_segments = set()  # count_poly()
+    stored.polymer_count = 0  # count_polymers()
+    stored.ca_p_only_segments = set()  # count_polymers()
 
 
 def extendaa(*arg, **kw):
@@ -258,8 +257,8 @@ class PdbApi(object):
 
         Format:
           <molecules> = dict(<PDB_ID>: list(<entity>))
-            <entity> = dict(<property>: <value>)
-            some properties:
+            <entity> = dict(<key>: <value>)
+            some keys:
               entity_id: unique numeric ID (key)
               molecule_name: list(name of this molecule)
               in_chains: list(<chain_name>)
@@ -274,9 +273,33 @@ class PdbApi(object):
         url = self._get_url('pdb/entry/molecules', pdbid)
         return self._fetcher.get_data(url, 'molecules')
 
-    def get_seq_scheme(self, pdbid):
+    def get_sequences(self, pdbid):
+        """Returns a dictionary of sequence data.
+
+        The contents is similar to mmCIF poly_seq_scheme.
+        http://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Categories/pdbx_poly_seq_scheme.html
+
+        Format:
+          <sequences> = dict(<PDB_ID>: dict("molecules": list(<molecule>)))
+            <molecule> = dict(<key>: <value)
+              available keys:
+                entity_id: molecule number (see get_molecules above)
+                chains: list(<chain>)
+              <chain> = dict(<key>: <value>)
+                available keys:
+                  chain_id: PyMOL's chain name (e.g in selection)
+                  struct_asym_id: PyMOL's segment name (e.g. in selection)
+                  residues: list(<residue>)
+                      <residue>: dict(<key>: <value>)
+                        available keys:
+                          residue_number: int; sequential within this dict
+                          author_residue_number: int; PyMOL residue number
+                                                 within chain
+                          observer_ration: float; ?
+                          residue_name: char; 3-letter residue code
+        """
         url = self._get_url('pdb/entry/residue_listing', pdbid)
-        return self._fetcher.get_data(url, 'seq_scheme')
+        return self._fetcher.get_data(url, 'sequences')
 
     def get_protein_domains(self, pdbid):
         url = self._get_url('mappings', pdbid)
@@ -295,10 +318,10 @@ class PdbApi(object):
             'validation/protein-RNA-DNA-geometry-outlier-residues/entry', pdbid)
         return self._fetcher.get_data(url, 'residue validation')
 
-    def get_rama_validation(self, pdbid):
+    def get_ramachandran_validation(self, pdbid):
         url = self._get_url(
             'validation/protein-ramachandran-sidechain-outliers/entry', pdbid)
-        return self._fetcher.get_data(url, 'rama validation')
+        return self._fetcher.get_data(url, 'ramachandran validation')
 
     def _get_url(self, api_url, pdbid):
         url = '/'.join((self._server_root, api_url, pdbid))
@@ -394,10 +417,10 @@ class Color(object):
 
 
 def get_polymer_display_type(segment_id, molecule_type, length):
-    """Returns dispay type depending on complexity."""
-    # start with it being cartoon - then change as needed.
+    """Returns display type depending on molecule complexity."""
+    # Start with it being cartoon - then change as needed.
     display_type = 'cartoon'
-    if stored.poly_count > 50:
+    if stored.polymer_count > 50:
         display_type = 'ribbon'
     elif segment_id in stored.ca_p_only_segments:
         logging.debug('set ribbon trace on')
@@ -426,7 +449,7 @@ class WorkerFunctions(object):
         cmd.set('sphere_transparency', transparency, selection)
 
     @staticmethod
-    def count_poly(pdbid):
+    def count_polymers(pdbid):
         # global molecules
         if not stored.molecules:
             stored.molecules = pdb.get_molecules(pdbid)
@@ -436,45 +459,84 @@ class WorkerFunctions(object):
                 for segment_id in molecule['in_struct_asyms']:
                     stored.ca_p_only_segments.add(segment_id)
             if molecule['molecule_type'] not in ['Water', 'Bound']:
-                stored.poly_count += 1
+                stored.polymer_count += 1
 
 
-def poly_seq_scheme(pdbid):
-    """build a dictionary like poly_seq_scheme"""
-    data = pdb.get_seq_scheme(pdbid)
-    if pdbid in data:
-        for molecule in data[pdbid]['molecules']:
+class Sequences(object):
+    """Polymer sequences."""
+
+    Residue = namedtuple('Residue',
+                         'chain_id pdb_num pdb_residue_num is_observed')
+    Range = namedtuple('Range', 'chain_id start_residue_num end_residue_num')
+
+    # TODO(r2r): For refactoring purposes temporarily moved stored.sequences
+    # into a Sequences class-level object. This should really be instance-level.
+    _sequences = {}  # get_sequences() reformatted by Sequences()._build()
+    """Stores polymer sequence data.
+
+    Format:
+      <sequences> = dict(<segment_id>: <residues>)
+        <residues> = dict(<residue_num>: <residue>)
+          <residue_num> = sequential numeric residue id within this sequence
+          <residue> = namedtuple
+            chain_id: PyMOL chain name
+            pdb_num: PDB residue number (excluding insertion codes)
+            pdb_residue_num: PyMOL residue number (including insertion codes),
+                             i.e. 'resi' in selections
+            is_observed: bool TODO(r2r): exact meaning unclear
+    """
+
+    def __init__(self, pdbid):
+        self._pdbid = pdbid
+        if not self._sequences:
+            self._build()
+
+    @classmethod
+    def clear(cls):
+        cls._sequences = {}
+
+    @staticmethod
+    def get_pdb_residue_num(pdb_num, pdb_insertion_code):
+        """Returns a residue number as used in PDB data."""
+        if not pdb_insertion_code or pdb_insertion_code == ' ':
+            pdb_residue_num = str(pdb_num)
+        else:
+            pdb_residue_num = '%s%s' % (pdb_num, pdb_insertion_code)
+        # TODO(r2r): not clear why this substitution would be necessary.
+        pdb_residue_num = pdb_residue_num.replace('-', '\\-')
+        return pdb_residue_num
+
+    def _build(self):
+        """Builds a dictionary of sequence residues."""
+        data = pdb.get_sequences(self._pdbid)
+        if self._pdbid not in data:
+            return
+        for molecule in data[self._pdbid]['molecules']:
             for chain in molecule['chains']:
                 chain_id = chain['chain_id']
                 segment_id = chain['struct_asym_id']
                 for residue in chain['residues']:
-                    cif_num = residue['residue_number']
+                    residue_num = residue['residue_number']
                     pdb_num = residue['author_residue_number']
                     pdb_ins_code = residue['author_insertion_code']
-                    residue_name = residue['residue_name']
+                    pdb_residue_num = self.get_pdb_residue_num(
+                        pdb_num, pdb_ins_code)
                     if residue['observed_ratio'] != 0:
                         is_observed = True
                     else:
                         is_observed = False
 
-                    stored.seq_scheme.setdefault(segment_id, {})[cif_num] = {
-                        'PDBnum': pdb_num,
-                        'PDBinsCode': pdb_ins_code,
-                        'observed': is_observed,
-                        'residueName': residue_name,
-                        'chainID': chain_id
-                    }
-                    # logging.debug(seq_scheme)
+                    self._sequences.setdefault(segment_id,
+                                               {})[residue_num] = self.Residue(
+                                                   chain_id, pdb_num,
+                                                   pdb_residue_num, is_observed)
+                    # logging.debug(self._sequences)
 
-
-Range = namedtuple('Range', 'chain_id start_residue end_residue')
-
-
-def get_ranges(  # noqa: C901 too complex
-    segment_id, start_residue, end_residue):
-
-    def order(start, end, start_code, end_code):
-        """Returns (start_code, end_code) ordered such that start < end."""
+    @staticmethod
+    def _order_range(start, end, start_pdb_residue_num, end_pdb_residue_num):
+        """Returns (start_pdb_residue_num, end_pdb_residue_num) ordered such
+        that start < end.
+        """
         # logging.debug('PRE: start: %s, end %s' % (start, end))
         if type(start) is str:
             start = start.split('\\')[-1]
@@ -482,153 +544,129 @@ def get_ranges(  # noqa: C901 too complex
             end = end.split('\\')[-1]
 
         if int(start) > int(end):
-            result = (end_code, start_code)
+            result = (end_pdb_residue_num, start_pdb_residue_num)
         else:
-            result = (start_code, end_code)
+            result = (start_pdb_residue_num, end_pdb_residue_num)
         # logging.debug('POST: start: %s, end: %s, %s' % (start, end, result))
         return result
 
-    def insert_code(segment_id, cif_num):
-        if not stored.seq_scheme[segment_id][cif_num]['PDBinsCode']:
-            pdb_num = str(stored.seq_scheme[segment_id][cif_num]['PDBnum'])
-        else:
-            pdb_num = '%s%s' % (
-                stored.seq_scheme[segment_id][cif_num]['PDBnum'],
-                stored.seq_scheme[segment_id][cif_num]['PDBinsCode'])
+    @classmethod
+    def _append_range(cls, start_residue, end_residue, ranges):
+        if not start_residue:
+            return  # Range was not started yet - ignore.
 
-        # TODO(r2r): not clear why this substitution would be necessary.
-        pdb_num = pdb_num.replace('-', '\\-')
+        start_pdb_residue_num, end_pdb_residue_num = cls._order_range(
+            start_residue.pdb_num, end_residue.pdb_num,
+            start_residue.pdb_residue_num, end_residue.pdb_residue_num)
+        ranges.append(
+            cls.Range(start_residue.chain_id, start_pdb_residue_num,
+                      end_pdb_residue_num))
 
-        return pdb_num
+    @staticmethod
+    def _get_trimmed_range(sequence, start_residue_num, end_residue_num):
+        """Trims the sequence range of unobserved residues."""
+        # Get the range of existing residue numbers.
+        residue_numbers = sequence.keys()
+        first_residue_num = min(residue_numbers)
+        last_residue_num = max(residue_numbers)
+        # Bound start/end residue number range to existing residue numbers.
+        start_residue_num = max(start_residue_num, first_residue_num)
+        end_residue_num = min(end_residue_num, last_residue_num)
+        # logging.debug('first_residue_num: %s, last_residue_num: %s' %
+        #               (first_residue_num, last_residue_num))
+        # logging.debug('start_residue_num: %s, end_residue_num: %s' %
+        #               (start_residue_num, end_residue_num))
 
-    first_residue = 1
-    last_residue = 1
-    for r in stored.seq_scheme[segment_id]:
-        if r <= first_residue:
-            first_residue = r
-        if r >= last_residue:
-            last_residue = r
+        # Trim unobserved ends of sequence.
+        while not sequence[start_residue_num].is_observed:
+            start_residue_num += 1
+            if start_residue_num > end_residue_num:
+                logging.debug('domain unobserved')
+                return (None, None)
+        while not sequence[end_residue_num].is_observed:
+            end_residue_num -= 1
+            if start_residue_num > end_residue_num:
+                logging.debug('domain unobserved')
+                return (None, None)
+        return (start_residue_num, end_residue_num)
 
-    if end_residue > last_residue:
-        # logging.debug('ERROR: residue %s from SIFTS is greater than the '
-        #               'lastSeqRes number %s' % (end_residue, lastSeqRes))
-        end_residue = last_residue
+    @classmethod
+    def get_ranges(cls, segment_id, start_residue_num, end_residue_num):
+        """Returns contiguous residue ranges present in the sequence.
 
-    # logging.debug('first residue: %s, last residue %s' %
-    #               (first_residue, last_residue))
-    # logging.debug(seq_scheme[segment_id][start_residue])
-    is_observed = True
-    if start_residue in stored.seq_scheme[segment_id]:
-        chain_id = stored.seq_scheme[segment_id][start_residue]['chainID']
+        Pymol doesn't cope with non-contiguous ranges.
 
-        while not stored.seq_scheme[segment_id][start_residue]['observed']:
-            # logging.debug('PDB start_residue is not observed, adding 1 to '
-            #               'residue number %s' % start_residue)
-            if start_residue == last_residue:
-                # logging.debug('domain not observed')
-                is_observed = False
-                break
-            else:
-                start_residue += 1
-                if start_residue == last_residue:
-                    # logging.debug('domain not observed')
-                    is_observed = False
-                    break
-                elif start_residue == end_residue:
-                    # logging.debug('domain not observed')
-                    is_observed = False
-                    break
+        This function finds all ranges where the residue number increases by 1.
+        If it jumps then a separate residue range is generated.
+        """
+        ranges = []
+        if segment_id not in cls._sequences:
+            return ranges
 
-    if end_residue in stored.seq_scheme[segment_id]:
-        while not stored.seq_scheme[segment_id][end_residue]['observed']:
-            # logging.debug('PDB end is not observed, minusing 1 from residue '
-            #               'number %s' % end_residue)
-            if end_residue == first_residue:
-                # logging.debug('domain not observed')
-                is_observed = False
-                break
-            else:
-                end_residue -= 1
-                if end_residue == first_residue:
-                    # logging.debug('domain not observed')
-                    is_observed = False
-                    break
-                elif start_residue == end_residue:
-                    # logging.debug('domain not observed')
-                    is_observed = False
-                    break
+        sequence = cls._sequences[segment_id]
+        start_residue_num, end_residue_num = cls._get_trimmed_range(
+            sequence, start_residue_num, end_residue_num)
+        # logging.debug('start_residue_num: %s, end_residue_num: %s' %
+        #               (start_residue_num, end_residue_num))
+        if not start_residue_num:
+            return ranges
 
-    ranges = []
-    if not is_observed:
-        logging.debug('domain unobserved')
+        # Look at difference of pdb_num between neighboring residues in
+        # start-end range:
+        # - If its 1 then its contiguous; continue increasing current range.
+        # - If its 0 then there must be insert codes; that's ok, continue
+        #   increasing current range.
+        # - if its > 1 or < 0 then there is a discontinuity; store the previous
+        #   residues as a range and start a new range on the next residue.
+        # Also, if we run into a residue that doesn't have a valid pdb_num then
+        # close off the previous range.
+        range_start_residue = sequence[start_residue_num]
+        for current_residue_num in range(start_residue_num, end_residue_num):
+            current_residue = sequence[current_residue_num]
+            current_pdb_num = current_residue.pdb_num
+            next_pdb_num = sequence[current_residue_num + 1].pdb_num
+
+            # Skip over residues that don't have valid PDB numbers.
+            if current_pdb_num in _EMPTY_PDB_NUM:
+                continue
+            # Start a new range if none is started yet.
+            if not range_start_residue:
+                range_start_residue = current_residue
+            if next_pdb_num in _EMPTY_PDB_NUM:
+                cls._append_range(range_start_residue, current_residue, ranges)
+                range_start_residue = None
+                continue
+
+            pdb_num_jump = int(next_pdb_num) - int(current_pdb_num)
+            if pdb_num_jump > 1 or pdb_num_jump < 0:
+                # logging.debug('numbering not contiguous, jump %d - '
+                #               'store as range' % pdb_num_jump)
+                cls._append_range(range_start_residue, current_residue, ranges)
+                range_start_residue = None
+
+        # Append the last open range (if any) until end of residues of interst.
+        cls._append_range(range_start_residue, sequence[end_residue_num],
+                          ranges)
+        # logging.debug(ranges)
+
         return ranges
 
-    # logging.debug('CIF start: %s, CIF end %s' % (start_residue, end_residue))
-    # logging.debug('PDB start: %s, PDB end %s' % (PDBstart, PDBend))
+    def get_range_selection(self, rng):
+        """Returns a PyMOL selection for the range."""
+        selection = 'chain %s and resi %s-%s and %s' % (
+            rng.chain_id, rng.start_residue_num, rng.end_residue_num,
+            self._pdbid)
+        # logging.debug(selection)
+        return selection
 
-    # Need to do something about non continuous ranges which pymol doesn't
-    # cope with.
-    #
-    # Find all sections where the residue number increases by one. If it
-    # jumps then store this as a separate residue block while number is less
-    # than end begin with number = start_residue plus 1. See how the numbering
-    # differs from start_residue if its 1 then its continuous - move to the next
-    # residue if its zero then there must be insert codes - this is ok -
-    # move to the next residue if its greater than 1 then store the previous
-    # residues as a block.
-    block_start_cif = start_residue
-    for current_cif in range(start_residue, end_residue - 1):
-        next_cif = current_cif + 1
-        current_pdb = stored.seq_scheme[segment_id][current_cif]['PDBnum']
-        next_pdb = stored.seq_scheme[segment_id][next_cif]['PDBnum']
-        if current_pdb in _EMPTY_CIF:
-            block_start_cif = next_cif
-            continue
-
-        if next_pdb in _EMPTY_CIF:
-            start_pdb = stored.seq_scheme[segment_id][block_start_cif]['PDBnum']
-            start_code, end_code = order(
-                start_pdb, current_pdb, insert_code(segment_id,
-                                                    block_start_cif),
-                insert_code(segment_id, current_cif))
-            ranges.append(Range(chain_id, start_code, end_code))
-            # move start to next block
-            block_start_cif = next_cif
-            continue
-
-        current_pdb = int(current_pdb)
-        next_pdb = int(next_pdb)
-
-        if next_pdb - current_pdb > 1:
-            # logging.debug('numbering not continues, positive '
-            #               'jump - store as section')
-            start_pdb = stored.seq_scheme[segment_id][block_start_cif]['PDBnum']
-            start_code, end_code = order(
-                start_pdb, current_pdb, insert_code(segment_id,
-                                                    block_start_cif),
-                insert_code(segment_id, current_cif))
-            ranges.append(Range(chain_id, start_code, end_code))
-            # move start to next block
-            block_start_cif = next_cif
-        elif current_pdb - next_pdb > 1:
-            # logging.debug('numbering not continues, negative '
-            #               'jump - store as section')
-            start_pdb = stored.seq_scheme[segment_id][block_start_cif]['PDBnum']
-            start_code, end_code = order(
-                start_pdb, current_pdb, insert_code(segment_id,
-                                                    block_start_cif),
-                insert_code(segment_id, current_cif))
-            ranges.append(Range(chain_id, start_code, end_code))
-            # move start to next block
-            block_start_cif = next_cif
-
-    start_code, end_code = order(block_start_cif, end_residue,
-                                 insert_code(segment_id, block_start_cif),
-                                 insert_code(segment_id, end_residue))
-    ranges.append(Range(chain_id, start_code, end_code))
-    # logging.debug(ranges)
-
-    return ranges
+    def append_residue_selections(self, segment_id, selections):
+        """Adds PyMOL selections strings for the segment to selections list."""
+        for residue in self._sequences[segment_id].values():
+            # logging.debug(residue)
+            selection = 'chain %s and resi %s and %s' % (
+                residue.chain_id, residue.pdb_residue_num, self._pdbid)
+            selections.append(selection)
+            # logging.debug(selection)
 
 
 class Validation(object):
@@ -641,16 +679,16 @@ class Validation(object):
         if val_data:
             logging.debug('There is validation for this entry')
 
-            res_data = pdb.get_residue_validation(pdbid)
-            rama_data = pdb.get_rama_validation(pdbid)
+            residue_data = pdb.get_residue_validation(pdbid)
+            ramachandran_data = pdb.get_ramachandran_validation(pdbid)
 
-            cls.per_residue_validation(pdbid, res_data, rama_data)
+            cls.per_residue_validation(pdbid, residue_data, ramachandran_data)
         else:
             logging.debug('No validation for this entry')
 
             # This takes too long for really large entries.
             # Validation.per_chain_per_residue_validation(
-            #   pdbid, res_data, rama_data)
+            #   pdbid, residue_data, ramachandran_data)
 
     """validation of all polymeric entries"""
 
@@ -667,10 +705,10 @@ class Validation(object):
         Color.set_validation_color(color_num, selection)
 
     @classmethod
-    def geometric_validation(cls, pdbid, res_data):
-        """check for geometric validation outliers in res_data """
+    def geometric_validation(cls, pdbid, residue_data):
+        """check for geometric validation outliers in residue_data """
         try:
-            molecules = res_data[pdbid]['molecules']
+            molecules = residue_data[pdbid]['molecules']
         except Exception:
             logging.debug('no residue validation for this entry')
             return
@@ -687,28 +725,29 @@ class Validation(object):
                         # logging.debug(outlier_type)
                         # logging.debug(outliers)
                         for outlier in outliers:
-                            PDB_res_num = outlier['author_residue_number']
-                            PDB_ins_code = outlier['author_insertion_code']
-                            if PDB_ins_code not in [None, ' ']:
-                                PDB_res_num = '%s%s' % (PDB_res_num,
-                                                        PDB_ins_code)
-
-                            # logging.debug(PDB_res_num)
-                            selection = 'chain %s and resi %s' % (chain_id,
-                                                                  PDB_res_num)
+                            pdb_residue_num = Sequences.get_pdb_residue_num(
+                                outlier['author_residue_number'],
+                                outlier['author_insertion_code'])
+                            # logging.debug(pdb_residue_num)
+                            selection = 'chain %s and resi %s' % (
+                                chain_id, pdb_residue_num)
                             if (model == 1 or model_id) and (not chain or
                                                              chain_id):
                                 cls.validation_selection(selection, pdbid)
 
     @classmethod
-    def ramachandran_validation(cls, pdbid, rama_data, chain=False, model=1):
+    def ramachandran_validation(cls,
+                                pdbid,
+                                ramachandran_data,
+                                chain=False,
+                                model=1):
         """display ramachandran outliers"""
 
-        if pdbid not in rama_data:
+        if pdbid not in ramachandran_data:
             return
 
-        for key in rama_data[pdbid]:
-            outliers = rama_data[pdbid][key]
+        for key in ramachandran_data[pdbid]:
+            outliers = ramachandran_data[pdbid][key]
             if not outliers:
                 logging.debug('no %s' % key)
                 continue
@@ -718,13 +757,10 @@ class Validation(object):
                 # logging.debug(outlier)
                 model_id = int(outlier['model_id'])
                 chain_id = outlier['chain_id']
-                PDB_res_num = outlier['author_residue_number']
-                PDB_ins_code = outlier['author_insertion_code']
-
-                if PDB_ins_code not in [None, ' ']:
-                    PDB_res_num = '%s%s' % (PDB_res_num, PDB_ins_code)
-
-                selection = 'chain %s and resi %s' % (chain_id, PDB_res_num)
+                pdb_residue_num = Sequences.get_pdb_residue_num(
+                    outlier['author_residue_number'],
+                    outlier['author_insertion_code'])
+                selection = 'chain %s and resi %s' % (chain_id, pdb_residue_num)
                 if model == 1 or model_id:
                     if not chain or chain_id:
                         cls.validation_selection(selection, pdbid)
@@ -733,9 +769,10 @@ class Validation(object):
                                   ' not shown.')
 
     @classmethod
-    def per_residue_validation(cls, pdbid, res_data, rama_data):
+    def per_residue_validation(cls, pdbid, residue_data, ramachandran_data):
         """validation of all outliers, colored by number of outliers"""
 
+        sequences = Sequences(pdbid)
         # display only polymers
         if not stored.molecules:
             stored.molecules = pdb.get_molecules(pdbid)
@@ -745,25 +782,21 @@ class Validation(object):
             if molecule_type in ['Water', 'Bound']:
                 continue
             for segment_id in molecule['in_struct_asyms']:
-                if not stored.seq_scheme:
-                    poly_seq_scheme(pdbid)
                 length = molecule['length']
                 display_type = get_polymer_display_type(segment_id,
                                                         'polypeptide', length)
                 # logging.debug(segment_id)
-                ranges = get_ranges(segment_id, 1, length)
-                for r in ranges:
-                    selection = 'chain %s and resi %s-%s and %s' % (
-                        r.chain_id, r.start_residue, r.end_residue, pdbid)
-                    # logging.debug(selection)
+                ranges = sequences.get_ranges(segment_id, 1, length)
+                for rng in ranges:
+                    selection = sequences.get_range_selection(rng)
                     cmd.show(display_type, selection)
 
         Color.set_validation_background_color(pdbid)
         # display(pdbid, image_type)
         cmd.enable(pdbid)
 
-        cls.geometric_validation(pdbid, res_data)
-        cls.ramachandran_validation(pdbid, rama_data)
+        cls.geometric_validation(pdbid, residue_data)
+        cls.ramachandran_validation(pdbid, ramachandran_data)
 
         # logging.debug(stored.residues)
 
@@ -776,8 +809,7 @@ class Molecules(object):
         # Analysis depends on some globally available data; load it.
         if not stored.molecules:
             stored.molecules = pdb.get_molecules(pdbid)
-        if not stored.seq_scheme:
-            poly_seq_scheme(pdbid)
+        self._sequences = Sequences(pdbid)
 
     def _process_molecule(self, molecule):
         """Returns the display type and selection criteria for the molecule."""
@@ -788,31 +820,18 @@ class Molecules(object):
             if molecule_type == 'Bound':
                 # Use segment_id to find residue number and chain ID.
                 # logging.debug(entity_name)
-                # logging.debug(stored.seq_scheme[segment_id])
                 display_type = 'spheres'
-                for short in stored.seq_scheme[segment_id].values():
-                    chain = short['chainID']
-                    # logging.debug(short)
-                    if not short['PDBinsCode']:
-                        residue = str(short['PDBnum'])
-                    else:
-                        residue = str(short['PDBnum']) + short['PDBinsCode']
-                    selection = 'chain %s and resi %s and %s' % (chain, residue,
-                                                                 self._pdbid)
-                    selections.append(selection)
-                    # logging.debug(selection)
+                self._sequences.append_residue_selections(
+                    segment_id, selections)
             else:
                 # Need to work out if cartoon is the right thing to display.
                 length = molecule['length']
                 display_type = get_polymer_display_type(segment_id,
                                                         molecule_type, length)
                 # logging.debug(segment_id)
-                ranges = get_ranges(segment_id, 1, length)
-                # logging.debug(ranges)
-                for r in ranges:
-                    selection = 'chain %s and resi %s-%s and %s' % (
-                        r.chain_id, r.start_residue, r.end_residue, self._pdbid)
-                    # logging.debug(selection)
+                ranges = self._sequences.get_ranges(segment_id, 1, length)
+                for rng in ranges:
+                    selection = self._sequences.get_range_selection(rng)
                     selections.append(selection)
 
         return display_type, selections
@@ -888,55 +907,62 @@ class Domains(object):
     }
     Segment = namedtuple('Segment', 'entity_id chain_id segment_id start end')
 
-    def _map_all(self, pdbid):
+    def __init__(self, pdbid):
+        self._pdbid = pdbid
+        # Analysis depends on some globally available data; load it.
+        if not stored.molecules:
+            stored.molecules = pdb.get_molecules(pdbid)
+        self._sequences = Sequences(pdbid)
+
+    def _map_all(self):
         """Make all domains."""
         # mapped_domains = dict(<domain_type>: <typed_domain>)
         # <typed_domain> = dict(<domain_id>: <named_domain>)
         # <named_domain> = dict(<domain_name>: list(Segment)
         mapped_domains = {}
 
-        if not stored.seq_scheme:
-            poly_seq_scheme(pdbid)
-        self._map_domains(pdbid, pdb.get_protein_domains(pdbid), mapped_domains)
-        self._map_domains(pdbid, pdb.get_nucleic_domains(pdbid), mapped_domains)
+        self._map_domains(pdb.get_protein_domains(self._pdbid), mapped_domains)
+        self._map_domains(pdb.get_nucleic_domains(self._pdbid), mapped_domains)
         return mapped_domains
 
-    def _map_domains(self, pdbid, domains, mapped_domains):
+    def _map_domains(self, domains, mapped_domains):
         if not domains:
             logging.debug('no domain information for this entry')
             return
-        for domain_type in domains[pdbid]:
+        for domain_type in domains[self._pdbid]:
             try:
                 segment_id_name = self._SEGMENT_ID_NAME[domain_type]
             except Exception:
+                # Ignore all domain types not in _SEGMENT_ID_NAME.
                 continue
-            for domain_id, domain in domains[pdbid][domain_type].items():
+            for domain_id, domain in domains[self._pdbid][domain_type].items():
                 # logging.debug(domain_type)
                 # logging.debug(domain_id)
                 for mapping in domain.get('mappings', []):
                     domain_name = str(mapping.get(segment_id_name, ''))
-                    start_residue = mapping['start']['residue_number']
-                    end_residue = mapping['end']['residue_number']
+                    start_residue_num = mapping['start']['residue_number']
+                    end_residue_num = mapping['end']['residue_number']
                     chain_id = mapping['chain_id']
                     entity_id = mapping['entity_id']
                     segment_id = mapping['struct_asym_id']
-                    if segment_id not in stored.seq_scheme:
-                        continue
-                    ranges = get_ranges(segment_id, start_residue, end_residue)
-                    for r in ranges:
+                    ranges = self._sequences.get_ranges(segment_id,
+                                                        start_residue_num,
+                                                        end_residue_num)
+                    for rng in ranges:
                         mapped_domains.setdefault(domain_type, {}).setdefault(
                             domain_id, {}).setdefault(domain_name, []).append(
                                 self.Segment(entity_id, chain_id, segment_id,
-                                             r.start_residue, r.end_residue))
+                                             rng.start_residue_num,
+                                             rng.end_residue_num))
 
-    def show(self, pdbid):
-        mapped_domains = self._map_all(pdbid)
+    def show(self):
+        mapped_domains = self._map_all()
         if not mapped_domains:
             return
 
         # Precompute molecule lengths indexed by entity_id.
         molecule_length = {}  # entity_id -> length
-        for molecule in stored.molecules[pdbid]:
+        for molecule in stored.molecules[self._pdbid]:
             entity_id = molecule['entity_id']
             molecule_length[entity_id] = molecule.get('length', None)
 
@@ -961,7 +987,8 @@ class Domains(object):
                                   segment.segment_id))
 
                         selection = 'chain %s and resi %s-%s and %s' % (
-                            segment.chain_id, segment.start, segment.end, pdbid)
+                            segment.chain_id, segment.start, segment.end,
+                            self._pdbid)
                         object_selections.append(selection)
 
                     # Create an object containing all segments.
@@ -977,7 +1004,7 @@ class Domains(object):
             # Show all original chains in grey as default background.
             for chain in chains:
                 logging.debug(chain.segment_id)
-                c_select = 'chain %s and %s' % (chain.chain_id, pdbid)
+                c_select = 'chain %s and %s' % (chain.chain_id, self._pdbid)
                 entity_id = chain.entity_id
                 length = molecule_length[entity_id]
                 display_type = get_polymer_display_type(chain.segment_id,
@@ -1059,20 +1086,20 @@ def PDBe_startup(  # noqa: 901 too complex
             logging.debug('File to load: %s' % file_path)
             cmd.load(file_path, pdbid, format='cif')
         cmd.hide('everything', pdbid)
-        WorkerFunctions.count_poly(pdbid)
+        WorkerFunctions.count_polymers(pdbid)
 
         if method == 'molecules':
             Molecules(pdbid).show()
         elif method == 'domains':
             Molecules(pdbid).show()
-            Domains().show(pdbid)
+            Domains(pdbid).show()
         elif method == 'validation':
             Validation.launch_validation(pdbid)
         elif method == 'assemblies':
             show_assemblies(pdbid, file_path)
         elif method == 'all':
             Molecules(pdbid).show()
-            Domains().show(pdbid)
+            Domains(pdbid).show()
             show_assemblies(pdbid, file_path)
             Validation.launch_validation(pdbid)
         else:
@@ -1082,7 +1109,7 @@ def PDBe_startup(  # noqa: 901 too complex
     elif mm_cif_file:
         logging.warning('no PDB ID, show assemblies from mmCIF file')
         cmd.load(mm_cif_file, pdbid, format='cif')
-        # WorkerFunctions.count_poly(pdbid)
+        # WorkerFunctions.count_polymers(pdbid)
         show_assemblies(pdbid, mm_cif_file)
 
     else:
