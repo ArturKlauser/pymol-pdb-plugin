@@ -91,7 +91,6 @@ def clear_analysis_data():
     Sequences.clear()
 
     # --- results of analysis
-    stored.residues = {}  # validation_selection()
     stored.polymer_count = 0  # Molecules()._process_molecules()
     stored.ca_p_only_segments = set()  # Molecules()._process_molecules()
 
@@ -654,45 +653,29 @@ class Sequences(object):
 
 
 class Validation(object):
-    """Validation methods."""
+    """Performs validation of all polymeric entries."""
 
-    @classmethod
-    def launch_validation(cls, pdbid):
-        val_data = pdb.get_validation(pdbid)
+    def __init__(self, molecules):
+        self._molecules = molecules
+        self._pdbid = molecules.pdbid
+        # Fetch all validation data.
+        self._val_data = pdb.get_validation(self._pdbid)
+        if self._val_data:
+            self._residue_data = pdb.get_residue_validation(self._pdbid)
+            self._ramachandran_data = pdb.get_ramachandran_validation(
+                self._pdbid)
 
-        if val_data:
+    def show(self):
+        if self._val_data:
             logging.debug('There is validation for this entry')
-
-            residue_data = pdb.get_residue_validation(pdbid)
-            ramachandran_data = pdb.get_ramachandran_validation(pdbid)
-
-            cls.per_residue_validation(pdbid, residue_data, ramachandran_data)
+            self._show_per_residue_validation()
         else:
-            logging.debug('No validation for this entry')
+            logging.warning('No validation for this entry')
 
-            # This takes too long for really large entries.
-            # Validation.per_chain_per_residue_validation(
-            #   pdbid, residue_data, ramachandran_data)
-
-    """validation of all polymeric entries"""
-
-    @staticmethod
-    def validation_selection(selection, display_id):
-        # logging.debug(selection)
-
-        # uses a list so 0 means that there is one outlier for this residue.
-        if selection in stored.residues:
-            color_num = stored.residues[selection] + 1
-        else:
-            color_num = 0
-        stored.residues[selection] = color_num
-        Presentation.set_validation_color(color_num, selection)
-
-    @classmethod
-    def geometric_validation(cls, pdbid, residue_data):
-        """check for geometric validation outliers in residue_data """
+    def _check_geometric_validation_outliers(self):
+        """Checks for geometric validation outliers."""
         try:
-            molecules = residue_data[pdbid]['molecules']
+            molecules = self._residue_data[self._pdbid]['molecules']
         except Exception:
             logging.debug('no residue validation for this entry')
             return
@@ -703,7 +686,6 @@ class Validation(object):
                 chain_id = chain['chain_id']
                 # logging.debug(chain_id)
                 for model in chain['models']:
-                    model_id = int(model['model_id'])
                     for outlier_type in model['outlier_types']:
                         outliers = model['outlier_types'][outlier_type]
                         # logging.debug(outlier_type)
@@ -715,23 +697,16 @@ class Validation(object):
                             # logging.debug(pdb_residue_num)
                             selection = 'chain %s and resi %s' % (
                                 chain_id, pdb_residue_num)
-                            if (model == 1 or model_id) and (not chain or
-                                                             chain_id):
-                                cls.validation_selection(selection, pdbid)
+                            self._tally_outlier(selection)
 
-    @classmethod
-    def ramachandran_validation(cls,
-                                pdbid,
-                                ramachandran_data,
-                                chain=False,
-                                model=1):
-        """display ramachandran outliers"""
+    def _check_ramachandran_validation_outliers(self):
+        """Checks for ramachandran validation outliers."""
 
-        if pdbid not in ramachandran_data:
+        if self._pdbid not in self._ramachandran_data:
             return
 
-        for key in ramachandran_data[pdbid]:
-            outliers = ramachandran_data[pdbid][key]
+        for key in self._ramachandran_data[self._pdbid]:
+            outliers = self._ramachandran_data[self._pdbid][key]
             if not outliers:
                 logging.debug('no %s' % key)
                 continue
@@ -739,50 +714,59 @@ class Validation(object):
             logging.debug('ramachandran %s for this entry' % key)
             for outlier in outliers:
                 # logging.debug(outlier)
-                model_id = int(outlier['model_id'])
                 chain_id = outlier['chain_id']
                 pdb_residue_num = Sequences.get_pdb_residue_num(
                     outlier['author_residue_number'],
                     outlier['author_insertion_code'])
                 selection = 'chain %s and resi %s' % (chain_id, pdb_residue_num)
-                if model == 1 or model_id:
-                    if not chain or chain_id:
-                        cls.validation_selection(selection, pdbid)
-                else:
-                    logging.debug('is multimodel!!!, outlier not in model 1,'
-                                  ' not shown.')
+                self._tally_outlier(selection)
 
-    @classmethod
-    def per_residue_validation(cls, pdbid, residue_data, ramachandran_data):
-        """validation of all outliers, colored by number of outliers"""
-
-        sequences = Sequences(pdbid)
-        # display only polymers
-        if not stored.molecules:
-            stored.molecules = pdb.get_molecules(pdbid)
-        for molecule in stored.molecules.get(pdbid, []):
+    def _show_per_residue_validation(self):
+        """Shows validation of all outliers, colored by number of outliers."""
+        # Display only polymers.
+        # FIXME(r2r): Molecules._process_molecule() does almost exactly the same
+        # thing. Whe should refactor this to use a single function, and it
+        # should probably live in the Molecule class which owns the respective
+        # data.
+        for molecule in self._molecules.molecules:
             # logging.debug(molecule)
             molecule_type = molecule['molecule_type']
             if molecule_type in ['Water', 'Bound']:
                 continue
+            length = molecule['length']
             for segment_id in molecule['in_struct_asyms']:
-                length = molecule['length']
+                # logging.debug(segment_id)
+                selections = []
+                ranges = self._molecules.sequences.get_ranges(
+                    segment_id, 1, length)
+                for rng in ranges:
+                    selection = self._molecules.sequences.get_range_selection(
+                        rng)
+                    selections.append(selection)
+
                 display_type = get_polymer_display_type(segment_id,
                                                         'polypeptide', length)
-                # logging.debug(segment_id)
-                ranges = sequences.get_ranges(segment_id, 1, length)
-                for rng in ranges:
-                    selection = sequences.get_range_selection(rng)
-                    cmd.show(display_type, selection)
+                pymol_selection = ' or '.join(['(%s)' % x for x in selections])
+                cmd.show(display_type, pymol_selection)
 
-        Presentation.set_validation_background_color(pdbid)
-        # display(pdbid, image_type)
-        cmd.enable(pdbid)
+        self._clear_outlier_tally()
+        self._check_geometric_validation_outliers()
+        self._check_ramachandran_validation_outliers()
+        self._display_outlier_tally()
+        cmd.enable(self._pdbid)
 
-        cls.geometric_validation(pdbid, residue_data)
-        cls.ramachandran_validation(pdbid, ramachandran_data)
+    def _clear_outlier_tally(self):
+        self._outlier_tally = {}
 
-        # logging.debug(stored.residues)
+    def _tally_outlier(self, selection):
+        # uses a list so 0 means that there is one outlier for this residue.
+        color_num = self._outlier_tally.get(selection, 0)
+        self._outlier_tally[selection] = color_num + 1
+
+    def _display_outlier_tally(self):
+        Presentation.set_validation_background_color(self._pdbid)
+        for selection, color_num in self._outlier_tally.items():
+            Presentation.set_validation_color(color_num, selection)
 
 
 class Molecules(object):
@@ -795,6 +779,18 @@ class Molecules(object):
             stored.molecules = pdb.get_molecules(pdbid)
         self._process_molecules()
         self._sequences = Sequences(pdbid)
+
+    @property
+    def pdbid(self):
+        return self._pdbid
+
+    @property
+    def sequences(self):
+        return self._sequences
+
+    @property
+    def molecules(self):
+        return stored.molecules.get(self._pdbid, [])
 
     def _process_molecules(self):
         """Generate derivative data from raw molecules.
@@ -824,8 +820,10 @@ class Molecules(object):
                 self._sequences.append_residue_selections(
                     segment_id, selections)
             else:
-                # Need to work out if cartoon is the right thing to display.
                 length = molecule['length']
+                # TODO(r2r): Computing a display_type per segment is rather
+                # useless if we only return a single display_type for the whole
+                # molecule. The display_type of the last segment wins.
                 display_type = get_polymer_display_type(segment_id,
                                                         molecule_type, length)
                 # logging.debug(segment_id)
@@ -908,12 +906,9 @@ class Domains(object):
     }
     Segment = namedtuple('Segment', 'entity_id chain_id segment_id start end')
 
-    def __init__(self, pdbid):
-        self._pdbid = pdbid
-        # Analysis depends on some globally available data; load it.
-        if not stored.molecules:
-            stored.molecules = pdb.get_molecules(pdbid)
-        self._sequences = Sequences(pdbid)
+    def __init__(self, molecules):
+        self._molecules = molecules
+        self._pdbid = molecules.pdbid
 
     def _map_all(self):
         """Make all domains."""
@@ -946,9 +941,8 @@ class Domains(object):
                     chain_id = mapping['chain_id']
                     entity_id = mapping['entity_id']
                     segment_id = mapping['struct_asym_id']
-                    ranges = self._sequences.get_ranges(segment_id,
-                                                        start_residue_num,
-                                                        end_residue_num)
+                    ranges = self._molecules.sequences.get_ranges(
+                        segment_id, start_residue_num, end_residue_num)
                     for rng in ranges:
                         mapped_domains.setdefault(domain_type, {}).setdefault(
                             domain_id, {}).setdefault(domain_name, []).append(
@@ -963,7 +957,7 @@ class Domains(object):
 
         # Precompute molecule lengths indexed by entity_id.
         molecule_length = {}  # entity_id -> length
-        for molecule in stored.molecules[self._pdbid]:
+        for molecule in self._molecules.molecules:
             entity_id = molecule['entity_id']
             molecule_length[entity_id] = molecule.get('length', None)
 
@@ -1005,13 +999,12 @@ class Domains(object):
             # Show all original chains in grey as default background.
             for chain in chains:
                 logging.debug(chain.segment_id)
-                c_select = 'chain %s and %s' % (chain.chain_id, self._pdbid)
-                entity_id = chain.entity_id
-                length = molecule_length[entity_id]
+                selection = 'chain %s and %s' % (chain.chain_id, self._pdbid)
+                length = molecule_length[chain.entity_id]
                 display_type = get_polymer_display_type(chain.segment_id,
                                                         'polypeptide', length)
-                cmd.show(display_type, c_select)
-                cmd.color('grey', c_select)
+                cmd.show(display_type, selection)
+                cmd.color('grey', selection)
 
             # Show each mapped object in a different color.
             num = 1
@@ -1023,8 +1016,7 @@ class Domains(object):
                 # TODO(r2r): Seems broken. It's just overriding the object's
                 # display type and color multiple times - last one wins.
                 for i, segment_id in enumerate(obj.segment_ids):
-                    entity_id = obj.entity_ids[i]
-                    length = molecule_length[entity_id]
+                    length = molecule_length[chain.entity_id]
                     display_type = get_polymer_display_type(
                         segment_id, 'polypeptide', length)
                     cmd.show(display_type, obj.name)
@@ -1093,16 +1085,16 @@ def PDBe_startup(  # noqa: 901 too complex
             molecules.show()
         elif method == 'domains':
             molecules.show()
-            Domains(pdbid).show()
+            Domains(molecules).show()
         elif method == 'validation':
-            Validation.launch_validation(pdbid)
+            Validation(molecules).show()
         elif method == 'assemblies':
             show_assemblies(pdbid, file_path)
         elif method == 'all':
             molecules.show()
-            Domains(pdbid).show()
+            Domains(molecules).show()
             show_assemblies(pdbid, file_path)
-            Validation.launch_validation(pdbid)
+            Validation(molecules).show()
         else:
             logging.warning('provide a method')
         cmd.zoom(pdbid, complete=1)
