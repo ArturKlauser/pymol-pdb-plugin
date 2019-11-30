@@ -123,7 +123,9 @@ jobs:
     - name: Install dependencies
       run: |
         # python -m pip install --upgrade pip
-        pip install coverage
+        pip install \
+          coverage \
+          coveralls
 
     # Having to unroll the cross product of the test-run job matrix here in
     # order to import their coverage files is cumbersome, but there does not
@@ -146,9 +148,26 @@ jobs:
         coverage html -d test_coverage/html
         coverage annotate -d test_coverage/annotation
         coverage report
-        mv .coverage test_coverage  # for combining later
+        cp .coverage test_coverage
     - name: Upload combined code coverage results
       uses: actions/upload-artifact@v1
       with:
         name: coverage-combined
         path: test_coverage
+    - name: Send combined coverage results to coveralls.io
+      env:
+        COVERALLS_REPO_TOKEN: ${{secrets.COVERALLS_REPO_TOKEN}}
+      run: |
+        # Coveralls can't figure out the right branch name for the way
+        # actions/checkout creates the clone as it is always in detached branch
+        # mode. So we'll have to tell it, otherwise the branch is called HEAD.
+        if [[ -n "${GITHUB_HEAD_REF}" ]]; then
+          # This is where the branch name seem to be for pull-request events.
+          # E.g. GITHUB_HEAD_REF=bugfix
+          export GIT_BRANCH="${GITHUB_HEAD_REF}"
+        else
+          # This is where the branch name seem to be for push events.
+          # E.g. GITHUB_REF=refs/heads/master
+          export GIT_BRANCH=$(echo "${GITHUB_REF}" | sed -e 's#refs/heads/##')
+        fi
+        coveralls
