@@ -3,6 +3,11 @@
     <img alt="GitHub Actions status"
          src="https://github.com/ArturKlauser/pymol-pdb-plugin/workflows/PyMOL%20PDB%20Plugin%20CI%20Tests/badge.svg?branch=master&event=push">
   </a>
+  <a
+  href="https://coveralls.io/github/ArturKlauser/pymol-pdb-plugin?branch=master">
+    <img alt='Coverage Status'
+         src="https://coveralls.io/repos/github/ArturKlauser/pymol-pdb-plugin/badge.svg?branch=master">
+  </a>
 </p>
 
 # PDB plugin for PyMOL
