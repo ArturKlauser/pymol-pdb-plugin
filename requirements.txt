@@ -1,0 +1,11 @@
+# formatting
+yapf
+
+# linting
+flake8
+
+# testing
+pytest
+pytest-cov
+requests
+requests-mock

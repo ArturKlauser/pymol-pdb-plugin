@@ -1,0 +1,14 @@
+:
+# Run all python tests with coverage.
+
+export PYTHONPATH="/Applications/PyMOL2.3.4py37.app/Contents/lib/python3.7/site-packages/:${PYTHONPATH}"
+
+python3 -m pytest \
+  --cov=. \
+  --cov-branch \
+  --cov-report html \
+  --cov-report term \
+  -v \
+  "$@"
+
+# vi:expandtab:smarttab:sw=2:tw=80:filetype=bash

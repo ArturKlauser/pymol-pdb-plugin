@@ -1,0 +1,6 @@
+:
+# Reformat all python files in-place.
+
+yapf -i -r PDB_plugin.py tests/
+
+# vi:expandtab:smarttab:sw=2:tw=80:filetype=bash

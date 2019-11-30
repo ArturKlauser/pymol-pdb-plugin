@@ -1,0 +1,6 @@
+:
+# Install project dependencies.
+
+pip3 install -r requirements.txt
+
+# vi:expandtab:smarttab:sw=2:tw=80:filetype=bash

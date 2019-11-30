@@ -1,0 +1,6 @@
+:
+# Lint all python files.
+
+flake8 PDB_plugin.py tests/
+
+# vi:expandtab:smarttab:sw=2:tw=80:filetype=bash
