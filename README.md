@@ -10,6 +10,8 @@
   </a>
 </p>
 
+test
+
 # PDB plugin for PyMOL
 
 This repository is based on [PDBe's](https://pdbe.org/) PDB plugin for
