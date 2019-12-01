@@ -170,4 +170,10 @@ jobs:
           # E.g. GITHUB_REF=refs/heads/master
           export GIT_BRANCH=$(echo "${GITHUB_REF}" | sed -e 's#refs/heads/##')
         fi
-        coveralls
+        # Pretend to be semaphore CI to have coveralls send PR number back
+        # through it's API.
+        export SEMAPHORE=1
+        export PULL_REQUEST_NUMBER=$(echo "${GITHUB_REF}" | \
+               sed -e 's#refs/pull/\([0-9]*\)/merge#\1#')
+        # But override the actual service name.
+        coveralls --service github-ci
