@@ -125,7 +125,7 @@ jobs:
         # python -m pip install --upgrade pip
         pip install \
           coverage \
-          coveralls
+          'coveralls>=1.9.2'
 
     # Having to unroll the cross product of the test-run job matrix here in
     # order to import their coverage files is cumbersome, but there does not
@@ -158,22 +158,4 @@ jobs:
       env:
         COVERALLS_REPO_TOKEN: ${{secrets.COVERALLS_REPO_TOKEN}}
       run: |
-        # Coveralls can't figure out the right branch name for the way
-        # actions/checkout creates the clone as it is always in detached branch
-        # mode. So we'll have to tell it, otherwise the branch is called HEAD.
-        if [[ -n "${GITHUB_HEAD_REF}" ]]; then
-          # This is where the branch name seem to be for pull-request events.
-          # E.g. GITHUB_HEAD_REF=bugfix
-          export GIT_BRANCH="${GITHUB_HEAD_REF}"
-        else
-          # This is where the branch name seem to be for push events.
-          # E.g. GITHUB_REF=refs/heads/master
-          export GIT_BRANCH=$(echo "${GITHUB_REF}" | sed -e 's#refs/heads/##')
-        fi
-        # Pretend to be semaphore CI to have coveralls send PR number back
-        # through it's API.
-        export SEMAPHORE=1
-        export PULL_REQUEST_NUMBER=$(echo "${GITHUB_REF}" | \
-               sed -e 's#refs/pull/\([0-9]*\)/merge#\1#')
-        # But override the actual service name.
-        coveralls --service github-ci
+        coveralls
