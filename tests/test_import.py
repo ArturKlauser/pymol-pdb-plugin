@@ -6,6 +6,7 @@ import pymol
 import importlib
 import json
 import logging
+import os
 import pytest
 import socket
 import sys
@@ -65,6 +66,18 @@ def cache_url_data_for_plugin(monkeypatch):
 
     # --- teardown ---
     pass  # nothing to do
+
+
+@pytest.fixture(autouse=True)
+def chdir_back_to_pwd(monkeypatch):
+    """Make sure we cd back to PWD after test completes (failure or not)."""
+    # --- setup ---
+    monkeypatch.chdir('.')
+
+    yield  # each test runs here
+
+    # --- teardown ---
+    pass  # monkeypatch undoes all recorded changes
 
 
 # ----- Unit Tests -----
@@ -265,7 +278,7 @@ def test_initialize():
     """Tests initialization fuction."""
     logger = logging.getLogger()
 
-    # When unset (first time use of pluging), set preference to WARNING.
+    # When unset (first time use of plugin), set preference to WARNING.
     pymol.plugins.pref_set(PREF_LOGLEVEL, None)
     plugin.initialize()
     loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
@@ -323,6 +336,17 @@ def test_run_main(argv):
         argv = [argv]
     plugin.main(argv)
     assert True
+
+
+def test_run_main_pdbid_file_exists():
+    """Load and initialize the module and attempt calling main().
+    This test covers the special case where a pdbid was requests but we happen
+    to also find the corresponding .cif file locally in the working directory.
+    """
+    pdbid = '3mxw'
+    os.chdir('tests/data')
+    assert os.access(pdbid + '.cif', os.R_OK)
+    plugin.main([pdbid])
 
 
 def test_commandline_api():
