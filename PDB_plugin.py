@@ -237,19 +237,34 @@ class PdbFetcher(object):
 
 
 class PdbApi(object):
-    """Handles getting data from the PDB API service."""
+    """Handles getting data from the PDB API service.
 
-    def __init__(self, server_root='https://www.ebi.ac.uk/pdbe/api'):
+    Some documentation of the PDBe server's REST API is available at
+    https://www.ebi.ac.uk/pdbe/pdbe-rest-api
+
+    Args:
+        pretty: If True, returns well indented, human readable result.
+    """
+
+    def __init__(self,
+                 server_root='https://www.ebi.ac.uk/pdbe/api',
+                 pretty=False):
         self._server_root = server_root.rstrip('/')
+        self._url_suffix = '?pretty=true' if pretty else ''
         self._fetcher = PdbFetcher()
 
     def get_summary(self, pdbid):
+        """Returns a summary dictionary of the PDB entry.
+
+        Documentation: https://www.ebi.ac.uk/pdbe/api/doc/pdb.html
+        """
         url = self._get_url('pdb/entry/summary', pdbid)
         return self._fetcher.get_data(url, 'summary')
 
     def get_molecules(self, pdbid):
         """Returns a dictionary of molecule data.
 
+        Documentation: https://www.ebi.ac.uk/pdbe/api/doc/pdb.html
         The contents is a conglomerate of data found in the mmCIF entity group
         http://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Groups/entity_group.html
         (Better reference would be good)
@@ -275,6 +290,7 @@ class PdbApi(object):
     def get_sequences(self, pdbid):
         """Returns a dictionary of sequence data.
 
+        Documentation: https://www.ebi.ac.uk/pdbe/api/doc/pdb.html
         The contents is similar to mmCIF poly_seq_scheme.
         http://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Categories/pdbx_poly_seq_scheme.html
 
@@ -301,29 +317,37 @@ class PdbApi(object):
         return self._fetcher.get_data(url, 'sequences')
 
     def get_protein_domains(self, pdbid):
+        """Documentation: https://www.ebi.ac.uk/pdbe/api/doc/sifts.html"""
         url = self._get_url('mappings', pdbid)
         return self._fetcher.get_data(url, 'protein_domains')
 
     def get_nucleic_domains(self, pdbid):
+        """Documentation:
+        https://www.ebi.ac.uk/pdbe/api/doc/nucleic_mappings.html
+        """
         url = self._get_url('nucleic_mappings', pdbid)
         return self._fetcher.get_data(url, 'nucleic_domains')
 
     def get_validation(self, pdbid):
+        """Documentation: https://www.ebi.ac.uk/pdbe/api/doc/validation.html"""
         url = self._get_url('validation/global-percentiles/entry', pdbid)
         return self._fetcher.get_data(url, 'validation')
 
     def get_residue_validation(self, pdbid):
+        """Documentation: https://www.ebi.ac.uk/pdbe/api/doc/validation.html"""
         url = self._get_url(
             'validation/protein-RNA-DNA-geometry-outlier-residues/entry', pdbid)
         return self._fetcher.get_data(url, 'residue validation')
 
     def get_ramachandran_validation(self, pdbid):
+        """Documentation: https://www.ebi.ac.uk/pdbe/api/doc/validation.html"""
         url = self._get_url(
             'validation/protein-ramachandran-sidechain-outliers/entry', pdbid)
         return self._fetcher.get_data(url, 'ramachandran validation')
 
     def _get_url(self, api_url, pdbid):
         url = '/'.join((self._server_root, api_url, pdbid))
+        url += self._url_suffix
         logging.debug('url: %s' % url)
         return url
 
