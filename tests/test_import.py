@@ -416,6 +416,21 @@ def test_gui_api(monkeypatch):
         gui.analyze_all()
 
 
+def test_gui_missing_libraries(monkeypatch):
+    """Tests the GUI with missing libraries."""
+
+    # Prevent all libraries from getting loaded.
+    mock = ImportModuleMock('*')
+    monkeypatch.setattr(importlib, 'import_module', mock.import_module)
+    # We're ready to get a GUI using urllib.
+    try:
+        plugin.PdbeGui()
+    except Exception as e:
+        assert 'missing python libraries' in str(e).split('\n')[0]
+    else:
+        raise Exception('No missing library Exception from PdbFetcher')
+
+
 def test_display_types():
     """Tests PDB entries causing use of different display types."""
 
@@ -439,19 +454,10 @@ def test_display_types():
     assert plugin.count_chains() == 5
 
 
-def test_gui_missing_libraries(monkeypatch):
-    """Tests the GUI with missing libraries."""
-
-    # Prevent all libraries from getting loaded.
-    mock = ImportModuleMock('*')
-    monkeypatch.setattr(importlib, 'import_module', mock.import_module)
-    # We're ready to get a GUI using urllib.
-    try:
-        plugin.PdbeGui()
-    except Exception as e:
-        assert 'missing python libraries' in str(e).split('\n')[0]
-    else:
-        raise Exception('No missing library Exception from PdbFetcher')
+def test_chimera_molecule():
+    """Tests PDB entry with > 1 molecule_name."""
+    plugin.PDB_Analysis_Molecules('1f0d')
+    assert plugin.count_chains() == 1
 
 
 def test_object_atom_count():
