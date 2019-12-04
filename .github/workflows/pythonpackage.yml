@@ -120,6 +120,12 @@ jobs:
         fetch-depth: 1  # no history, just HEAD
     - name: Set up Python
       uses: actions/setup-python@v1
+      with:
+        # Python3.8 computes coverage lines differently from <=3.7, leading to
+        # 'def' lines after function decorators being reported as uncovered.
+        # See https://github.com/nedbat/coveragepy/issues/866.
+        # Thus we have to stick to v3.7 for coverage combine and its reporting.
+        python-version: 3.7
     - name: Install dependencies
       run: |
         # python -m pip install --upgrade pip
