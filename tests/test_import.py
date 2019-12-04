@@ -352,13 +352,6 @@ def test_commandline_api():
     assert plugin.count_chains() == 3
 
 
-def test_ca_p_only():
-    """Run molecule analysis on an entry with ca_p_only=true."""
-
-    plugin.PDB_Analysis_Molecules('1a1q')
-    assert plugin.count_chains() == 3
-
-
 def test_gui_api(monkeypatch):
     """Load and initialize the module and attempt calling GUI API.
 
@@ -421,6 +414,29 @@ def test_gui_api(monkeypatch):
         gui.analyze_validation()
         gui.analyze_assemblies()
         gui.analyze_all()
+
+
+def test_display_types():
+    """Tests PDB entries causing use of different display types."""
+
+    # has many polymers -> display type ribbin
+    plugin.PDB_Analysis_Molecules('3jcd')
+    assert plugin.count_chains() == 57
+
+    # has ca_p_only molecule -> display type ribbon
+    pymol.cmd.reinitialize()
+    plugin.PDB_Analysis_Molecules('1a1q')
+    assert plugin.count_chains() == 3
+
+    # has small polypeptide -> display type sticks
+    pymol.cmd.reinitialize()
+    plugin.PDB_Analysis_Molecules('6a5j')
+    assert plugin.count_chains() == 1
+
+    # has small nucleotide -> display type sticks
+    pymol.cmd.reinitialize()
+    plugin.PDB_Analysis_Molecules('1b2m')
+    assert plugin.count_chains() == 5
 
 
 def test_gui_missing_libraries(monkeypatch):
