@@ -65,7 +65,7 @@ jobs:
       with:
         path: pymol
         # Use date as a cache token so we can invalidate it when necessary.
-        key: ${{steps.pymol_name.outputs.short_name}}-2019-11-16
+        key: ${{steps.pymol_name.outputs.short_name}}-20191205
     - name: Install PyMOL Package
       run: |
         if [[ -d 'pymol' ]]; then
