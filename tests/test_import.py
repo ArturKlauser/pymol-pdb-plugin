@@ -352,6 +352,13 @@ def test_commandline_api():
     assert plugin.count_chains() == 3
 
 
+def test_ca_p_only():
+    """Run molecule analysis on an entry with ca_p_only=true."""
+
+    plugin.PDB_Analysis_Molecules('1a1q')
+    assert plugin.count_chains() == 3
+
+
 def test_gui_api(monkeypatch):
     """Load and initialize the module and attempt calling GUI API.
 
