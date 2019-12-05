@@ -25,19 +25,20 @@ def initialize_pymol():
         # Under pytest this apparently works only for python2. But it appears
         # that PyMOL under python3 is happy enough without this call.
         pymol.finish_launching(['pymol', '-cqk'])
+    pymol.cmd.reinitialize()
+    pymol.plugins.initialize(pmgapp=-2)  # No Autoloading
+    # Don't save preference changes into rc file.
+    pymol.plugins.pref_set('instantsave', False)
     # Temporarily turn on maximal log level to also test all logging statements.
-    orig_loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
     pymol.plugins.pref_set(PREF_LOGLEVEL, 'DEBUG')
     # Also set log level directly in logging library for unit tests.
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    pymol.cmd.reinitialize()
 
     yield  # each test runs here
 
     # --- teardown ---
-    if orig_loglevel is not None:
-        pymol.plugins.pref_set(PREF_LOGLEVEL, orig_loglevel)
+    pass  # nothing to do
 
 
 url_data_cache = {}
