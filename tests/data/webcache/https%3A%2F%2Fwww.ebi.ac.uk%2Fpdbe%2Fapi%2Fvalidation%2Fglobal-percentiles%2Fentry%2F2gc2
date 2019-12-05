@@ -1,0 +1,29 @@
+{
+  "2gc2": {
+    "DCC_Rfree": {
+      "absolute": 48.3,
+      "rawvalue": 0.24,
+      "relative": 53
+    },
+    "clashscore": {
+      "absolute": 59,
+      "rawvalue": 5.14,
+      "relative": 60.2
+    },
+    "percent-RSRZ-outliers": {
+      "absolute": 43.7,
+      "rawvalue": 3.46,
+      "relative": 50.7
+    },
+    "percent-rama-outliers": {
+      "absolute": 100,
+      "rawvalue": 0,
+      "relative": 100
+    },
+    "percent-rota-outliers": {
+      "absolute": 30.1,
+      "rawvalue": 4.46,
+      "relative": 28.8
+    }
+  }
+}

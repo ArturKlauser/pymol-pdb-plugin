@@ -1,0 +1,58 @@
+{
+  "3jcd": [
+    {
+      "assemblies": [
+        {
+          "assembly_id": "1",
+          "form": "hetero",
+          "name": "57-mer",
+          "preferred": true
+        }
+      ],
+      "deposition_date": "20151201",
+      "deposition_site": "RCSB",
+      "entry_authors": [
+        "Zhang, D.",
+        "Yan, K.",
+        "Liu, G.",
+        "Song, G.",
+        "Luo, J.",
+        "Shi, Y.",
+        "Cheng, E.",
+        "Wu, S.",
+        "Jiang, T.",
+        "Low, J.",
+        "Gao, N.",
+        "Qin, Y."
+      ],
+      "experimental_method": [
+        "Electron Microscopy"
+      ],
+      "experimental_method_class": [
+        "em"
+      ],
+      "number_of_entities": {
+        "dna": 0,
+        "dna/rna": 0,
+        "ligand": 0,
+        "other": 0,
+        "polypeptide": 51,
+        "rna": 5,
+        "sugar": 0,
+        "water": 0
+      },
+      "processing_site": "PDBJ",
+      "related_structures": [
+        {
+          "accession": "EMD-6549",
+          "relationship": "associated EM volume",
+          "resource": "EMDB"
+        }
+      ],
+      "release_date": "20160113",
+      "revision_date": "20181017",
+      "split_entry": [],
+      "title": "Structure of Escherichia coli EF4 in posttranslocational ribosomes (Post EF4)"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "3mzw": [
+    {
+      "ca_p_only": false,
+      "entity_id": 1,
+      "gene_name": [
+        "ERBB2",
+        "HER2",
+        "MLN19",
+        "NEU",
+        "NGL"
+      ],
+      "in_chains": [
+        "A"
+      ],
+      "in_struct_asyms": [
+        "A"
+      ],
+      "length": 624,
+      "molecule_name": [
+        "Receptor tyrosine-protein kinase erbB-2"
+      ],
+      "molecule_type": "polypeptide(L)",
+      "mutation_flag": null,
+      "number_of_copies": 1,
+      "pdb_sequence": "TQVCTGTDMKLRLPASPETHLDMLRHLYQGCQVVQGNLELTYLPTNASLSFLQDIQEVQGYVLIAHNQVRQVPLQRLRIVRGTQLFEDNYALAVLDNGDPLNNTTPVTGASPGGLRELQLRSLTEILKGGVLIQRNPQLCYQDTILWKDIFHKNNQLALTLIDTNRSRACHPCSPMCKGSRCWGESSEDCQSLTRTVCAGGCARCKGPLPTDCCHEQCAAGCTGPKHSDCLACLHFNHSGICELHCPALVTYNTDTFESMPNPEGRYTFGASCVTACPYNYLSTDVGSCTLVCPLHNQEVTAEDGTQRCEKCSKPCARVCYGLGMEHLREVRAVTSANIQEFAGCKKIFGSLAFLPESFDGDPASNTAPLQPEQLQVFETLEEITGYLYISAWPDSLPDLSVFQNLQVIRGRILHNGAYSLTLQGLGISWLGLRSLRELGSGLALIHHNTHLCFVHTVPWDQLFRNPHQALLHTANRPEDECVGEGLACHQLCARGHCWGPGPTQCVNCSQFLRGQECVEECRVLQGLPREYVNARHCLPCHPECQPQNGSVTCFGPEADQCVACAHYKDPPFCVARCPSGVKPDLSYMPIWKFPDEEGACQPCPINCTHSCVDLDDKGCPAEQ",
+      "pdb_sequence_indices_with_multiple_residues": {},
+      "sample_preparation": "Genetically manipulated",
+      "sequence": "TQVCTGTDMKLRLPASPETHLDMLRHLYQGCQVVQGNLELTYLPTNASLSFLQDIQEVQGYVLIAHNQVRQVPLQRLRIVRGTQLFEDNYALAVLDNGDPLNNTTPVTGASPGGLRELQLRSLTEILKGGVLIQRNPQLCYQDTILWKDIFHKNNQLALTLIDTNRSRACHPCSPMCKGSRCWGESSEDCQSLTRTVCAGGCARCKGPLPTDCCHEQCAAGCTGPKHSDCLACLHFNHSGICELHCPALVTYNTDTFESMPNPEGRYTFGASCVTACPYNYLSTDVGSCTLVCPLHNQEVTAEDGTQRCEKCSKPCARVCYGLGMEHLREVRAVTSANIQEFAGCKKIFGSLAFLPESFDGDPASNTAPLQPEQLQVFETLEEITGYLYISAWPDSLPDLSVFQNLQVIRGRILHNGAYSLTLQGLGISWLGLRSLRELGSGLALIHHNTHLCFVHTVPWDQLFRNPHQALLHTANRPEDECVGEGLACHQLCARGHCWGPGPTQCVNCSQFLRGQECVEECRVLQGLPREYVNARHCLPCHPECQPQNGSVTCFGPEADQCVACAHYKDPPFCVARCPSGVKPDLSYMPIWKFPDEEGACQPCPINCTHSCVDLDDKGCPAEQ",
+      "source": [
+        {
+          "expression_host_scientific_name": "Cricetulus griseus",
+          "expression_host_tax_id": 10029,
+          "mappings": [
+            {
+              "end": {
+                "residue_number": 624
+              },
+              "start": {
+                "residue_number": 1
+              }
+            }
+          ],
+          "organism_scientific_name": "Homo sapiens",
+          "tax_id": 9606
+        }
+      ],
+      "synonym": "Tyrosine kinase-type cell surface receptor HER2",
+      "weight": 68794.086
+    },
+    {
+      "ca_p_only": false,
+      "entity_id": 2,
+      "gene_name": [
+        "spa"
+      ],
+      "in_chains": [
+        "B"
+      ],
+      "in_struct_asyms": [
+        "B"
+      ],
+      "length": 58,
+      "molecule_name": [
+        "Immunoglobulin G-binding protein A"
+      ],
+      "molecule_type": "polypeptide(L)",
+      "mutation_flag": "A212V, Q220M, Q221R, F224Y, Y225W, L228A, H229L, E235N, E236Q, R238K, N239R, G240A, Q243R, K246Y",
+      "number_of_copies": 1,
+      "pdb_sequence": "VDNKFNKEMRNAYWEIALLPNLNNQQKRAFIRSLYDDPSQSANLLAEAKKLNDAQAPK",
+      "pdb_sequence_indices_with_multiple_residues": {},
+      "sample_preparation": "Synthetically obtained",
+      "sequence": "VDNKFNKEMRNAYWEIALLPNLNNQQKRAFIRSLYDDPSQSANLLAEAKKLNDAQAPK",
+      "source": [
+        {
+          "expression_host_scientific_name": null,
+          "expression_host_tax_id": null,
+          "mappings": [
+            {
+              "end": {
+                "residue_number": 58
+              },
+              "start": {
+                "residue_number": 1
+              }
+            }
+          ],
+          "organism_scientific_name": "Staphylococcus aureus",
+          "tax_id": 1280
+        }
+      ],
+      "synonym": "Immunoglobulin G-binding protein A",
+      "weight": 6714.555
+    },
+    {
+      "ca_p_only": false,
+      "chem_comp_ids": [
+        "NAG"
+      ],
+      "entity_id": 3,
+      "in_chains": [
+        "A"
+      ],
+      "in_struct_asyms": [
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "molecule_name": [
+        "N-ACETYL-D-GLUCOSAMINE"
+      ],
+      "molecule_type": "Bound",
+      "mutation_flag": null,
+      "number_of_copies": 4,
+      "sample_preparation": "Genetically manipulated",
+      "weight": 221.208
+    },
+    {
+      "ca_p_only": false,
+      "chem_comp_ids": [
+        "HOH"
+      ],
+      "entity_id": 4,
+      "in_chains": [
+        "A"
+      ],
+      "in_struct_asyms": [
+        "G"
+      ],
+      "molecule_name": [
+        "water"
+      ],
+      "molecule_type": "Water",
+      "mutation_flag": null,
+      "number_of_copies": 9,
+      "sample_preparation": "Natural source",
+      "weight": 18.015
+    }
+  ]
+}

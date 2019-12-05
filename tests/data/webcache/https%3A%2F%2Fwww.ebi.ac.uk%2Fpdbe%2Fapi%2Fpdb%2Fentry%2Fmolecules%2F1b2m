@@ -1,0 +1,132 @@
+{
+  "1b2m": [
+    {
+      "ca_p_only": false,
+      "entity_id": 1,
+      "gene_name": null,
+      "in_chains": [
+        "C",
+        "D",
+        "E"
+      ],
+      "in_struct_asyms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "length": 2,
+      "molecule_name": [
+        "5'-R(*GP*(U34))-3'"
+      ],
+      "molecule_type": "polyribonucleotide",
+      "mutation_flag": null,
+      "number_of_copies": 3,
+      "pdb_sequence": "G(U34)",
+      "pdb_sequence_indices_with_multiple_residues": {
+        "2": {
+          "one_letter_code": "U",
+          "parent_chem_comp_ids": [
+            "U"
+          ],
+          "three_letter_code": "U34"
+        }
+      },
+      "sample_preparation": "Synthetically obtained",
+      "sequence": "GU",
+      "source": [
+        {
+          "expression_host_scientific_name": null,
+          "expression_host_tax_id": null,
+          "mappings": [
+            {
+              "end": {
+                "residue_number": 104
+              },
+              "start": {
+                "residue_number": 1
+              }
+            }
+          ],
+          "organism_scientific_name": "Aspergillus oryzae",
+          "tax_id": 5062
+        }
+      ],
+      "synonym": "5'-R(*GP*(U34))-3'",
+      "weight": 620.441
+    },
+    {
+      "ca_p_only": false,
+      "entity_id": 2,
+      "gene_name": [
+        "AO090011000118",
+        "rntA"
+      ],
+      "in_chains": [
+        "A",
+        "B"
+      ],
+      "in_struct_asyms": [
+        "D",
+        "E"
+      ],
+      "length": 104,
+      "molecule_name": [
+        "Guanyl-specific ribonuclease T1"
+      ],
+      "molecule_type": "polypeptide(L)",
+      "mutation_flag": "GLN 25 VARIANT",
+      "number_of_copies": 2,
+      "pdb_sequence": "ACDYTCGSNCYSSSDVSTAQAAGYQLHEDGETVGSNSYPHKYNNYEGFDFSVSSPYYEWPILSSGDVYSGGSPGADRVVFNENNQLAGVITHTGASGNNFVECT",
+      "pdb_sequence_indices_with_multiple_residues": {},
+      "sample_preparation": "Natural source",
+      "sequence": "ACDYTCGSNCYSSSDVSTAQAAGYQLHEDGETVGSNSYPHKYNNYEGFDFSVSSPYYEWPILSSGDVYSGGSPGADRVVFNENNQLAGVITHTGASGNNFVECT",
+      "source": [
+        {
+          "expression_host_scientific_name": null,
+          "expression_host_tax_id": null,
+          "mappings": [
+            {
+              "end": {
+                "residue_number": 104
+              },
+              "start": {
+                "residue_number": 1
+              }
+            }
+          ],
+          "organism_scientific_name": "Aspergillus oryzae",
+          "tax_id": 5062
+        }
+      ],
+      "synonym": "RIBONUCLEASE T1",
+      "weight": 11093.644
+    },
+    {
+      "ca_p_only": false,
+      "chem_comp_ids": [
+        "HOH"
+      ],
+      "entity_id": 3,
+      "in_chains": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "in_struct_asyms": [
+        "F",
+        "G",
+        "H",
+        "I"
+      ],
+      "molecule_name": [
+        "water"
+      ],
+      "molecule_type": "Water",
+      "mutation_flag": null,
+      "number_of_copies": 92,
+      "sample_preparation": "Natural source",
+      "weight": 18.015
+    }
+  ]
+}

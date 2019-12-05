@@ -10,10 +10,15 @@ import os
 import pytest
 import socket
 import sys
+try:
+    import urllib.parse as url_parse
+except ImportError:
+    import urllib as url_parse
 
 # ----- Test Fixtures -----
 
 PREF_LOGLEVEL = 'PDB_PLUGIN_LOGLEVEL'
+WEBCACHE_PATH = 'tests/data/webcache'
 
 
 @pytest.fixture(autouse=True)
@@ -41,32 +46,95 @@ def initialize_pymol():
     pass  # nothing to do
 
 
-url_data_cache = {}
+class WebCache(object):
+    """Cache web data accessed by the PDB API URLs."""
+
+    def __init__(self, fetcher):
+        """Uses 'fetcher' to get data on cache miss."""
+        self._fetcher = fetcher if fetcher else self._get_fetch_exception
+        self._cache = {}
+        self._num_accesses = 0
+        self._num_hits = 0
+
+    @staticmethod
+    def _get_fetch_exception(url, description):
+        raise Exception(
+            'Missing in webcache: %s (%s)\nFetching from web is disallowed.' %
+            (description, url))
+
+    def access(self, url, description):
+        """Returns the data for the given URL."""
+        self._num_accesses += 1
+        if url in self._cache:
+            self._num_hits += 1
+            return self._cache[url]
+        data = self._fetcher(url, description)
+        self._cache[url] = data
+        return data
+
+    def save_to_dir(self, path):
+        """Saves cache data, one file per key, located in dir path."""
+        print('Saving %d URLs to webcache %s.' % (len(self._cache), path))
+        if not os.access(path, os.O_DIRECTORY):
+            os.mkdir(path)
+        for url, data in self._cache.items():
+            url = url_parse.quote_plus(url, safe='')  # must quote '/'
+            with open(os.path.join(path, url), 'w') as file:
+                json.dump(data, file, indent=2, sort_keys=True)
+
+    def load_from_dir(self, path):
+        """Loads cache data, one file per key, located in dir path."""
+        print('loading webcache from', path)
+        for url in os.listdir(path):
+            with open(os.path.join(path, url), 'r') as file:
+                url = url_parse.unquote_plus(url)
+                self._cache[url] = json.load(file)
+
+    def report_stats(self):
+        print('\nWebCache Stats: %d accesses, %d hits, %d misses; '
+              '%3.0f%% hit rate' %
+              (self._num_accesses, self._num_hits,
+               self._num_accesses - self._num_hits, 100.0 * (self._num_hits) /
+               self._num_accesses if self._num_accesses else 0))
+
+
+@pytest.fixture(scope='session')
+def web_cache(pytestconfig):
+    # --- setup ---
+    if pytestconfig.option.webcache_fetch:
+        fetcher = getattr(plugin.pdb._fetcher, 'get_data')
+    else:
+        fetcher = None
+    web_cache = WebCache(fetcher)
+    webcache_path = os.path.join(os.getcwd(), WEBCACHE_PATH)
+    if pytestconfig.option.webcache_load:
+        web_cache.load_from_dir(webcache_path)
+
+    yield web_cache  # each test runs here
+
+    # --- teardown ---
+    web_cache.report_stats()
+    if pytestconfig.option.webcache_save:
+        web_cache.save_to_dir(webcache_path)
 
 
 @pytest.fixture(autouse=True)
-def cache_url_data_for_plugin(monkeypatch):
+def cache_url_data_for_plugin(monkeypatch, web_cache):
     """Cache data returned from URLs fetched over the network.
 
     Wrap URL fetcher cache around code so we don't hit the real PDB with
     repeated requests from this test.
+
+    Note that his fixture can't be session scoped like the cache itself since
+    the monkeypatch dependence fixture is function scoped.
     """
     # --- setup ---
-    orig_get_data = getattr(plugin.pdb._fetcher, 'get_data')
-
-    def cached_get_data(url, description):
-        if url in url_data_cache:
-            return url_data_cache[url]
-        data = orig_get_data(url, description)
-        url_data_cache[url] = data
-        return data
-
-    monkeypatch.setattr(plugin.pdb._fetcher, 'get_data', cached_get_data)
+    monkeypatch.setattr(plugin.pdb._fetcher, 'get_data', web_cache.access)
 
     yield  # each test runs here
 
     # --- teardown ---
-    pass  # nothing to do
+    pass  # monkeypatch undoes all recorded changes
 
 
 @pytest.fixture(autouse=True)
@@ -144,7 +212,7 @@ def test_pdb_fetcher_with_urllib(monkeypatch):
             self._data = data
 
         def read(self):
-            return json.JSONEncoder().encode(self._data)
+            return json.dumps(self._data)
 
     urllib_request = fetcher._modules['urllib.request']
     urllib_error = fetcher._modules['urllib.error']
@@ -519,3 +587,11 @@ def test_object_atom_count():
     for object_name in object_names:
         atom_count = pymol.cmd.count_atoms(object_name)
         assert expected_objects[object_name] == atom_count
+
+
+# ----- keep this test last -----
+def test_print_web_cache_stats(web_cache, capsys):
+    """Not a test: Just print web_cache stats outside of stdout capture."""
+    with capsys.disabled():
+        web_cache.report_stats()
+    assert True

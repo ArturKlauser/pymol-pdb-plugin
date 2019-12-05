@@ -1,0 +1,46 @@
+{
+  "6a5j": [
+    {
+      "ca_p_only": false,
+      "entity_id": 1,
+      "gene_name": null,
+      "in_chains": [
+        "A"
+      ],
+      "in_struct_asyms": [
+        "A"
+      ],
+      "length": 13,
+      "molecule_name": [
+        "ILE-LYS-LYS-ILE-LEU-SER-LYS-ILE-LYS-LYS-LEU-LEU-LYS"
+      ],
+      "molecule_type": "polypeptide(L)",
+      "mutation_flag": null,
+      "number_of_copies": 1,
+      "pdb_sequence": "IKKILSKIKKLLK",
+      "pdb_sequence_indices_with_multiple_residues": {},
+      "sample_preparation": "Synthetically obtained",
+      "sequence": "IKKILSKIKKLLK",
+      "source": [
+        {
+          "expression_host_scientific_name": null,
+          "expression_host_tax_id": null,
+          "mappings": [
+            {
+              "end": {
+                "residue_number": 13
+              },
+              "start": {
+                "residue_number": 1
+              }
+            }
+          ],
+          "organism_scientific_name": "Rana chensinensis",
+          "tax_id": 79015
+        }
+      ],
+      "synonym": "ILE-LYS-LYS-ILE-LEU-SER-LYS-ILE-LYS-LYS-LEU-LEU-LYS",
+      "weight": 1559.118
+    }
+  ]
+}

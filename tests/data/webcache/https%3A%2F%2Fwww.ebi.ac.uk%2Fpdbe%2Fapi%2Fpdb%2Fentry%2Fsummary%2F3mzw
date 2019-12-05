@@ -1,0 +1,42 @@
+{
+  "3mzw": [
+    {
+      "assemblies": [
+        {
+          "assembly_id": "1",
+          "form": "hetero",
+          "name": "dimer",
+          "preferred": true
+        }
+      ],
+      "deposition_date": "20100513",
+      "deposition_site": "RCSB",
+      "entry_authors": [
+        "Eigenbrot, C.",
+        "Ultsch, M.H."
+      ],
+      "experimental_method": [
+        "X-ray diffraction"
+      ],
+      "experimental_method_class": [
+        "x-ray"
+      ],
+      "number_of_entities": {
+        "dna": 0,
+        "dna/rna": 0,
+        "ligand": 1,
+        "other": 0,
+        "polypeptide": 2,
+        "rna": 0,
+        "sugar": 0,
+        "water": 1
+      },
+      "processing_site": "RCSB",
+      "related_structures": [],
+      "release_date": "20100728",
+      "revision_date": "20171108",
+      "split_entry": [],
+      "title": "HER2 extracelluar region with affinity matured 3-helix affibody ZHER2:342"
+    }
+  ]
+}
