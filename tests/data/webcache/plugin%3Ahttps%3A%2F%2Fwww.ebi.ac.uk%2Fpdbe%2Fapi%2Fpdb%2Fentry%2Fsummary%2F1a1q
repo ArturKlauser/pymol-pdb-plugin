@@ -1,0 +1,60 @@
+{
+  "1a1q": [
+    {
+      "assemblies": [
+        {
+          "assembly_id": "1",
+          "form": "homo",
+          "name": "monomer",
+          "preferred": true
+        },
+        {
+          "assembly_id": "2",
+          "form": "homo",
+          "name": "monomer",
+          "preferred": false
+        },
+        {
+          "assembly_id": "3",
+          "form": "homo",
+          "name": "monomer",
+          "preferred": false
+        }
+      ],
+      "deposition_date": "19971212",
+      "deposition_site": null,
+      "entry_authors": [
+        "Love, R.A.",
+        "Parge, H.E.",
+        "Wickersham, J.A.",
+        "Hostomsky, Z.",
+        "Habuka, N.",
+        "Moomaw, E.W.",
+        "Adachi, T.",
+        "Hostomska, Z."
+      ],
+      "experimental_method": [
+        "X-ray diffraction"
+      ],
+      "experimental_method_class": [
+        "x-ray"
+      ],
+      "number_of_entities": {
+        "dna": 0,
+        "dna/rna": 0,
+        "ligand": 1,
+        "other": 0,
+        "polypeptide": 1,
+        "rna": 0,
+        "sugar": 0,
+        "water": 0
+      },
+      "processing_site": "BNL",
+      "related_structures": [],
+      "release_date": "19980325",
+      "revision_date": "20110713",
+      "split_entry": [],
+      "title": "HEPATITIS C VIRUS NS3 PROTEINASE"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "1b2m": [
+    {
+      "assemblies": [
+        {
+          "assembly_id": "1",
+          "form": "hetero",
+          "name": "dimer",
+          "preferred": true
+        },
+        {
+          "assembly_id": "2",
+          "form": "hetero",
+          "name": "trimer",
+          "preferred": false
+        }
+      ],
+      "deposition_date": "19981127",
+      "deposition_site": "BNL",
+      "entry_authors": [
+        "Arni, R.K.",
+        "Watanabe, L.",
+        "Ward, R.J.",
+        "Kreitman, R.J.",
+        "Kumar, K.",
+        "Walz Jr., F.G."
+      ],
+      "experimental_method": [
+        "X-ray diffraction"
+      ],
+      "experimental_method_class": [
+        "x-ray"
+      ],
+      "number_of_entities": {
+        "dna": 0,
+        "dna/rna": 0,
+        "ligand": 0,
+        "other": 0,
+        "polypeptide": 1,
+        "rna": 1,
+        "sugar": 0,
+        "water": 1
+      },
+      "processing_site": "RCSB",
+      "related_structures": [],
+      "release_date": "19990325",
+      "revision_date": "20170201",
+      "split_entry": [],
+      "title": "THREE-DIMENSIONAL STRUCTURE OF RIBONULCEASE T1 COMPLEXED WITH AN ISOSTERIC PHOSPHONATE ANALOGUE OF GPU: ALTERNATE SUBSTRATE BINDING MODES AND CATALYSIS."
+    }
+  ]
+}

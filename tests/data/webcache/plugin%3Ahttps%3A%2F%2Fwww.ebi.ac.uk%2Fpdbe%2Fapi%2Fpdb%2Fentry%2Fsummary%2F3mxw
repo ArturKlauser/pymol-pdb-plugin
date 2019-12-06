@@ -1,0 +1,42 @@
+{
+  "3mxw": [
+    {
+      "assemblies": [
+        {
+          "assembly_id": "1",
+          "form": "hetero",
+          "name": "trimer",
+          "preferred": true
+        }
+      ],
+      "deposition_date": "20100507",
+      "deposition_site": "RCSB",
+      "entry_authors": [
+        "Hymowitz, S.G.",
+        "Maun, H.R."
+      ],
+      "experimental_method": [
+        "X-ray diffraction"
+      ],
+      "experimental_method_class": [
+        "x-ray"
+      ],
+      "number_of_entities": {
+        "dna": 0,
+        "dna/rna": 0,
+        "ligand": 3,
+        "other": 0,
+        "polypeptide": 3,
+        "rna": 0,
+        "sugar": 0,
+        "water": 1
+      },
+      "processing_site": "RCSB",
+      "related_structures": [],
+      "release_date": "20100526",
+      "revision_date": "20110713",
+      "split_entry": [],
+      "title": "Crystal structure Sonic hedgehog bound to the 5E1 fab fragment"
+    }
+  ]
+}

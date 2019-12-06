@@ -1,0 +1,2729 @@
+{
+  "2gc2": {
+    "molecules": [
+      {
+        "chains": [
+          {
+            "chain_id": "A",
+            "residues": [
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 183,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 184
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 184,
+                "observed_ratio": 1,
+                "residue_name": "ASN",
+                "residue_number": 185
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 185,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 186
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 186,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 187
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 187,
+                "observed_ratio": 0.933,
+                "residue_name": "TRP",
+                "residue_number": 188
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 0,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 1
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 1,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 2
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 2,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 3
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 3,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 4
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 4,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 5
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 5,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 6
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 6,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 7
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 7,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 8
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 8,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 9
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 9,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 10
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 10,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 11
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 11,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 12
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 12,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 13
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 13,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 14
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 14,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 15
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 15,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 16
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 16,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 17
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 17,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 18
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 18,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 19
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 19,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 20
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 20,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 21
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 21,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 22
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 22,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 23
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 23,
+                "observed_ratio": 1,
+                "residue_name": "SER",
+                "residue_number": 24
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 24,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 25
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 25,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 26
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 26,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 27
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 27,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 28
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 28,
+                "observed_ratio": 1,
+                "residue_name": "SER",
+                "residue_number": 29
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 29,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 30
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 30,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 31
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 31,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 32
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 32,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 33
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 33,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 34
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 34,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 35
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 35,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 36
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 36,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 37
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 37,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 38
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 38,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 39
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 39,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 40
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 40,
+                "observed_ratio": 1,
+                "residue_name": "TRP",
+                "residue_number": 41
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 41,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 42
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 42,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 43
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 43,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 44
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 44,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 45
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 45,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 46
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 46,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 47
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 47,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 48
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 48,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 49
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 49,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 50
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 50,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 51
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 51,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 52
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 52,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 53
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 53,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 54
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 54,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 55
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 55,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 56
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 56,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 57
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 57,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 58
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 58,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 59
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 59,
+                "observed_ratio": 1,
+                "residue_name": "GLN",
+                "residue_number": 60
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 60,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 61
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 61,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 62
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 62,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 63
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 63,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 64
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 64,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 65
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 65,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 66
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 66,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 67
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 67,
+                "observed_ratio": 1,
+                "residue_name": "ASN",
+                "residue_number": 68
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 68,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 69
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 69,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 70
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 70,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 71
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 71,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 72
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 72,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 73
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 73,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 74
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 74,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 75
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 75,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 76
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 76,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 77
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 77,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 78
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 78,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 79
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 79,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 80
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 80,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 81
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 81,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 82
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 82,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 83
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 83,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 84
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 84,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 85
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 85,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 86
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 86,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 87
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 87,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 88
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 88,
+                "observed_ratio": 1,
+                "residue_name": "HIS",
+                "residue_number": 89
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 89,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 90
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 90,
+                "observed_ratio": 1,
+                "residue_name": "HIS",
+                "residue_number": 91
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 91,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 92
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 92,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 93
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 93,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 94
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 94,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 95
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 95,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 96
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 96,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 97
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 97,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 98
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 98,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 99
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 99,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 100
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 100,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 101
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 101,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 102
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 102,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 103
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 103,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 104
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 104,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 105
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 105,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 106
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 106,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 107
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 107,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 108
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 108,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 109
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 109,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 110
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 110,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 111
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 111,
+                "observed_ratio": 1,
+                "residue_name": "GLN",
+                "residue_number": 112
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 112,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 113
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 113,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 114
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 114,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 115
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 115,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 116
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 116,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 117
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 117,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 118
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 118,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 119
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 119,
+                "observed_ratio": 1,
+                "residue_name": "TRP",
+                "residue_number": 120
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 120,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 121
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 121,
+                "observed_ratio": 1,
+                "residue_name": "SER",
+                "residue_number": 122
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 122,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 123
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 123,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 124
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 124,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 125
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 125,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 126
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 126,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 127
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 127,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 128
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 128,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 129
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 129,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 130
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 130,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 131
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 131,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 132
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 132,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 133
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 133,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 134
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 134,
+                "observed_ratio": 1,
+                "residue_name": "TRP",
+                "residue_number": 135
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 135,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 136
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 136,
+                "observed_ratio": 1,
+                "residue_name": "HIS",
+                "residue_number": 137
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 137,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 138
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 138,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 139
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 139,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 140
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 140,
+                "observed_ratio": 1,
+                "residue_name": "ASN",
+                "residue_number": 141
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 141,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 142
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 142,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 143
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 143,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 144
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 144,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 145
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 145,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 146
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 146,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 147
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 147,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 148
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 148,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 149
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 149,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 150
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 150,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 151
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 151,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 152
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 152,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 153
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 153,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 154
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 154,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 155
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 155,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 156
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 156,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 157
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 157,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 158
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 158,
+                "observed_ratio": 1,
+                "residue_name": "HIS",
+                "residue_number": 159
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 159,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 160
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 160,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 161
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 161,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 162
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 162,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 163
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 163,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 164
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 164,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 165
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 165,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 166
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 166,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 167
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 167,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 168
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 168,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 169
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 169,
+                "observed_ratio": 1,
+                "residue_name": "SER",
+                "residue_number": 170
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 170,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 171
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 171,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 172
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 172,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 173
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 173,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 174
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 174,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 175
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 175,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 176
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 176,
+                "observed_ratio": 1,
+                "residue_name": "ASN",
+                "residue_number": 177
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 177,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 178
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 178,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 179
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 179,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 180
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 180,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 181
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 181,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 182
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 182,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 183
+              }
+            ],
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "B",
+            "residues": [
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 12,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 13
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 13,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 14
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 14,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 15
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 15,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 16
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 16,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 17
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 17,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 18
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 18,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 19
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 19,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 20
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 20,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 21
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 21,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 22
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 22,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 23
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 23,
+                "observed_ratio": 1,
+                "residue_name": "SER",
+                "residue_number": 24
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 24,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 25
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 25,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 26
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 26,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 27
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 27,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 28
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 28,
+                "observed_ratio": 1,
+                "residue_name": "SER",
+                "residue_number": 29
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 29,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 30
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 30,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 31
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 31,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 32
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 32,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 33
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 33,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 34
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 34,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 35
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 35,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 36
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 36,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 37
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 37,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 38
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 38,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 39
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 39,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 40
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 40,
+                "observed_ratio": 1,
+                "residue_name": "TRP",
+                "residue_number": 41
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 41,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 42
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 42,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 43
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 43,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 44
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 44,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 45
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 45,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 46
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 46,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 47
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 47,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 48
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 48,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 49
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 49,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 50
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 50,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 51
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 51,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 52
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 52,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 53
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 53,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 54
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 54,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 55
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 55,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 56
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 56,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 57
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 57,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 58
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 58,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 59
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 59,
+                "observed_ratio": 1,
+                "residue_name": "GLN",
+                "residue_number": 60
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 60,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 61
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 61,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 62
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 62,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 63
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 63,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 64
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 64,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 65
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 65,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 66
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 66,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 67
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 67,
+                "observed_ratio": 1,
+                "residue_name": "ASN",
+                "residue_number": 68
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 68,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 69
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 69,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 70
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 70,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 71
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 71,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 72
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 72,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 73
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 73,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 74
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 74,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 75
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 75,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 76
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 76,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 77
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 77,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 78
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 78,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 79
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 79,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 80
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 80,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 81
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 81,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 82
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 82,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 83
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 83,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 84
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 84,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 85
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 85,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 86
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 86,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 87
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 87,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 88
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 88,
+                "observed_ratio": 1,
+                "residue_name": "HIS",
+                "residue_number": 89
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 89,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 90
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 90,
+                "observed_ratio": 1,
+                "residue_name": "HIS",
+                "residue_number": 91
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 91,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 92
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 92,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 93
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 93,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 94
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 94,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 95
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 95,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 96
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 96,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 97
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 97,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 98
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 98,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 99
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 99,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 100
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 100,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 101
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 101,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 102
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 102,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 103
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 103,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 104
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 104,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 105
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 105,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 106
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 106,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 107
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 107,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 108
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 108,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 109
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 109,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 110
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 110,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 111
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 111,
+                "observed_ratio": 1,
+                "residue_name": "GLN",
+                "residue_number": 112
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 112,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 113
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 113,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 114
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 114,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 115
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 115,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 116
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 116,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 117
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 117,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 118
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 118,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 119
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 119,
+                "observed_ratio": 1,
+                "residue_name": "TRP",
+                "residue_number": 120
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 120,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 121
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 121,
+                "observed_ratio": 1,
+                "residue_name": "SER",
+                "residue_number": 122
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 122,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 123
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 123,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 124
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 124,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 125
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 125,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 126
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 126,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 127
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 127,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 128
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 128,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 129
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 129,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 130
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 130,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 131
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 131,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 132
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 132,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 133
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 133,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 134
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 134,
+                "observed_ratio": 1,
+                "residue_name": "TRP",
+                "residue_number": 135
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 135,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 136
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 136,
+                "observed_ratio": 1,
+                "residue_name": "HIS",
+                "residue_number": 137
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 137,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 138
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 138,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 139
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 139,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 140
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 140,
+                "observed_ratio": 1,
+                "residue_name": "ASN",
+                "residue_number": 141
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 141,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 142
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 142,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 143
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 143,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 144
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 144,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 145
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 145,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 146
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 146,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 147
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 147,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 148
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 148,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 149
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 149,
+                "observed_ratio": 1,
+                "residue_name": "LEU",
+                "residue_number": 150
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 150,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 151
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 151,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 152
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 152,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 153
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 153,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 154
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 154,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 155
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 155,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 156
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 156,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 157
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 157,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 158
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 158,
+                "observed_ratio": 1,
+                "residue_name": "HIS",
+                "residue_number": 159
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 159,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 160
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 160,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 161
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 161,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 162
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 162,
+                "observed_ratio": 1,
+                "residue_name": "THR",
+                "residue_number": 163
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 163,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 164
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 164,
+                "observed_ratio": 1,
+                "residue_name": "ALA",
+                "residue_number": 165
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 165,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 166
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 166,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 167
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 167,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 168
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 168,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 169
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 169,
+                "observed_ratio": 1,
+                "residue_name": "SER",
+                "residue_number": 170
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 170,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 171
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 171,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 172
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 172,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 173
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 173,
+                "observed_ratio": 1,
+                "residue_name": "ILE",
+                "residue_number": 174
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 174,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 175
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 175,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 176
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 176,
+                "observed_ratio": 1,
+                "residue_name": "ASN",
+                "residue_number": 177
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 177,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 178
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 178,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 179
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 179,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 180
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 180,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 181
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 181,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 182
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 182,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 183
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 183,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 184
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 184,
+                "observed_ratio": 1,
+                "residue_name": "ASN",
+                "residue_number": 185
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 185,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 186
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 186,
+                "observed_ratio": 1,
+                "residue_name": "ARG",
+                "residue_number": 187
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 187,
+                "observed_ratio": 0.933,
+                "residue_name": "TRP",
+                "residue_number": 188
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 0,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 1
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 1,
+                "observed_ratio": 1,
+                "residue_name": "MET",
+                "residue_number": 2
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 2,
+                "observed_ratio": 1,
+                "residue_name": "TYR",
+                "residue_number": 3
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 3,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 4
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 4,
+                "observed_ratio": 1,
+                "residue_name": "GLU",
+                "residue_number": 5
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 5,
+                "observed_ratio": 1,
+                "residue_name": "PRO",
+                "residue_number": 6
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 6,
+                "observed_ratio": 1,
+                "residue_name": "PHE",
+                "residue_number": 7
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 7,
+                "observed_ratio": 1,
+                "residue_name": "GLY",
+                "residue_number": 8
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 8,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 9
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 9,
+                "observed_ratio": 1,
+                "residue_name": "LYS",
+                "residue_number": 10
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 10,
+                "observed_ratio": 1,
+                "residue_name": "VAL",
+                "residue_number": 11
+              },
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 11,
+                "observed_ratio": 1,
+                "residue_name": "ASP",
+                "residue_number": 12
+              }
+            ],
+            "struct_asym_id": "B"
+          }
+        ],
+        "entity_id": 1
+      },
+      {
+        "chains": [
+          {
+            "chain_id": "A",
+            "residues": [
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 401,
+                "observed_ratio": 1,
+                "residue_name": "ZN",
+                "residue_number": 1
+              }
+            ],
+            "struct_asym_id": "C"
+          },
+          {
+            "chain_id": "B",
+            "residues": [
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 402,
+                "observed_ratio": 1,
+                "residue_name": "ZN",
+                "residue_number": 1
+              }
+            ],
+            "struct_asym_id": "E"
+          }
+        ],
+        "entity_id": 2
+      },
+      {
+        "chains": [
+          {
+            "chain_id": "A",
+            "residues": [
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 501,
+                "multiple_conformers": [
+                  {
+                    "alternate_conformers": 2,
+                    "residue_name": "F6R"
+                  }
+                ],
+                "observed_ratio": 1,
+                "residue_name": "F6R",
+                "residue_number": 1
+              }
+            ],
+            "struct_asym_id": "D"
+          },
+          {
+            "chain_id": "B",
+            "residues": [
+              {
+                "author_insertion_code": "",
+                "author_residue_number": 502,
+                "multiple_conformers": [
+                  {
+                    "alternate_conformers": 2,
+                    "residue_name": "F6R"
+                  }
+                ],
+                "observed_ratio": 1,
+                "residue_name": "F6R",
+                "residue_number": 1
+              }
+            ],
+            "struct_asym_id": "F"
+          }
+        ],
+        "entity_id": 3
+      }
+    ]
+  }
+}

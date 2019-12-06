@@ -1,0 +1,704 @@
+{
+  "3mzw": {
+    "molecules": [
+      {
+        "chains": [
+          {
+            "chain_id": "A",
+            "models": [
+              {
+                "model_id": 1,
+                "outlier_types": {
+                  "bond_angles": [
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 101,
+                      "residue_number": 101
+                    }
+                  ],
+                  "clashes": [
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 10,
+                      "residue_number": 10
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 100,
+                      "residue_number": 100
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 116,
+                      "residue_number": 116
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 12,
+                      "residue_number": 12
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 124,
+                      "residue_number": 124
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 125,
+                      "residue_number": 125
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 126,
+                      "residue_number": 126
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 135,
+                      "residue_number": 135
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 141,
+                      "residue_number": 141
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 144,
+                      "residue_number": 144
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 151,
+                      "residue_number": 151
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 154,
+                      "residue_number": 154
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 155,
+                      "residue_number": 155
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 156,
+                      "residue_number": 156
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 158,
+                      "residue_number": 158
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 16,
+                      "residue_number": 16
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 164,
+                      "residue_number": 164
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 166,
+                      "residue_number": 166
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 182,
+                      "residue_number": 182
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 184,
+                      "residue_number": 184
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 186,
+                      "residue_number": 186
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 189,
+                      "residue_number": 189
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 19,
+                      "residue_number": 19
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 194,
+                      "residue_number": 194
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 195,
+                      "residue_number": 195
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 203,
+                      "residue_number": 203
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 204,
+                      "residue_number": 204
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 220,
+                      "residue_number": 220
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 227,
+                      "residue_number": 227
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 231,
+                      "residue_number": 231
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 241,
+                      "residue_number": 241
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 267,
+                      "residue_number": 267
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 274,
+                      "residue_number": 274
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 280,
+                      "residue_number": 280
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 32,
+                      "residue_number": 32
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 333,
+                      "residue_number": 333
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 340,
+                      "residue_number": 340
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 347,
+                      "residue_number": 347
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 349,
+                      "residue_number": 349
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 355,
+                      "residue_number": 355
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 358,
+                      "residue_number": 358
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 360,
+                      "residue_number": 360
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 361,
+                      "residue_number": 361
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 362,
+                      "residue_number": 362
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 363,
+                      "residue_number": 363
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 365,
+                      "residue_number": 365
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 367,
+                      "residue_number": 367
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 379,
+                      "residue_number": 379
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 383,
+                      "residue_number": 383
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 397,
+                      "residue_number": 397
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 398,
+                      "residue_number": 398
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 401,
+                      "residue_number": 401
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 404,
+                      "residue_number": 404
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 405,
+                      "residue_number": 405
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 408,
+                      "residue_number": 408
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 410,
+                      "residue_number": 410
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 412,
+                      "residue_number": 412
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 424,
+                      "residue_number": 424
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 430,
+                      "residue_number": 430
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 434,
+                      "residue_number": 434
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 438,
+                      "residue_number": 438
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 447,
+                      "residue_number": 447
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 448,
+                      "residue_number": 448
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 480,
+                      "residue_number": 480
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 492,
+                      "residue_number": 492
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 499,
+                      "residue_number": 499
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 501,
+                      "residue_number": 501
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 510,
+                      "residue_number": 510
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 511,
+                      "residue_number": 511
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 514,
+                      "residue_number": 514
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 522,
+                      "residue_number": 522
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 523,
+                      "residue_number": 523
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 527,
+                      "residue_number": 527
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 528,
+                      "residue_number": 528
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 529,
+                      "residue_number": 529
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 531,
+                      "residue_number": 531
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 533,
+                      "residue_number": 533
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 536,
+                      "residue_number": 536
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 542,
+                      "residue_number": 542
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 544,
+                      "residue_number": 544
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 546,
+                      "residue_number": 546
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 547,
+                      "residue_number": 547
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 548,
+                      "residue_number": 548
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 552,
+                      "residue_number": 552
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 553,
+                      "residue_number": 553
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 558,
+                      "residue_number": 558
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 559,
+                      "residue_number": 559
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 561,
+                      "residue_number": 561
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 563,
+                      "residue_number": 563
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 574,
+                      "residue_number": 574
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 60,
+                      "residue_number": 60
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 65,
+                      "residue_number": 65
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 66,
+                      "residue_number": 66
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 70,
+                      "residue_number": 70
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 72,
+                      "residue_number": 72
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 73,
+                      "residue_number": 73
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 78,
+                      "residue_number": 78
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 8,
+                      "residue_number": 8
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 80,
+                      "residue_number": 80
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 82,
+                      "residue_number": 82
+                    },
+                    {
+                      "alt_code": "A",
+                      "author_insertion_code": "",
+                      "author_residue_number": 9,
+                      "residue_number": 9
+                    },
+                    {
+                      "alt_code": "B",
+                      "author_insertion_code": "",
+                      "author_residue_number": 9,
+                      "residue_number": 9
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 95,
+                      "residue_number": 95
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 96,
+                      "residue_number": 96
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 99,
+                      "residue_number": 99
+                    }
+                  ]
+                }
+              }
+            ],
+            "struct_asym_id": "A"
+          }
+        ],
+        "entity_id": 1
+      },
+      {
+        "chains": [
+          {
+            "chain_id": "B",
+            "models": [
+              {
+                "model_id": 1,
+                "outlier_types": {
+                  "clashes": [
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 19,
+                      "residue_number": 19
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 22,
+                      "residue_number": 22
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 41,
+                      "residue_number": 41
+                    },
+                    {
+                      "alt_code": "",
+                      "author_insertion_code": "",
+                      "author_residue_number": 45,
+                      "residue_number": 45
+                    }
+                  ]
+                }
+              }
+            ],
+            "struct_asym_id": "B"
+          }
+        ],
+        "entity_id": 2
+      }
+    ]
+  }
+}

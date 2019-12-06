@@ -1,0 +1,44 @@
+{
+  "1f0d": [
+    {
+      "assemblies": [
+        {
+          "assembly_id": "1",
+          "form": "homo",
+          "name": "monomer",
+          "preferred": true
+        }
+      ],
+      "deposition_date": "20000516",
+      "deposition_site": "RCSB",
+      "entry_authors": [
+        "Oh, D.",
+        "Shin, S.Y.",
+        "Lee, S.",
+        "Kim, Y."
+      ],
+      "experimental_method": [
+        "Solution NMR"
+      ],
+      "experimental_method_class": [
+        "nmr"
+      ],
+      "number_of_entities": {
+        "dna": 0,
+        "dna/rna": 0,
+        "ligand": 0,
+        "other": 0,
+        "polypeptide": 1,
+        "rna": 0,
+        "sugar": 0,
+        "water": 0
+      },
+      "processing_site": "RCSB",
+      "related_structures": [],
+      "release_date": "20000614",
+      "revision_date": "20110713",
+      "split_entry": [],
+      "title": "Cecropin A(1-8)-magainin 2(1-12) in dodecylphosphocholine micelles"
+    }
+  ]
+}

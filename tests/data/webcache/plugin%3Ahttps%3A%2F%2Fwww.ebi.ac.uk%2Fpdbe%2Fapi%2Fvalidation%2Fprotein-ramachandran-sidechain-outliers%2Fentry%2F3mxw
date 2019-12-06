@@ -1,0 +1,118 @@
+{
+  "3mxw": {
+    "ramachandran_outliers": [
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 44,
+        "chain_id": "H",
+        "entity_id": 3,
+        "model_id": 1,
+        "residue_number": 44,
+        "struct_asym_id": "C"
+      }
+    ],
+    "sidechain_outliers": [
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 175,
+        "chain_id": "A",
+        "entity_id": 1,
+        "model_id": 1,
+        "residue_number": 147,
+        "struct_asym_id": "A"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 10,
+        "chain_id": "L",
+        "entity_id": 2,
+        "model_id": 1,
+        "residue_number": 10,
+        "struct_asym_id": "B"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 89,
+        "chain_id": "L",
+        "entity_id": 2,
+        "model_id": 1,
+        "residue_number": 89,
+        "struct_asym_id": "B"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 137,
+        "chain_id": "L",
+        "entity_id": 2,
+        "model_id": 1,
+        "residue_number": 137,
+        "struct_asym_id": "B"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 158,
+        "chain_id": "L",
+        "entity_id": 2,
+        "model_id": 1,
+        "residue_number": 158,
+        "struct_asym_id": "B"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 1,
+        "chain_id": "H",
+        "entity_id": 3,
+        "model_id": 1,
+        "residue_number": 1,
+        "struct_asym_id": "C"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 12,
+        "chain_id": "H",
+        "entity_id": 3,
+        "model_id": 1,
+        "residue_number": 12,
+        "struct_asym_id": "C"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 44,
+        "chain_id": "H",
+        "entity_id": 3,
+        "model_id": 1,
+        "residue_number": 44,
+        "struct_asym_id": "C"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 95,
+        "chain_id": "H",
+        "entity_id": 3,
+        "model_id": 1,
+        "residue_number": 99,
+        "struct_asym_id": "C"
+      },
+      {
+        "alt_code": "",
+        "author_insertion_code": "",
+        "author_residue_number": 96,
+        "chain_id": "H",
+        "entity_id": 3,
+        "model_id": 1,
+        "residue_number": 100,
+        "struct_asym_id": "C"
+      }
+    ]
+  }
+}

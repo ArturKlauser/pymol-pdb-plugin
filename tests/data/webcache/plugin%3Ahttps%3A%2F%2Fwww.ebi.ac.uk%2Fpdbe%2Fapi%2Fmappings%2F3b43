@@ -1,0 +1,1154 @@
+{
+  "3b43": {
+    "CATH": {
+      "2.60.40.10": {
+        "architecture": "Sandwich",
+        "class": "Mainly Beta",
+        "homology": "Immunoglobulins",
+        "identifier": "Immunoglobulin-like",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "domain": "3b43A01",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 91,
+              "residue_number": 95
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": -2,
+              "residue_number": 2
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A02",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 188,
+              "residue_number": 192
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 92,
+              "residue_number": 96
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A03",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 282,
+              "residue_number": 286
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 189,
+              "residue_number": 193
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A04",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 380,
+              "residue_number": 384
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 283,
+              "residue_number": 287
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A05",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 471,
+              "residue_number": 475
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 381,
+              "residue_number": 385
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A06",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 566,
+              "residue_number": 570
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 472,
+              "residue_number": 476
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "Titin. Chain: a. Fragment: i65-i70. Engineered: yes",
+        "topology": "Immunoglobulin-like"
+      }
+    },
+    "CATH-B": {
+      "2.60.40.10": {
+        "architecture": "Sandwich",
+        "class": "Mainly Beta",
+        "homology": "Immunoglobulins",
+        "identifier": "Immunoglobulin-like",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "domain": "3b43A01",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 91,
+              "residue_number": 95
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": -2,
+              "residue_number": 2
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A02",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 188,
+              "residue_number": 192
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 92,
+              "residue_number": 96
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A03",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 282,
+              "residue_number": 286
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 189,
+              "residue_number": 193
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A04",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 380,
+              "residue_number": 384
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 283,
+              "residue_number": 287
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A05",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 471,
+              "residue_number": 475
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 381,
+              "residue_number": 385
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "domain": "3b43A06",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 566,
+              "residue_number": 570
+            },
+            "entity_id": 1,
+            "segment_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 472,
+              "residue_number": 476
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "Titin. Chain: a. Fragment: i65-i70. Engineered: yes",
+        "topology": "Immunoglobulin-like"
+      }
+    },
+    "EC": {
+      "2.7.11.1": {
+        "accepted_name": "Non-specific serine/threonine protein kinase",
+        "identifier": "Non-specific serine/threonine protein kinase",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "entity_id": 1,
+            "struct_asym_id": "A"
+          }
+        ],
+        "reaction": "ATP + a protein = ADP + a phosphoprotein",
+        "synonyms": [
+          "A-kinase",
+          "AP50 kinase",
+          "ATP-protein transphosphorylase",
+          "Beta-IIPKC",
+          "Beta-adrenergic receptor kinase",
+          "CK-2",
+          "CKI",
+          "CKII",
+          "Calcium-dependent protein kinase C",
+          "Calcium/phospholipid-dependent protein kinase",
+          "Casein kinase",
+          "Casein kinase (phosphorylating)",
+          "Casein kinase 2",
+          "Casein kinase I",
+          "Casein kinase II",
+          "Cyclic AMP-dependent protein kinase",
+          "Cyclic AMP-dependent protein kinase A",
+          "Cyclic monophosphate-dependent protein kinase",
+          "Cyclic nucleotide-dependent protein kinase",
+          "Cyclin-dependent kinase",
+          "Cytidine 3',5'-cyclic monophosphate-responsive protein kinase",
+          "Dsk1",
+          "Epsilon PKC",
+          "Glycogen synthase A kinase",
+          "Glycogen synthase a kinase",
+          "Glycogen synthase kinase",
+          "HIPK2",
+          "Hpr kinase",
+          "Hydroxyalkyl-protein kinase",
+          "M phase-specific cdc2 kinase",
+          "MAPK",
+          "Mitogen-activated S6 kinase",
+          "Mitogen-activated protein kinase",
+          "P82 kinase",
+          "PKA",
+          "PKC",
+          "Phosphorylase B kinase kinase",
+          "Phosphorylase b kinase kinase",
+          "Phosphorylase b kinase kinase",
+          "Protein glutamyl kinase",
+          "Protein kinase (phosphorylating)",
+          "Protein kinase A",
+          "Protein kinase CK2",
+          "Protein kinase p58",
+          "Protein phosphokinase",
+          "Protein serine kinase",
+          "Protein serine-threonine kinase",
+          "Protein-aspartyl kinase",
+          "Protein-cysteine kinase",
+          "Protein-serine kinase",
+          "Prp4 protein kinase",
+          "Raf kinase",
+          "Raf-1",
+          "Ribosomal S6 protein kinase",
+          "Ribosomal protein S6 kinase II",
+          "STK32",
+          "Serine kinase",
+          "Serine protein kinase",
+          "Serine(threonine) protein kinase",
+          "Serine-specific protein kinase",
+          "Serine/threonine protein kinase",
+          "T-antigen kinase",
+          "Threonine-specific protein kinase",
+          "Twitchin kinase",
+          "Type-2 casein kinase",
+          "WEE1Hu",
+          "Wee 1-like kinase",
+          "Wee-kinase",
+          "cAMP-dependent protein kinase",
+          "cAMP-dependent protein kinase A",
+          "cGMP-dependent protein kinase"
+        ],
+        "systematic_name": "ATP:protein phosphotransferase (non-specific)"
+      }
+    },
+    "Ensembl": {},
+    "GO": {},
+    "HMMER": {
+      "PF07679": {
+        "description": "Immunoglobulin I-set domain",
+        "identifier": "Immunoglobulin I-set domain",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "coverage": 0.989,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 90,
+              "residue_number": 94
+            },
+            "entity_id": 1,
+            "hmm_end": 89,
+            "hmm_length": 90,
+            "hmm_start": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 2,
+              "residue_number": 6
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 0.989,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 186,
+              "residue_number": 190
+            },
+            "entity_id": 1,
+            "hmm_end": 89,
+            "hmm_length": 90,
+            "hmm_start": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 98,
+              "residue_number": 102
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 283,
+              "residue_number": 287
+            },
+            "entity_id": 1,
+            "hmm_end": 90,
+            "hmm_length": 90,
+            "hmm_start": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 194,
+              "residue_number": 198
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 377,
+              "residue_number": 381
+            },
+            "entity_id": 1,
+            "hmm_end": 90,
+            "hmm_length": 90,
+            "hmm_start": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 287,
+              "residue_number": 291
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 0.944,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 465,
+              "residue_number": 469
+            },
+            "entity_id": 1,
+            "hmm_end": 85,
+            "hmm_length": 90,
+            "hmm_start": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 381,
+              "residue_number": 385
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 564,
+              "residue_number": 568
+            },
+            "entity_id": 1,
+            "hmm_end": 90,
+            "hmm_length": 90,
+            "hmm_start": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 474,
+              "residue_number": 478
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "I-set"
+      }
+    },
+    "InterPro": {
+      "IPR003598": {
+        "identifier": "Immunoglobulin subtype 2",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 81,
+              "residue_number": 85
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 14,
+              "residue_number": 18
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 177,
+              "residue_number": 181
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 110,
+              "residue_number": 114
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 273,
+              "residue_number": 277
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 206,
+              "residue_number": 210
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 367,
+              "residue_number": 371
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 300,
+              "residue_number": 304
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 460,
+              "residue_number": 464
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 393,
+              "residue_number": 397
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 554,
+              "residue_number": 558
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 486,
+              "residue_number": 490
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "Immunoglobulin subtype 2"
+      },
+      "IPR003599": {
+        "identifier": "Immunoglobulin subtype",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 92,
+              "residue_number": 96
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 8,
+              "residue_number": 12
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 188,
+              "residue_number": 192
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 104,
+              "residue_number": 108
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 284,
+              "residue_number": 288
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 200,
+              "residue_number": 204
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 378,
+              "residue_number": 382
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 294,
+              "residue_number": 298
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 471,
+              "residue_number": 475
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 387,
+              "residue_number": 391
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 565,
+              "residue_number": 569
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 480,
+              "residue_number": 484
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "Immunoglobulin subtype"
+      },
+      "IPR007110": {
+        "identifier": "Immunoglobulin-like domain",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 90,
+              "residue_number": 94
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 1,
+              "residue_number": 5
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 188,
+              "residue_number": 192
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 98,
+              "residue_number": 102
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 284,
+              "residue_number": 288
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 193,
+              "residue_number": 197
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 376,
+              "residue_number": 380
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 287,
+              "residue_number": 291
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 469,
+              "residue_number": 473
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 381,
+              "residue_number": 385
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 563,
+              "residue_number": 567
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 474,
+              "residue_number": 478
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "Immunoglobulin-like domain"
+      },
+      "IPR013098": {
+        "identifier": "Immunoglobulin I-set",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 90,
+              "residue_number": 94
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 2,
+              "residue_number": 6
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 186,
+              "residue_number": 190
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 98,
+              "residue_number": 102
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 283,
+              "residue_number": 287
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 194,
+              "residue_number": 198
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 377,
+              "residue_number": 381
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 287,
+              "residue_number": 291
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 465,
+              "residue_number": 469
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 381,
+              "residue_number": 385
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 564,
+              "residue_number": 568
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 474,
+              "residue_number": 478
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "Immunoglobulin I-set"
+      },
+      "IPR013783": {
+        "identifier": "Immunoglobulin-like fold",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 91,
+              "residue_number": 95
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": null,
+              "residue_number": 1
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 187,
+              "residue_number": 191
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 92,
+              "residue_number": 96
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 285,
+              "residue_number": 289
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 190,
+              "residue_number": 194
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 380,
+              "residue_number": 384
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 286,
+              "residue_number": 290
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 472,
+              "residue_number": 476
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 381,
+              "residue_number": 385
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 566,
+              "residue_number": 570
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 473,
+              "residue_number": 477
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "Immunoglobulin-like fold"
+      },
+      "IPR036179": {
+        "identifier": "Immunoglobulin-like domain superfamily",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 98,
+              "residue_number": 102
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 2,
+              "residue_number": 6
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 190,
+              "residue_number": 194
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 96,
+              "residue_number": 100
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 292,
+              "residue_number": 296
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 194,
+              "residue_number": 198
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 387,
+              "residue_number": 391
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 287,
+              "residue_number": 291
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 475,
+              "residue_number": 479
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 381,
+              "residue_number": 385
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 566,
+              "residue_number": 570
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 474,
+              "residue_number": 478
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "Immunoglobulin-like domain superfamily"
+      }
+    },
+    "Pfam": {
+      "PF07679": {
+        "description": "Immunoglobulin I-set domain",
+        "identifier": "Immunoglobulin I-set domain",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 91,
+              "residue_number": 95
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 2,
+              "residue_number": 6
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 187,
+              "residue_number": 191
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 98,
+              "residue_number": 102
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 283,
+              "residue_number": 287
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 194,
+              "residue_number": 198
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 377,
+              "residue_number": 381
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 287,
+              "residue_number": 291
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 470,
+              "residue_number": 474
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 381,
+              "residue_number": 385
+            },
+            "struct_asym_id": "A"
+          },
+          {
+            "chain_id": "A",
+            "coverage": 1,
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 564,
+              "residue_number": 568
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": 474,
+              "residue_number": 478
+            },
+            "struct_asym_id": "A"
+          }
+        ],
+        "name": "I-set"
+      }
+    },
+    "SCOP": {},
+    "UniProt": {
+      "D0VWS0": {
+        "identifier": "D0VWS0_RABIT",
+        "mappings": [
+          {
+            "chain_id": "A",
+            "end": {
+              "author_insertion_code": "",
+              "author_residue_number": 566,
+              "residue_number": 570
+            },
+            "entity_id": 1,
+            "start": {
+              "author_insertion_code": "",
+              "author_residue_number": null,
+              "residue_number": 1
+            },
+            "struct_asym_id": "A",
+            "unp_end": 570,
+            "unp_start": 1
+          }
+        ],
+        "name": "D0VWS0_RABIT"
+      }
+    }
+  }
+}

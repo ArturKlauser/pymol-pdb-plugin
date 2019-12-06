@@ -1,0 +1,75 @@
+{
+  "1a1q": [
+    {
+      "ca_p_only": true,
+      "entity_id": 1,
+      "gene_name": null,
+      "in_chains": [
+        "A",
+        "B",
+        "C"
+      ],
+      "in_struct_asyms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "length": 189,
+      "molecule_name": [
+        "Serine protease NS3"
+      ],
+      "molecule_type": "polypeptide(L)",
+      "mutation_flag": null,
+      "number_of_copies": 3,
+      "pdb_sequence": "APITAYSQQTRGLLGCIITSLTGRDKNQVEGEVQVVSTATQSFLATCVNGVCWTVYHGAGSKTLAGPKGPITQMYTNVDQDLVGWQAPPGARSLTPCTCGSSDLYLVTRHADVIPVRRRGDSRGSLLSPRPVSYLKGSSGGPLLCPSGHAVGIFRAAVCTRGVAKAVDFVPVESMETTMRSPVFTDNSS",
+      "pdb_sequence_indices_with_multiple_residues": {},
+      "sample_preparation": "Genetically manipulated",
+      "sequence": "APITAYSQQTRGLLGCIITSLTGRDKNQVEGEVQVVSTATQSFLATCVNGVCWTVYHGAGSKTLAGPKGPITQMYTNVDQDLVGWQAPPGARSLTPCTCGSSDLYLVTRHADVIPVRRRGDSRGSLLSPRPVSYLKGSSGGPLLCPSGHAVGIFRAAVCTRGVAKAVDFVPVESMETTMRSPVFTDNSS",
+      "source": [
+        {
+          "expression_host_scientific_name": "Escherichia coli",
+          "expression_host_tax_id": 562,
+          "mappings": [
+            {
+              "end": {
+                "residue_number": 189
+              },
+              "start": {
+                "residue_number": 1
+              }
+            }
+          ],
+          "organism_scientific_name": "Hepacivirus C",
+          "tax_id": 11103
+        }
+      ],
+      "synonym": "NS3 PROTEINASE",
+      "weight": 19894.604
+    },
+    {
+      "ca_p_only": false,
+      "chem_comp_ids": [
+        "ZN"
+      ],
+      "entity_id": 2,
+      "in_chains": [
+        "A",
+        "B",
+        "C"
+      ],
+      "in_struct_asyms": [
+        "D",
+        "E",
+        "F"
+      ],
+      "molecule_name": [
+        "ZINC ION"
+      ],
+      "molecule_type": "Bound",
+      "mutation_flag": null,
+      "number_of_copies": 3,
+      "sample_preparation": "Synthetically obtained",
+      "weight": 65.409
+    }
+  ]
+}
