@@ -109,11 +109,10 @@ jobs:
         pymol/bin/python -m pytest \
           --cov=. \
           --cov-branch \
-          --cov-report html:test_coverage/html \
-          --cov-report annotate:test_coverage/annotation \
           --cov-report term \
           --durations=10 \
           -v
+        mkdir test_coverage
         mv .coverage test_coverage  # for combining later
     - name: Upload code coverage results
       uses: actions/upload-artifact@v1
@@ -161,9 +160,8 @@ jobs:
     - name: Combine coverage across test matrix
       run: |
         coverage combine coverage-*/.coverage
-        coverage html -d test_coverage/html
-        coverage annotate -d test_coverage/annotation
         coverage report
+        mkdir test_coverage
         cp .coverage test_coverage
     - name: Upload combined code coverage results
       uses: actions/upload-artifact@v1
