@@ -404,7 +404,7 @@ def test_initialize():
     pymol.plugins.pref_set(PREF_LOGLEVEL, None)
     plugin.initialize()
     loglevel = pymol.plugins.pref_get(PREF_LOGLEVEL, None)
-    assert loglevel == "WARNING"
+    assert loglevel == 'WARNING'
     assert logger.getEffectiveLevel() == logging.WARNING
 
     # When set to something valid, keep preference as is.

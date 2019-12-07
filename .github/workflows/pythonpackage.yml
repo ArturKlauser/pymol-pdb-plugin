@@ -1,11 +1,30 @@
 name: PyMOL PDB Plugin CI Tests
-# Originally based on pythonpackage.
 
 on: [push, pull_request]
 
 jobs:
-  test-runs:
-    name: Test Runs
+  run-pre-commits:
+    name: Run pre-commit checks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1  # no history, just HEAD
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        pip install pre-commit
+
+    - name: Run pre-commit checks
+      run: |
+        pre-commit run --all-files
+
+  run-tests:
+    name: Run Tests
+    needs: run-pre-commits
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 3
@@ -24,26 +43,11 @@ jobs:
     - uses: actions/checkout@v1
       with:
         fetch-depth: 1  # no history, just HEAD
-
-    #----- linting steps -----
     - name: Set up Python ${{matrix.python-version}}
       uses: actions/setup-python@v1
       with:
         python-version: ${{matrix.python-version}}
-    - name: Install dependencies
-      run: |
-        # python -m pip install --upgrade pip
-        # pip install -r requirements.txt
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        # Stop the build if there are Python syntax errors or undefined names.
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings.
-        # Flake8 config is checked into repository and read from there.
-        flake8 . --count --exit-zero --statistics
 
-    #----- pytest steps -----
     - name: Get PyMOL Package Name
       id: pymol_name
       run: |
@@ -112,7 +116,7 @@ jobs:
 
   combine-coverage:
     name: Combine Coverage
-    needs: test-runs
+    needs: run-tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -128,7 +132,6 @@ jobs:
         python-version: 3.7
     - name: Install dependencies
       run: |
-        # python -m pip install --upgrade pip
         pip install \
           coverage \
           'coveralls>=1.9.2'

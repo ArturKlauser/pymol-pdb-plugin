@@ -38,7 +38,7 @@ To install the plugin for PyMOL 1.7 or later use the PyMOL menu:
   * select the *Install New Plugin* tab
   * fill in the *URL* field with one of the URLs above
   * click *Fetch*
-  
+
 For earlier versions of PyMOL install the plugin manually from the above URL.
 
 ## Contributing
@@ -48,8 +48,7 @@ PyMOL and Python you are using and all the steps you performed to lead to
 your result. Also describe the output you are getting as well what you had
 expected to get, i.e. why do you consider the current behavior an error.
 
-If you are sufficiently programming literate to fix an issue in the code,
-feel free to send a pull request.
+If you want to help fix an issue in the code, feel free to send a pull request.
 
 ### Programming Style
 Please conform to the
@@ -57,3 +56,15 @@ Please conform to the
 The code in this repository is auto-formatted with
 [yapf](https://github.com/google/yapf/) --style google and linted with
 [flake8](http://flake8.pycqa.org/).
+
+Before starting to work on changes install required packages.
+```
+pip install -r requirements.txt
+pre-commit install
+```
+
+Before committing or sending a pull request run the pre-commit checks and tests.
+```
+pre-commit run --all-files
+tools/test
+```
